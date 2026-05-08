@@ -32,14 +32,19 @@ class DemandeController extends Controller
 
     public function download(DemandeAdministrative $demande)
     {
+        // Vérification de la propriété
         if ($demande->user_id !== auth()->id()) {
-            abort(403);
+            abort(403, "Vous n'êtes pas autorisé à télécharger ce document.");
         }
 
+        // Vérification de l'existence du fichier
         if (!$demande->fichier_pdf || !Storage::disk('public')->exists($demande->fichier_pdf)) {
-            return back()->with('error', 'Le fichier n\'est pas encore disponible ou a été supprimé.');
+            abort(404, "Le fichier PDF est introuvable sur le serveur.");
         }
 
-        return Storage::disk('public')->download($demande->fichier_pdf);
+        return Storage::disk('public')->download(
+            $demande->fichier_pdf,
+            basename($demande->fichier_pdf)
+        );
     }
 }

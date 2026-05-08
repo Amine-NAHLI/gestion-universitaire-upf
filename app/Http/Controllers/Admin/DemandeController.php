@@ -54,14 +54,14 @@ class DemandeController extends Controller
         ]);
         
         // Ensure directory exists
-        if (!Storage::exists('public/demandes')) {
-            Storage::makeDirectory('public/demandes');
+        if (!Storage::disk('public')->exists('demandes')) {
+            Storage::disk('public')->makeDirectory('demandes');
         }
 
         // Generate the PDF
         $pdf = Pdf::loadView('pdf.demande', compact('demande'));
         $filename = 'demande_' . $demande->id . '_' . $demande->type . '.pdf';
-        Storage::put('public/demandes/' . $filename, $pdf->output());
+        Storage::disk('public')->put('demandes/' . $filename, $pdf->output());
         
         $demande->update(['fichier_pdf' => 'demandes/' . $filename]);
         
