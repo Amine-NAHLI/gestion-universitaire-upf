@@ -7,6 +7,9 @@ use App\Models\DemandeAdministrative;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\DemandeApprouvee;
+use App\Mail\DemandeRefusee;
 
 class DemandeController extends Controller
 {
@@ -65,7 +68,10 @@ class DemandeController extends Controller
         
         $demande->update(['fichier_pdf' => 'demandes/' . $filename]);
         
-        return back()->with('success', 'Demande validée et document PDF généré avec succès.');
+        // Envoi de l'email de notification
+        Mail::to($demande->user->email)->send(new DemandeApprouvee($demande));
+        
+        return back()->with('success', 'Demande validée, PDF généré et email envoyé à l\'étudiant.');
     }
 
     /**
@@ -82,8 +88,11 @@ class DemandeController extends Controller
             'validateur_id' => auth()->id(),
             'motif_refus' => $request->motif_refus,
         ]);
+
+        // Envoi de l'email de notification
+        Mail::to($demande->user->email)->send(new DemandeRefusee($demande));
         
-        return back()->with('warning', 'Demande refusée.');
+        return back()->with('warning', 'Demande refusée et email de notification envoyé.');
     }
 
     /**
