@@ -33,6 +33,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::patch('users/{user}/toggle-active', [\App\Http\Controllers\Admin\UserController::class, 'toggleActive'])->name('users.toggle-active');
     Route::resource('filieres', \App\Http\Controllers\Admin\FiliereController::class);
     Route::resource('modules', \App\Http\Controllers\Admin\ModuleController::class);
+    Route::resource('salles', \App\Http\Controllers\Admin\SalleController::class);
 });
 
 // Routes Professeur
