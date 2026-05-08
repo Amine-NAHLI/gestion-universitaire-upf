@@ -20,8 +20,15 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'prenom',
         'email',
         'password',
+        'role',
+        'telephone',
+        'adresse',
+        'date_naissance',
+        'photo',
+        'is_active',
     ];
 
     /**
@@ -44,6 +51,40 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'date_naissance' => 'date',
+            'is_active' => 'boolean',
         ];
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isProfesseur(): bool
+    {
+        return $this->role === 'professeur';
+    }
+
+    public function isEtudiant(): bool
+    {
+        return $this->role === 'etudiant';
+    }
+
+    public function getFullNameAttribute(): string
+    {
+        return "{$this->prenom} {$this->name}";
+    }
+
+    public function getPhotoUrlAttribute(): string
+    {
+        return $this->photo
+            ? asset('storage/' . $this->photo)
+            : asset('images/default-avatar.png');
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
     }
 }
