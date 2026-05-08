@@ -7,6 +7,8 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -86,5 +88,30 @@ class User extends Authenticatable
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
+    }
+
+    public function etudiant(): HasOne
+    {
+        return $this->hasOne(Etudiant::class);
+    }
+
+    public function professeur(): HasOne
+    {
+        return $this->hasOne(Professeur::class);
+    }
+
+    public function demandesAdministratives(): HasMany
+    {
+        return $this->hasMany(DemandeAdministrative::class);
+    }
+
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(NotificationApp::class);
+    }
+
+    public function commentaires(): HasMany
+    {
+        return $this->hasMany(Commentaire::class);
     }
 }
