@@ -48,6 +48,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::patch('demandes/{demande}/valider', [\App\Http\Controllers\Admin\DemandeController::class, 'valider'])->name('demandes.valider');
     Route::patch('demandes/{demande}/refuser', [\App\Http\Controllers\Admin\DemandeController::class, 'refuser'])->name('demandes.refuser');
     Route::get('demandes/{demande}/pdf', [\App\Http\Controllers\Admin\DemandeController::class, 'genererPdf'])->name('demandes.pdf');
+
+    Route::get('edt', [\App\Http\Controllers\Admin\EdtController::class, 'index'])->name('edt.index');
+    Route::get('edt/data', [\App\Http\Controllers\Admin\EdtController::class, 'data'])->name('edt.data');
+    Route::post('edt', [\App\Http\Controllers\Admin\EdtController::class, 'store'])->name('edt.store');
+    Route::put('edt/{seance}', [\App\Http\Controllers\Admin\EdtController::class, 'update'])->name('edt.update');
+    Route::delete('edt/{seance}', [\App\Http\Controllers\Admin\EdtController::class, 'destroy'])->name('edt.destroy');
+    Route::get('statistiques', [\App\Http\Controllers\Admin\StatistiqueController::class, 'index'])->name('statistiques.index');
 });
 
 // Routes Professeur
