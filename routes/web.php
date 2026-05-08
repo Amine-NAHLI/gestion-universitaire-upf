@@ -62,9 +62,30 @@ Route::middleware(['auth', 'role:professeur'])->prefix('professeur')->name('prof
     Route::get('/dashboard', [ProfesseurDashboard::class, 'index'])->name('dashboard');
 });
 
-// Routes Etudiant
+// Routes Étudiant
 Route::middleware(['auth', 'role:etudiant'])->prefix('etudiant')->name('etudiant.')->group(function () {
-    Route::get('/dashboard', [EtudiantDashboard::class, 'index'])->name('dashboard');
+    Route::get('dashboard', function () {
+        return view('etudiant.dashboard');
+    })->name('dashboard');
+
+    Route::get('notes', [\App\Http\Controllers\Etudiant\NoteController::class, 'index'])->name('notes.index');
+    
+    Route::get('edt', [\App\Http\Controllers\Etudiant\EdtController::class, 'index'])->name('edt.index');
+    
+    Route::get('absences', [\App\Http\Controllers\Etudiant\AbsenceController::class, 'index'])->name('absences.index');
+    
+    Route::get('justificatifs', [\App\Http\Controllers\Etudiant\JustificatifController::class, 'index'])->name('justificatifs.index');
+    Route::post('justificatifs', [\App\Http\Controllers\Etudiant\JustificatifController::class, 'store'])->name('justificatifs.store');
+    
+    Route::get('demandes', [\App\Http\Controllers\Etudiant\DemandeController::class, 'index'])->name('demandes.index');
+    Route::post('demandes', [\App\Http\Controllers\Etudiant\DemandeController::class, 'store'])->name('demandes.store');
+    Route::get('demandes/{demande}/download', [\App\Http\Controllers\Etudiant\DemandeController::class, 'download'])->name('demandes.download');
+    
+    Route::get('classroom', [\App\Http\Controllers\Etudiant\ClassroomController::class, 'index'])->name('classroom.index');
+    Route::get('classroom/{module}', [\App\Http\Controllers\Etudiant\ClassroomController::class, 'show'])->name('classroom.show');
+    Route::post('classroom/annonces/{annonce}/commenter', [\App\Http\Controllers\Etudiant\ClassroomController::class, 'commenter'])->name('classroom.commenter');
+    
+    Route::get('documents', [\App\Http\Controllers\Etudiant\DocumentController::class, 'index'])->name('documents.index');
 });
 
 require __DIR__.'/auth.php';
