@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    .btn-primary {
+        @apply bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-xl transition-all duration-300 inline-block;
+    }
+    .btn-secondary {
+        @apply bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-gray-700 font-bold py-2 px-4 rounded-xl hover:bg-indigo-50 dark:hover:bg-gray-700 transition-all duration-300 inline-block;
+    }
+    .card {
+        @apply bg-white dark:bg-gray-800 p-8 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300;
+    }
+}

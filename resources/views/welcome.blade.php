@@ -19,7 +19,7 @@
                     <span class="text-xl font-bold text-gray-800">UPF Gestion</span>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <a href="#" class="btn-secondary">Connexion</a>
+                    <a href="{{ route('login') }}" class="btn-secondary">Connexion</a>
                 </div>
             </div>
         </div>
@@ -36,7 +36,7 @@
                 Une application moderne pour gérer toute votre vie universitaire : notes, emploi du temps, absences, demandes administratives.
             </p>
             <div class="flex flex-wrap gap-4 justify-center">
-                <a href="#" class="btn-primary text-lg px-8 py-3">
+                <a href="{{ route('login') }}" class="btn-primary text-lg px-8 py-3">
                     Se connecter
                 </a>
                 <a href="#features" class="btn-secondary text-lg px-8 py-3">

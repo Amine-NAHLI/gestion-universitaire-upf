@@ -31,10 +31,10 @@ class AuthenticatedSessionController extends Controller
         $user = Auth::user();
 
         return match ($user->role) {
-            'admin' => redirect()->intended(route('admin.dashboard')),
-            'professeur' => redirect()->intended(route('professeur.dashboard')),
-            'etudiant' => redirect()->intended(route('etudiant.dashboard')),
-            default => redirect()->intended(route('dashboard')),
+            'admin' => redirect()->route('admin.dashboard'),
+            'professeur' => redirect()->route('professeur.dashboard'),
+            'etudiant' => redirect()->route('etudiant.dashboard'),
+            default => redirect()->route('dashboard'),
         };
     }
 

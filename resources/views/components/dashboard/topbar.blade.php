@@ -1,0 +1,82 @@
+<header class="sticky top-0 z-20 flex h-20 w-full items-center bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm px-4 md:px-6 transition-colors duration-300">
+    
+    <!-- Sidebar Toggle -->
+    <button @click="sidebarOpen = !sidebarOpen" class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+
+    <!-- Page Title -->
+    <div class="ml-4 flex-1">
+        <h1 class="text-lg font-bold text-gray-800 dark:text-white tracking-tight">@yield('page-title', 'Tableau de bord')</h1>
+    </div>
+
+    <!-- Right Side Actions -->
+    <div class="flex items-center space-x-2 md:space-x-4">
+        
+        <!-- Notifications -->
+        <div x-data="{ open: false }" class="relative">
+            <button @click="open = !open" class="relative p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                <span class="absolute top-2 right-2 flex h-2.5 w-2.5">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+                </span>
+            </button>
+            
+            <div x-show="open" @click.away="open = false" 
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 scale-95 translate-y-2"
+                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                 class="absolute right-0 mt-3 w-80 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden" 
+                 x-cloak>
+                <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-700 font-bold text-gray-800 dark:text-white">Notifications</div>
+                <div class="max-h-64 overflow-y-auto">
+                    <div class="p-4 border-b border-gray-50 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer">
+                        <p class="text-sm font-bold text-gray-800 dark:text-white">Bienvenue sur le portail !</p>
+                        <p class="text-xs text-gray-500 mt-1">Votre compte est actif et prêt.</p>
+                    </div>
+                </div>
+                <a href="#" class="block py-3 text-center text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">Tout marquer comme lu</a>
+            </div>
+        </div>
+
+        <!-- User Dropdown -->
+        <div x-data="{ open: false }" class="relative">
+            <button @click="open = !open" class="flex items-center gap-2 p-1 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-all border border-transparent hover:border-gray-200 dark:hover:border-gray-600">
+                <div class="flex flex-col items-end hidden sm:flex">
+                    <span class="text-sm font-bold text-gray-700 dark:text-white">{{ Auth::user()->prenom }}</span>
+                    <span class="text-[10px] font-bold text-indigo-500 uppercase tracking-tighter">{{ Auth::user()->role }}</span>
+                </div>
+                @if(Auth::user()->photo)
+                    <img src="{{ asset('storage/'.Auth::user()->photo) }}" class="w-10 h-10 rounded-lg object-cover ring-2 ring-indigo-500/10">
+                @else
+                    <div class="w-10 h-10 rounded-lg bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold ring-2 ring-indigo-500/10">
+                        {{ substr(Auth::user()->prenom, 0, 1) }}
+                    </div>
+                @endif
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+
+            <!-- Dropdown Menu -->
+            <div x-show="open" @click.away="open = false" 
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 scale-95 translate-y-2"
+                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                 class="absolute right-0 mt-3 w-48 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 py-2 overflow-hidden" 
+                 x-cloak>
+                <a href="{{ route('profile.edit') }}" class="flex items-center px-4 py-2.5 text-sm text-gray-600 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    Mon profil
+                </a>
+                <div class="border-t border-gray-100 dark:border-gray-700 my-1"></div>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="flex items-center w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-left">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                        Déconnexion
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</header>
