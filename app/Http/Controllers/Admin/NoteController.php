@@ -9,9 +9,19 @@ use App\Models\Module;
 use App\Models\Groupe;
 use App\Models\Filiere;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\NotesExport;
 
 class NoteController extends Controller
 {
+    public function export(Request $request)
+    {
+        $groupe_id = $request->query('groupe_id');
+        $module_id = $request->query('module_id');
+        
+        return Excel::download(new NotesExport($groupe_id, $module_id), 'notes_etudiants.xlsx');
+    }
+
     /**
      * Display a listing of the notes.
      */

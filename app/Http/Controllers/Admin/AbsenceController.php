@@ -9,8 +9,17 @@ use App\Models\Groupe;
 use App\Models\Etudiant;
 use Illuminate\Http\Request;
 
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\AbsencesExport;
+
 class AbsenceController extends Controller
 {
+    public function export(Request $request)
+    {
+        $groupe_id = $request->query('groupe_id');
+        return Excel::download(new AbsencesExport($groupe_id), 'absences_etudiants.xlsx');
+    }
+
     /**
      * Display a listing of the absences.
      */

@@ -45,6 +45,10 @@
                 </select>
             </div>
             <button type="submit" class="btn-primary w-full md:w-auto px-8">Filtrer</button>
+            <a href="{{ route('admin.absences.export', ['groupe_id' => $groupe_id]) }}" class="flex items-center gap-2 px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-emerald-100 dark:shadow-none w-full md:w-auto justify-center">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Exporter Excel
+            </a>
             @if($groupe_id)
                 <a href="{{ route('admin.absences.index') }}" class="btn-secondary w-full md:w-auto">Réinitialiser</a>
             @endif

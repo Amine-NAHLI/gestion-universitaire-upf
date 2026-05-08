@@ -35,10 +35,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('modules', \App\Http\Controllers\Admin\ModuleController::class);
     Route::resource('salles', \App\Http\Controllers\Admin\SalleController::class);
     Route::get('notes', [\App\Http\Controllers\Admin\NoteController::class, 'index'])->name('notes.index');
+    Route::get('notes/export', [\App\Http\Controllers\Admin\NoteController::class, 'export'])->name('notes.export');
     Route::get('notes/{etudiant}/{module}', [\App\Http\Controllers\Admin\NoteController::class, 'edit'])->name('notes.edit');
     Route::put('notes/{etudiant}/{module}', [\App\Http\Controllers\Admin\NoteController::class, 'update'])->name('notes.update');
     
     Route::get('absences', [\App\Http\Controllers\Admin\AbsenceController::class, 'index'])->name('absences.index');
+    Route::get('absences/export', [\App\Http\Controllers\Admin\AbsenceController::class, 'export'])->name('absences.export');
     Route::patch('absences/{absence}/toggle-justifiee', [\App\Http\Controllers\Admin\AbsenceController::class, 'toggleJustifiee'])->name('absences.toggle-justifiee');
     Route::get('justificatifs/{justificatif}/valider', [\App\Http\Controllers\Admin\AbsenceController::class, 'validerJustificatif'])->name('justificatifs.valider');
     Route::get('justificatifs/{justificatif}/refuser', [\App\Http\Controllers\Admin\AbsenceController::class, 'refuserJustificatif'])->name('justificatifs.refuser');
