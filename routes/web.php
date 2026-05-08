@@ -34,6 +34,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('filieres', \App\Http\Controllers\Admin\FiliereController::class);
     Route::resource('modules', \App\Http\Controllers\Admin\ModuleController::class);
     Route::resource('salles', \App\Http\Controllers\Admin\SalleController::class);
+    Route::get('notes', [\App\Http\Controllers\Admin\NoteController::class, 'index'])->name('notes.index');
+    Route::get('notes/{etudiant}/{module}', [\App\Http\Controllers\Admin\NoteController::class, 'edit'])->name('notes.edit');
+    Route::put('notes/{etudiant}/{module}', [\App\Http\Controllers\Admin\NoteController::class, 'update'])->name('notes.update');
 });
 
 // Routes Professeur
