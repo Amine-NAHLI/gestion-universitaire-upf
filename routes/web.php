@@ -42,6 +42,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::patch('absences/{absence}/toggle-justifiee', [\App\Http\Controllers\Admin\AbsenceController::class, 'toggleJustifiee'])->name('absences.toggle-justifiee');
     Route::get('justificatifs/{justificatif}/valider', [\App\Http\Controllers\Admin\AbsenceController::class, 'validerJustificatif'])->name('justificatifs.valider');
     Route::get('justificatifs/{justificatif}/refuser', [\App\Http\Controllers\Admin\AbsenceController::class, 'refuserJustificatif'])->name('justificatifs.refuser');
+
+    Route::get('demandes', [\App\Http\Controllers\Admin\DemandeController::class, 'index'])->name('demandes.index');
+    Route::get('demandes/{demande}', [\App\Http\Controllers\Admin\DemandeController::class, 'show'])->name('demandes.show');
+    Route::patch('demandes/{demande}/valider', [\App\Http\Controllers\Admin\DemandeController::class, 'valider'])->name('demandes.valider');
+    Route::patch('demandes/{demande}/refuser', [\App\Http\Controllers\Admin\DemandeController::class, 'refuser'])->name('demandes.refuser');
+    Route::get('demandes/{demande}/pdf', [\App\Http\Controllers\Admin\DemandeController::class, 'genererPdf'])->name('demandes.pdf');
 });
 
 // Routes Professeur
