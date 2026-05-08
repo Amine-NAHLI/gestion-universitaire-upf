@@ -29,6 +29,8 @@ Route::middleware('auth')->group(function () {
 // Routes Admin
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
+    Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
+    Route::patch('users/{user}/toggle-active', [\App\Http\Controllers\Admin\UserController::class, 'toggleActive'])->name('users.toggle-active');
 });
 
 // Routes Professeur
