@@ -27,6 +27,8 @@ class Seance extends Model
 
     protected $casts = [
         'date' => 'date',
+        'heure_debut' => 'datetime',
+        'heure_fin' => 'datetime',
     ];
 
     public function module(): BelongsTo
