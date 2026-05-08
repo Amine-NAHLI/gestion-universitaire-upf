@@ -59,7 +59,35 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
 // Routes Professeur
 Route::middleware(['auth', 'role:professeur'])->prefix('professeur')->name('professeur.')->group(function () {
-    Route::get('/dashboard', [ProfesseurDashboard::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [\App\Http\Controllers\Professeur\DashboardController::class, 'index'])->name('dashboard');
+    
+    Route::get('modules', [\App\Http\Controllers\Professeur\ModuleController::class, 'index'])->name('modules.index');
+    
+    Route::get('notes', [\App\Http\Controllers\Professeur\NoteController::class, 'index'])->name('notes.index');
+    Route::get('notes/{module}/{groupe}', [\App\Http\Controllers\Professeur\NoteController::class, 'saisir'])->name('notes.saisir');
+    Route::post('notes/{module}/{groupe}', [\App\Http\Controllers\Professeur\NoteController::class, 'enregistrer'])->name('notes.enregistrer');
+    
+    Route::get('absences', [\App\Http\Controllers\Professeur\AbsenceController::class, 'index'])->name('absences.index');
+    Route::get('absences/{seance}', [\App\Http\Controllers\Professeur\AbsenceController::class, 'feuille'])->name('absences.feuille');
+    Route::post('absences/{seance}', [\App\Http\Controllers\Professeur\AbsenceController::class, 'enregistrer'])->name('absences.enregistrer');
+    
+    Route::get('cahier', [\App\Http\Controllers\Professeur\CahierController::class, 'index'])->name('cahier.index');
+    Route::get('cahier/{seance}', [\App\Http\Controllers\Professeur\CahierController::class, 'create'])->name('cahier.create');
+    Route::post('cahier/{seance}', [\App\Http\Controllers\Professeur\CahierController::class, 'store'])->name('cahier.store');
+    
+    Route::get('edt', [\App\Http\Controllers\Professeur\EdtController::class, 'index'])->name('edt.index');
+    
+    Route::get('reservations', [\App\Http\Controllers\Professeur\ReservationController::class, 'index'])->name('reservations.index');
+    Route::post('reservations', [\App\Http\Controllers\Professeur\ReservationController::class, 'store'])->name('reservations.store');
+    Route::delete('reservations/{reservation}', [\App\Http\Controllers\Professeur\ReservationController::class, 'destroy'])->name('reservations.destroy');
+    
+    Route::get('demandes', [\App\Http\Controllers\Professeur\DemandeController::class, 'index'])->name('demandes.index');
+    Route::post('demandes', [\App\Http\Controllers\Professeur\DemandeController::class, 'store'])->name('demandes.store');
+    
+    Route::get('classroom', [\App\Http\Controllers\Professeur\ClassroomController::class, 'index'])->name('classroom.index');
+    Route::get('classroom/{module}', [\App\Http\Controllers\Professeur\ClassroomController::class, 'show'])->name('classroom.show');
+    Route::post('classroom/{module}/annonces', [\App\Http\Controllers\Professeur\ClassroomController::class, 'publierAnnonce'])->name('classroom.annonce');
+    Route::post('classroom/{module}/supports', [\App\Http\Controllers\Professeur\ClassroomController::class, 'uploadSupport'])->name('classroom.support');
 });
 
 // Routes Étudiant
