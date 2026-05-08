@@ -118,4 +118,11 @@ Route::middleware(['auth', 'role:etudiant'])->prefix('etudiant')->name('etudiant
     Route::get('documents', [\App\Http\Controllers\Etudiant\DocumentController::class, 'index'])->name('documents.index');
 });
 
+// Notifications system
+Route::middleware('auth')->group(function () {
+    Route::get('notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('notifications/{notification}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('notifications/read-all', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
+});
+
 require __DIR__.'/auth.php';

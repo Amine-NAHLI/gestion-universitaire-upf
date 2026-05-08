@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\DemandeApprouvee;
 use App\Mail\DemandeRefusee;
+use App\Models\NotificationApp;
 
 class DemandeController extends Controller
 {
@@ -71,7 +72,16 @@ class DemandeController extends Controller
         // Envoi de l'email de notification
         Mail::to($demande->user->email)->send(new DemandeApprouvee($demande));
         
-        return back()->with('success', 'Demande validée, PDF généré et email envoyé à l\'étudiant.');
+        // Création de la notification interne
+        NotificationApp::create([
+            'user_id' => $demande->user_id,
+            'type' => 'DEMANDE',
+            'titre' => 'Demande approuvée !',
+            'message' => 'Votre demande de ' . str_replace('_', ' ', $demande->type) . ' a été validée.',
+            'lien' => $demande->user->isEtudiant() ? route('etudiant.demandes.index') : route('professeur.demandes.index'),
+        ]);
+        
+        return back()->with('success', 'Demande validée, PDF généré et notifications envoyées.');
     }
 
     /**
@@ -92,7 +102,16 @@ class DemandeController extends Controller
         // Envoi de l'email de notification
         Mail::to($demande->user->email)->send(new DemandeRefusee($demande));
         
-        return back()->with('warning', 'Demande refusée et email de notification envoyé.');
+        // Création de la notification interne
+        NotificationApp::create([
+            'user_id' => $demande->user_id,
+            'type' => 'DEMANDE',
+            'titre' => 'Demande refusée',
+            'message' => 'Votre demande de ' . str_replace('_', ' ', $demande->type) . ' a été refusée.',
+            'lien' => $demande->user->isEtudiant() ? route('etudiant.demandes.index') : route('professeur.demandes.index'),
+        ]);
+        
+        return back()->with('warning', 'Demande refusée et notifications envoyées.');
     }
 
     /**

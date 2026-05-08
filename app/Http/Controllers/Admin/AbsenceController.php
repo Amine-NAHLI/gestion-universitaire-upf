@@ -7,6 +7,7 @@ use App\Models\Absence;
 use App\Models\Justificatif;
 use App\Models\Groupe;
 use App\Models\Etudiant;
+use App\Models\NotificationApp;
 use Illuminate\Http\Request;
 
 use Maatwebsite\Excel\Facades\Excel;
@@ -66,7 +67,15 @@ class AbsenceController extends Controller
         
         $justificatif->absence->update(['justifiee' => true]);
         
-        return back()->with('success', 'Justificatif accepté et absence marquée comme justifiée.');
+        NotificationApp::create([
+            'user_id' => $justificatif->absence->etudiant->user_id,
+            'type' => 'ABSENCE',
+            'titre' => 'Justificatif accepté',
+            'message' => 'Votre justificatif pour l\'absence du ' . $justificatif->absence->seance->date->format('d/m/Y') . ' a été validé.',
+            'lien' => route('etudiant.absences.index'),
+        ]);
+        
+        return back()->with('success', 'Justificatif accepté et notification envoyée.');
     }
 
     /**
@@ -80,6 +89,14 @@ class AbsenceController extends Controller
             'motif_refus' => $request->query('motif_refus', 'Non conforme')
         ]);
         
-        return back()->with('warning', 'Justificatif refusé.');
+        NotificationApp::create([
+            'user_id' => $justificatif->absence->etudiant->user_id,
+            'type' => 'ABSENCE',
+            'titre' => 'Justificatif refusé',
+            'message' => 'Votre justificatif pour l\'absence du ' . $justificatif->absence->seance->date->format('d/m/Y') . ' a été refusé.',
+            'lien' => route('etudiant.absences.index'),
+        ]);
+        
+        return back()->with('warning', 'Justificatif refusé et notification envoyée.');
     }
 }
