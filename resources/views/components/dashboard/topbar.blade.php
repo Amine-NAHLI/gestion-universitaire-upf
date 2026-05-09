@@ -20,31 +20,49 @@
                 fetchNotifications() {
                     fetch('{{ route('notifications.index') }}')
                         .then(r => r.json())
-                        .then(data => this.notifications = data);
+                        .then(data => {
+                            this.notifications = data;
+                        })
+                        .catch(err => console.error('Erreur notifications:', err));
                 },
-                markRead(id) {
-                    fetch(`/notifications/${id}/read`, {
+                handleNotifClick(notif) {
+                    fetch(`/notifications/${notif.id}/read`, {
                         method: 'POST',
-                        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
-                    }).then(() => this.fetchNotifications());
+                        headers: { 
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        }
+                    }).then(() => {
+                        if(notif.lien) {
+                            window.location.href = notif.lien;
+                        } else {
+                            this.fetchNotifications();
+                        }
+                    }).catch(() => {
+                        // Redirect anyway if API fails
+                        if(notif.lien) window.location.href = notif.lien;
+                    });
                 },
                 markAllRead() {
                     fetch('{{ route('notifications.read-all') }}', {
                         method: 'POST',
-                        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                        headers: { 
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        }
                     }).then(() => {
                         this.notifications = [];
                         this.open = false;
                     });
                 }
             }" 
-            x-init="fetchNotifications(); setInterval(() => fetchNotifications(), 30000)"
+            x-init="fetchNotifications(); setInterval(() => fetchNotifications(), 10000)"
             class="relative">
             
             <button @click="open = !open" class="relative p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
                 <template x-if="notifications.length > 0">
-                    <span class="absolute top-2 right-2 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[8px] font-black text-white">
+                    <span class="absolute top-2 right-2 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[8px] font-black text-white ring-2 ring-white dark:ring-gray-800">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                         <span x-text="notifications.length"></span>
                     </span>
@@ -55,27 +73,35 @@
                  x-transition:enter="transition ease-out duration-200"
                  x-transition:enter-start="opacity-0 scale-95 translate-y-2"
                  x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-                 class="absolute right-0 mt-3 w-80 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden" 
+                 class="absolute right-0 mt-3 w-80 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden z-50" 
                  x-cloak>
-                <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-700 font-bold text-gray-800 dark:text-white flex justify-between items-center">
+                <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-700 font-bold text-gray-800 dark:text-white flex justify-between items-center bg-gray-50/50 dark:bg-gray-900/20">
                     <span>Notifications</span>
-                    <span class="text-[10px] bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full" x-text="notifications.length"></span>
+                    <span class="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-black" x-text="notifications.length"></span>
                 </div>
-                <div class="max-h-64 overflow-y-auto">
+                <div class="max-h-80 overflow-y-auto">
                     <template x-for="notif in notifications" :key="notif.id">
-                        <div @click="markRead(notif.id); if(notif.lien) window.location.href = notif.lien" 
-                             class="p-4 border-b border-gray-50 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer">
-                            <p class="text-xs font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest" x-text="notif.type"></p>
-                            <p class="text-sm font-bold text-gray-800 dark:text-white mt-1" x-text="notif.titre"></p>
-                            <p class="text-[10px] text-gray-500 mt-1" x-text="notif.message"></p>
+                        <div @click="handleNotifClick(notif)" 
+                             class="p-4 border-b border-gray-50 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all cursor-pointer group">
+                            <div class="flex justify-between items-start">
+                                <span class="text-[9px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest bg-indigo-50 dark:bg-indigo-900/30 px-2 py-0.5 rounded" x-text="notif.type"></span>
+                                <span class="text-[8px] text-gray-400" x-text="new Date(notif.created_at).toLocaleDateString()"></span>
+                            </div>
+                            <p class="text-sm font-bold text-gray-800 dark:text-white mt-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" x-text="notif.titre"></p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2" x-text="notif.message"></p>
                         </div>
                     </template>
                     <template x-if="notifications.length === 0">
-                        <div class="p-8 text-center text-gray-400 text-xs font-bold italic">Aucune nouvelle notification</div>
+                        <div class="p-10 text-center flex flex-col items-center">
+                            <svg class="w-10 h-10 text-gray-200 dark:text-gray-700 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                            <p class="text-xs font-bold text-gray-400 dark:text-gray-500 italic">Aucune nouvelle notification</p>
+                        </div>
                     </template>
                 </div>
                 <template x-if="notifications.length > 0">
-                    <button @click="markAllRead()" class="w-full py-3 text-center text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-t border-gray-100 dark:border-gray-700">Tout marquer comme lu</button>
+                    <button @click="markAllRead()" class="w-full py-3 text-center text-[10px] font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors border-t border-gray-100 dark:border-gray-700">
+                        Tout marquer comme lu
+                    </button>
                 </template>
             </div>
         </div>

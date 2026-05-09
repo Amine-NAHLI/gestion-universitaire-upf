@@ -9,6 +9,8 @@ use App\Models\Professeur;
 use App\Models\Groupe;
 use App\Models\Salle;
 use Illuminate\Http\Request;
+use App\Models\NotificationApp;
+use App\Models\Etudiant;
 
 class EdtController extends Controller
 {
@@ -77,6 +79,27 @@ class EdtController extends Controller
 
         $seance = Seance::create($request->all() + ['statut' => 'planifiee']);
         
+        // Notifier le professeur
+        NotificationApp::create([
+            'user_id' => $seance->professeur->user_id,
+            'type' => 'EDT',
+            'titre' => 'Nouvelle séance planifiée',
+            'message' => 'Une séance de ' . $seance->module->nom . ' a été ajoutée à votre emploi du temps.',
+            'lien' => route('professeur.dashboard'),
+        ]);
+
+        // Notifier les étudiants du groupe
+        $etudiants = Etudiant::where('groupe_id', $seance->groupe_id)->get();
+        foreach ($etudiants as $etudiant) {
+            NotificationApp::create([
+                'user_id' => $etudiant->user_id,
+                'type' => 'EDT',
+                'titre' => 'Mise à jour Emploi du Temps',
+                'message' => 'Une séance de ' . $seance->module->nom . ' a été planifiée.',
+                'lien' => route('etudiant.dashboard'),
+            ]);
+        }
+        
         return response()->json([
             'success' => true, 
             'seance' => $seance->load(['module', 'groupe', 'salle', 'professeur.user'])
@@ -89,6 +112,27 @@ class EdtController extends Controller
     public function update(Request $request, Seance $seance)
     {
         $seance->update($request->only(['date', 'heure_debut', 'heure_fin', 'salle_id', 'statut']));
+
+        // Notifier le professeur
+        NotificationApp::create([
+            'user_id' => $seance->professeur->user_id,
+            'type' => 'EDT',
+            'titre' => 'Séance modifiée',
+            'message' => 'Votre séance de ' . $seance->module->nom . ' du ' . $seance->date->format('d/m/Y') . ' a été modifiée.',
+            'lien' => route('professeur.dashboard'),
+        ]);
+
+        // Notifier les étudiants
+        $etudiants = Etudiant::where('groupe_id', $seance->groupe_id)->get();
+        foreach ($etudiants as $etudiant) {
+            NotificationApp::create([
+                'user_id' => $etudiant->user_id,
+                'type' => 'EDT',
+                'titre' => 'Changement d\'emploi du temps',
+                'message' => 'La séance de ' . $seance->module->nom . ' du ' . $seance->date->format('d/m/Y') . ' a été modifiée.',
+                'lien' => route('etudiant.dashboard'),
+            ]);
+        }
         
         return response()->json(['success' => true]);
     }

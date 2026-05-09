@@ -6,6 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\DemandeAdministrative;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Mail;
+use App\Models\User;
+use App\Models\NotificationApp;
+use App\Mail\NouvelleDemandeAdmin;
+
 class DemandeController extends Controller
 {
     public function index()
@@ -21,13 +26,27 @@ class DemandeController extends Controller
             'donnees_supplementaires' => 'nullable|array',
         ]);
 
-        DemandeAdministrative::create([
+        $demande = DemandeAdministrative::create([
             'user_id' => auth()->id(),
             'type' => $request->type,
             'donnees_supplementaires' => $request->donnees_supplementaires,
             'statut' => 'en_attente',
         ]);
 
-        return back()->with('success', 'Demande administrative soumise avec succès.');
+        // Notifier tous les admins
+        $admins = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            NotificationApp::create([
+                'user_id' => $admin->id,
+                'type' => 'INFO',
+                'titre' => 'Nouvelle demande (Prof) : ' . auth()->user()->full_name,
+                'message' => 'Un professeur a soumis une demande de ' . str_replace('_', ' ', $demande->type),
+                'lien' => route('admin.demandes.index'),
+            ]);
+            
+            Mail::to($admin->email)->send(new NouvelleDemandeAdmin($demande));
+        }
+
+        return back()->with('success', 'Demande soumise avec succès. Les administrateurs ont été notifiés.');
     }
 }

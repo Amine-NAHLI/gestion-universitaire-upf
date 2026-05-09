@@ -8,6 +8,7 @@ use App\Models\Module;
 use App\Models\Groupe;
 use App\Models\Etudiant;
 use Illuminate\Http\Request;
+use App\Models\NotificationApp;
 
 class NoteController extends Controller
 {
@@ -38,8 +39,20 @@ class NoteController extends Controller
                 ],
                 array_filter($noteData, fn($v) => $v !== null && $v !== '')
             );
+
+            // Notifier l'étudiant
+            $etudiant = Etudiant::find($etudiant_id);
+            if ($etudiant) {
+                NotificationApp::create([
+                    'user_id' => $etudiant->user_id,
+                    'type' => 'NOTES',
+                    'titre' => 'Notes mises à jour : ' . $module->nom,
+                    'message' => 'Vos notes pour le module ' . $module->nom . ' ont été mises à jour par le professeur.',
+                    'lien' => route('etudiant.notes.index'),
+                ]);
+            }
         }
 
-        return back()->with('success', 'Notes enregistrées avec succès.');
+        return back()->with('success', 'Notes enregistrées et étudiants notifiés.');
     }
 }

@@ -69,10 +69,15 @@ class DemandeController extends Controller
         
         $demande->update(['fichier_pdf' => 'demandes/' . $filename]);
         
-        // Envoi de l'email de notification
-        Mail::to($demande->user->email)->send(new DemandeApprouvee($demande));
+        // Envoi de l'email de notification (try-catch pour ne pas bloquer la notification interne)
+        try {
+            Mail::to($demande->user->email)->send(new DemandeApprouvee($demande));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Erreur envoi email validation : " . $e->getMessage());
+        }
         
         // Création de la notification interne
+        $demande->load('user');
         NotificationApp::create([
             'user_id' => $demande->user_id,
             'type' => 'DEMANDE',
@@ -100,9 +105,14 @@ class DemandeController extends Controller
         ]);
 
         // Envoi de l'email de notification
-        Mail::to($demande->user->email)->send(new DemandeRefusee($demande));
+        try {
+            Mail::to($demande->user->email)->send(new DemandeRefusee($demande));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Erreur envoi email refus : " . $e->getMessage());
+        }
         
         // Création de la notification interne
+        $demande->load('user');
         NotificationApp::create([
             'user_id' => $demande->user_id,
             'type' => 'DEMANDE',

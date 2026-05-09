@@ -12,6 +12,9 @@ use Illuminate\Http\Request;
 
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\AbsencesExport;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\JustificatifApprouve;
+use App\Mail\JustificatifRefuse;
 
 class AbsenceController extends Controller
 {
@@ -74,8 +77,14 @@ class AbsenceController extends Controller
             'message' => 'Votre justificatif pour l\'absence du ' . $justificatif->absence->seance->date->format('d/m/Y') . ' a été validé.',
             'lien' => route('etudiant.absences.index'),
         ]);
+
+        try {
+            Mail::to($justificatif->absence->etudiant->user->email)->send(new JustificatifApprouve($justificatif));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Erreur email justificatif approuvé : " . $e->getMessage());
+        }
         
-        return back()->with('success', 'Justificatif accepté et notification envoyée.');
+        return back()->with('success', 'Justificatif accepté, notification et email envoyés.');
     }
 
     /**
@@ -96,7 +105,13 @@ class AbsenceController extends Controller
             'message' => 'Votre justificatif pour l\'absence du ' . $justificatif->absence->seance->date->format('d/m/Y') . ' a été refusé.',
             'lien' => route('etudiant.absences.index'),
         ]);
+
+        try {
+            Mail::to($justificatif->absence->etudiant->user->email)->send(new JustificatifRefuse($justificatif));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Erreur email justificatif refusé : " . $e->getMessage());
+        }
         
-        return back()->with('warning', 'Justificatif refusé et notification envoyée.');
+        return back()->with('warning', 'Justificatif refusé, notification et email envoyés.');
     }
 }

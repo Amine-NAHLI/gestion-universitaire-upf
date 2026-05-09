@@ -7,6 +7,10 @@ use App\Models\Justificatif;
 use App\Models\Absence;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
+use App\Models\User;
+use App\Models\NotificationApp;
+use App\Mail\NouveauJustificatifAdmin;
 
 class JustificatifController extends Controller
 {
@@ -38,7 +42,7 @@ class JustificatifController extends Controller
 
         $path = $request->file('fichier')->store('justificatifs', 'public');
 
-        Justificatif::create([
+        $justificatif = Justificatif::create([
             'etudiant_id' => auth()->user()->etudiant->id,
             'absence_id' => $request->absence_id,
             'fichier' => $path,
@@ -46,6 +50,20 @@ class JustificatifController extends Controller
             'statut' => 'en_attente',
         ]);
 
-        return back()->with('success', 'Justificatif déposé avec succès.');
+        // Notifier tous les admins
+        $admins = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            NotificationApp::create([
+                'user_id' => $admin->id,
+                'type' => 'INFO',
+                'titre' => 'Nouveau justificatif : ' . auth()->user()->full_name,
+                'message' => 'Un étudiant a déposé un justificatif pour son absence.',
+                'lien' => route('admin.absences.index'),
+            ]);
+            
+            Mail::to($admin->email)->send(new NouveauJustificatifAdmin($justificatif));
+        }
+
+        return back()->with('success', 'Justificatif déposé avec succès. Les administrateurs ont été notifiés.');
     }
 }
