@@ -1,13 +1,13 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Dashboard Admin')
-@section('header_title', 'Bienvenue, ' . Auth::user()->prenom)
-@section('header_subtitle', 'Voici ce qui se passe aujourd\'hui à l\'UPF.')
+@section('title', __('Dashboard Admin'))
+@section('header_title', __('Bienvenue, ') . Auth::user()->prenom)
+@section('header_subtitle', __('Voici ce qui se passe aujourd\'hui à l\'UPF.'))
 
 @section('content')
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <x-dashboard.stat-card 
-            title="Étudiants Inscrits" 
+            title="{{ __('Étudiants Inscrits') }}" 
             value="{{ number_format($stats['etudiants_count']) }}" 
             icon="fa-user-graduate" 
             color="primary" 
@@ -15,7 +15,7 @@
             trendUp="true" />
             
         <x-dashboard.stat-card 
-            title="Corps Professoral" 
+            title="{{ __('Corps Professoral') }}" 
             value="{{ number_format($stats['professeurs_count']) }}" 
             icon="fa-chalkboard-teacher" 
             color="indigo" 
@@ -23,13 +23,13 @@
             trendUp="true" />
 
         <x-dashboard.stat-card 
-            title="Séances ce jour" 
+            title="{{ __('Séances ce jour') }}" 
             value="{{ $stats['seances_jour'] }}" 
             icon="fa-calendar-check" 
             color="emerald" />
 
         <x-dashboard.stat-card 
-            title="Demandes en attente" 
+            title="{{ __('Demandes en attente') }}" 
             value="{{ $stats['demandes_attente'] }}" 
             icon="fa-file-invoice" 
             color="amber" 
@@ -42,8 +42,8 @@
         <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm" data-aos="fade-right">
             <div class="flex items-center justify-between mb-8">
                 <div>
-                    <h3 class="text-xl font-bold text-slate-800 dark:text-white">Distribution des Notes</h3>
-                    <p class="text-sm text-slate-500">Répartition des moyennes générales</p>
+                    <h3 class="text-xl font-bold text-slate-800 dark:text-white">{{ __('Distribution des Notes') }}</h3>
+                    <p class="text-sm text-slate-500">{{ __('Répartition des moyennes générales') }}</p>
                 </div>
             </div>
             <div class="h-[300px]">
@@ -55,8 +55,8 @@
         <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm" data-aos="fade-left">
             <div class="flex items-center justify-between mb-8">
                 <div>
-                    <h3 class="text-xl font-bold text-slate-800 dark:text-white">Taux d'Absentéisme</h3>
-                    <p class="text-sm text-slate-500">Proportion des absences justifiées vs non justifiées</p>
+                    <h3 class="text-xl font-bold text-slate-800 dark:text-white">{{ __('Taux d\'Absentéisme') }}</h3>
+                    <p class="text-sm text-slate-500">{{ __('Proportion des absences justifiées vs non justifiées') }}</p>
                 </div>
             </div>
             <div class="h-[300px] flex justify-center">
@@ -74,9 +74,9 @@
         new Chart(notesCtx, {
             type: 'bar',
             data: {
-                labels: ['Excellentes (>=16)', 'Bonnes (12-16)', 'Passables (10-12)', 'Échecs (<10)'],
+                labels: ['{{ __('Excellentes (>=16)') }}', '{{ __('Bonnes (12-16)') }}', '{{ __('Passables (10-12)') }}', '{{ __('Échecs (<10)') }}'],
                 datasets: [{
-                    label: 'Nombre d\'étudiants',
+                    label: '{{ __('Nombre d\'étudiants') }}',
                     data: [
                         {{ $stats['notes_distribution']['excellentes'] }}, 
                         {{ $stats['notes_distribution']['bonnes'] }}, 
@@ -108,7 +108,7 @@
         new Chart(absencesCtx, {
             type: 'doughnut',
             data: {
-                labels: ['Justifiées', 'Non Justifiées'],
+                labels: ['{{ __('Justifiées') }}', '{{ __('Non Justifiées') }}'],
                 datasets: [{
                     data: [
                         {{ $stats['absences']['justifiees'] }}, 

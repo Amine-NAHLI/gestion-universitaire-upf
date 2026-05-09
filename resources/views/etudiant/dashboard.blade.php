@@ -1,19 +1,19 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Dashboard Étudiant')
-@section('header_title', 'Salut, ' . Auth::user()->prenom . ' ! 👋')
-@section('header_subtitle', 'Voici ton résumé académique pour le semestre actuel.')
+@section('title', __('Dashboard Étudiant'))
+@section('header_title', __('Salut, ') . Auth::user()->prenom . ' ! 👋')
+@section('header_subtitle', __('Voici ton résumé académique pour le semestre actuel.'))
 
 @section('content')
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <x-dashboard.stat-card 
-            title="Moyenne Générale" 
+            title="{{ __('Moyenne Générale') }}" 
             value="15.42" 
             icon="fa-graduation-cap" 
             color="primary" />
             
         <x-dashboard.stat-card 
-            title="Absences" 
+            title="{{ __('Absences') }}" 
             value="3" 
             icon="fa-user-clock" 
             color="rose" 
@@ -21,13 +21,13 @@
             trendUp="false" />
 
         <x-dashboard.stat-card 
-            title="Crédits validés" 
+            title="{{ __('Crédits validés') }}" 
             value="24/30" 
             icon="fa-check-circle" 
             color="emerald" />
 
         <x-dashboard.stat-card 
-            title="Supports de cours" 
+            title="{{ __('Supports de cours') }}" 
             value="12" 
             icon="fa-file-download" 
             color="indigo" />
@@ -36,15 +36,15 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Courses List -->
         <div class="lg:col-span-2 bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm" data-aos="fade-right">
-            <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-6">Mes Modules</h3>
+            <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-6">{{ __('Mes Modules') }}</h3>
             <div class="overflow-x-auto">
                 <table class="w-full">
                     <thead>
                         <tr class="text-left text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800">
-                            <th class="pb-4">Module</th>
-                            <th class="pb-4">Note CC1</th>
-                            <th class="pb-4">Note CC2</th>
-                            <th class="pb-4">Moyenne</th>
+                            <th class="pb-4">{{ __('Module') }}</th>
+                            <th class="pb-4">{{ __('Note CC1') }}</th>
+                            <th class="pb-4">{{ __('Note CC2') }}</th>
+                            <th class="pb-4">{{ __('Moyenne') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-50 dark:divide-slate-800">
@@ -68,7 +68,7 @@
         <!-- Schedule Today -->
         <div class="bg-slate-900 text-white p-8 rounded-3xl shadow-xl shadow-primary-500/10 relative overflow-hidden" data-aos="fade-left">
             <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-primary-500/20 rounded-full blur-3xl"></div>
-            <h3 class="text-xl font-bold mb-6 relative">Planning du jour</h3>
+            <h3 class="text-xl font-bold mb-6 relative">{{ __('Planning du jour') }}</h3>
             <div class="space-y-6 relative">
                 <div class="border-l-4 border-primary-500 pl-4 py-1">
                     <p class="text-xs font-bold text-primary-400 uppercase tracking-widest">08:00 - 10:00</p>
@@ -86,7 +86,7 @@
                 </div>
             </div>
             <button class="w-full mt-10 py-4 bg-white text-slate-900 font-black rounded-2xl hover:scale-105 transition-transform">
-                Emploi du temps complet
+                {{ __('Emploi du temps complet') }}
             </button>
         </div>
     </div>

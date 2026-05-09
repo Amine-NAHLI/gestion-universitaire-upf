@@ -1,31 +1,31 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Dashboard Professeur')
-@section('header_title', 'Espace Enseignant')
-@section('header_subtitle', 'Gérez vos cours, notes et absences en toute simplicité.')
+@section('title', __('Dashboard Professeur'))
+@section('header_title', __('Espace Enseignant'))
+@section('header_subtitle', __('Gérez vos cours, notes et absences en toute simplicité.'))
 
 @section('content')
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <x-dashboard.stat-card 
-            title="Heures assurées" 
+            title="{{ __('Heures assurées') }}" 
             value="124h" 
             icon="fa-clock" 
             color="indigo" />
             
         <x-dashboard.stat-card 
-            title="Étudiants suivis" 
+            title="{{ __('Étudiants suivis') }}" 
             value="320" 
             icon="fa-users" 
             color="primary" />
 
         <x-dashboard.stat-card 
-            title="Modules actifs" 
+            title="{{ __('Modules actifs') }}" 
             value="4" 
             icon="fa-layer-group" 
             color="emerald" />
 
         <x-dashboard.stat-card 
-            title="Taux de présence" 
+            title="{{ __('Taux de présence') }}" 
             value="92%" 
             icon="fa-chart-pie" 
             color="amber" />
@@ -34,7 +34,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <!-- Next Classes -->
         <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm" data-aos="fade-up">
-            <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-6">Prochaines Séances</h3>
+            <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-6">{{ __('Prochaines Séances') }}</h3>
             <div class="space-y-4">
                 <div class="flex items-center p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700">
                     <div class="bg-primary-500 text-white p-3 rounded-xl text-center min-w-[60px]">
@@ -63,7 +63,7 @@
 
         <!-- Grading Progress -->
         <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm" data-aos="fade-up" data-aos-delay="200">
-            <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-6">Saisie des Notes</h3>
+            <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-6">{{ __('Saisie des Notes') }}</h3>
             <div class="space-y-6">
                 <div>
                     <div class="flex justify-between text-sm mb-2">
@@ -85,7 +85,7 @@
                 </div>
             </div>
             <button class="w-full mt-10 py-4 bg-slate-900 dark:bg-primary-600 text-white font-bold rounded-2xl hover:bg-slate-800 dark:hover:bg-primary-500 transition-all shadow-lg shadow-primary-500/20">
-                Accéder à la saisie
+                {{ __('Accéder à la saisie') }}
             </button>
         </div>
     </div>

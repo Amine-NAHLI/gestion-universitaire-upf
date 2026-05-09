@@ -62,8 +62,9 @@ class DemandeController extends Controller
             Storage::disk('public')->makeDirectory('demandes');
         }
 
-        // Generate the PDF
-        $pdf = Pdf::loadView('pdf.demande', compact('demande'));
+        // Generate the PDF with the chosen language
+        $langue = $demande->langue_document ?? 'fr';
+        $pdf = Pdf::loadView('pdf.demande', compact('demande', 'langue'));
         $filename = 'demande_' . $demande->id . '_' . $demande->type . '.pdf';
         Storage::disk('public')->put('demandes/' . $filename, $pdf->output());
         
@@ -130,7 +131,8 @@ class DemandeController extends Controller
     public function genererPdf(DemandeAdministrative $demande)
     {
         $demande->load('user');
-        $pdf = Pdf::loadView('pdf.demande', compact('demande'));
+        $langue = $demande->langue_document ?? 'fr';
+        $pdf = Pdf::loadView('pdf.demande', compact('demande', 'langue'));
         
         $typeLabels = [
             'attestation_scolarite' => 'Attestation_Scolarite',

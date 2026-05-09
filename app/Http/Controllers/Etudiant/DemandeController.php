@@ -22,13 +22,15 @@ class DemandeController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'type' => 'required|in:attestation_scolarite,releve_notes,certificat_inscription'
+            'type' => 'required|in:attestation_scolarite,releve_notes,certificat_inscription',
+            'langue_document' => 'required|in:fr,en,ar'
         ]);
 
         $demande = DemandeAdministrative::create([
             'user_id' => auth()->id(),
             'type' => $request->type,
             'statut' => 'en_attente',
+            'langue_document' => $request->langue_document,
         ]);
 
         // Notifier tous les admins

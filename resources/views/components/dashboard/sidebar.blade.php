@@ -36,7 +36,7 @@
                 <svg class="w-5 h-5 shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                 </svg>
-                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">Dashboard</span>
+                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">@lang('nav.dashboard')</span>
             </a>
 
             <a href="{{ Route::has('admin.users.index') ? route('admin.users.index') : '#' }}" 
@@ -44,7 +44,7 @@
                 <svg class="w-5 h-5 shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
                 </svg>
-                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">Utilisateurs</span>
+                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">@lang('nav.users')</span>
             </a>
 
             <a href="{{ Route::has('admin.filieres.index') ? route('admin.filieres.index') : '#' }}" 
@@ -52,7 +52,7 @@
                 <svg class="w-5 h-5 shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"/>
                 </svg>
-                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">Filières & Modules</span>
+                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">@lang('nav.filieres_modules')</span>
             </a>
 
             <a href="{{ Route::has('admin.edt.index') ? route('admin.edt.index') : '#' }}" 
@@ -60,7 +60,7 @@
                 <svg class="w-5 h-5 shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                 </svg>
-                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">Emploi du temps</span>
+                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">@lang('nav.edt')</span>
             </a>
 
             <a href="{{ Route::has('admin.notes.index') ? route('admin.notes.index') : '#' }}" 
@@ -68,7 +68,7 @@
                 <svg class="w-5 h-5 shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
                 </svg>
-                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">Notes</span>
+                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">@lang('nav.notes')</span>
             </a>
 
             <a href="{{ Route::has('admin.absences.index') ? route('admin.absences.index') : '#' }}" 
@@ -76,7 +76,7 @@
                 <svg class="w-5 h-5 shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6"/>
                 </svg>
-                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">Absences</span>
+                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">@lang('nav.absences')</span>
             </a>
 
             <a href="{{ Route::has('admin.demandes.index') ? route('admin.demandes.index') : '#' }}" 
@@ -84,7 +84,7 @@
                 <svg class="w-5 h-5 shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
                 </svg>
-                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">Demandes</span>
+                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">@lang('nav.demandes')</span>
             </a>
 
             <a href="{{ Route::has('admin.salles.index') ? route('admin.salles.index') : '#' }}" 
@@ -92,7 +92,7 @@
                 <svg class="w-5 h-5 shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                 </svg>
-                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">Salles</span>
+                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">@lang('nav.salles')</span>
             </a>
 
             <a href="{{ Route::has('admin.statistiques.index') ? route('admin.statistiques.index') : '#' }}" 
@@ -100,7 +100,7 @@
                 <svg class="w-5 h-5 shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                 </svg>
-                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">Statistiques</span>
+                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">@lang('nav.statistiques')</span>
             </a>
         @elseif(auth()->user()->isProfesseur())
             <!-- Prof Links -->
@@ -265,7 +265,7 @@
                     </svg>
                 </button>
             </form>
-            <span x-show="sidebarOpen" x-transition class="text-xs text-indigo-300 font-medium whitespace-nowrap overflow-hidden">Déconnexion</span>
+            <span x-show="sidebarOpen" x-transition class="text-xs text-indigo-300 font-medium whitespace-nowrap overflow-hidden">@lang('nav.logout')</span>
         </div>
     </div>
 </aside>

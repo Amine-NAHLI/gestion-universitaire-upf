@@ -21,7 +21,8 @@ class DemandeAdministrative extends Model
         'motif_refus',
         'fichier_pdf',
         'validateur_id',
-        'date_validation'
+        'date_validation',
+        'langue_document'
     ];
 
     protected $casts = [

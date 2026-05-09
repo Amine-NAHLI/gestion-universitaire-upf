@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr" class="h-full" 
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}" class="h-full" 
       x-data="{ 
         sidebarOpen: window.innerWidth >= 1024, 
         darkMode: localStorage.getItem('darkMode') === 'true' 
@@ -19,6 +19,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- Scripts & Styles -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
 
