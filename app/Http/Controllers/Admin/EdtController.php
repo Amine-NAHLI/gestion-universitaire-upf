@@ -30,9 +30,19 @@ class EdtController extends Controller
     /**
      * Fetch calendar event data.
      */
-    public function data()
+    public function data(Request $request)
     {
-        $seances = Seance::with(['module', 'professeur.user', 'groupe', 'salle'])->get();
+        $query = Seance::with(['module', 'professeur.user', 'groupe', 'salle']);
+
+        // Filter by date range if provided by FullCalendar
+        if ($request->has('start') && $request->has('end')) {
+            $query->whereBetween('date', [
+                substr($request->start, 0, 10),
+                substr($request->end, 0, 10)
+            ]);
+        }
+
+        $seances = $query->get();
         
         $events = $seances->map(function($seance) {
             $colors = [
@@ -79,26 +89,38 @@ class EdtController extends Controller
 
         $seance = Seance::create($request->all() + ['statut' => 'planifiee']);
         
+        // Notification batch data
+        $notifications = [];
+
         // Notifier le professeur
-        NotificationApp::create([
+        $notifications[] = [
             'user_id' => $seance->professeur->user_id,
             'type' => 'EDT',
             'titre' => 'Nouvelle séance planifiée',
             'message' => 'Une séance de ' . $seance->module->nom . ' a été ajoutée à votre emploi du temps.',
             'lien' => route('professeur.dashboard'),
-        ]);
+            'lue' => false,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
 
         // Notifier les étudiants du groupe
-        $etudiants = Etudiant::where('groupe_id', $seance->groupe_id)->get();
-        foreach ($etudiants as $etudiant) {
-            NotificationApp::create([
-                'user_id' => $etudiant->user_id,
+        $etudiantUserIds = Etudiant::where('groupe_id', $seance->groupe_id)->pluck('user_id');
+        foreach ($etudiantUserIds as $userId) {
+            $notifications[] = [
+                'user_id' => $userId,
                 'type' => 'EDT',
                 'titre' => 'Mise à jour Emploi du Temps',
                 'message' => 'Une séance de ' . $seance->module->nom . ' a été planifiée.',
                 'lien' => route('etudiant.dashboard'),
-            ]);
+                'lue' => false,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
         }
+
+        // Bulk insert for performance
+        NotificationApp::insert($notifications);
         
         return response()->json([
             'success' => true, 
