@@ -30,7 +30,8 @@ class DashboardController extends Controller
         $totalModules = $etudiant->groupe->modules()->count() ?: 1; // Éviter div par 0
         
         foreach ($notes as $note) {
-            $moyenneModule = (($note->cc1 ?? 0) + ($note->cc2 ?? 0) + ($note->examen ?? 0)) / 3;
+            $ccAvg = (($note->cc1 ?? 0) + ($note->cc2 ?? 0)) / 2;
+            $moyenneModule = ($ccAvg * 0.4) + (($note->examen ?? 0) * 0.6);
             $totalSomes += $moyenneModule;
             if ($moyenneModule >= 10) {
                 $creditsValides++;

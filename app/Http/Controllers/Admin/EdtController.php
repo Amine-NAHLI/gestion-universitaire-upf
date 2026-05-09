@@ -45,8 +45,8 @@ class EdtController extends Controller
             return [
                 'id' => $seance->id,
                 'title' => $seance->module->nom . ' (' . $seance->groupe->nom . ')',
-                'start' => $seance->date->format('Y-m-d') . 'T' . $seance->heure_debut,
-                'end' => $seance->date->format('Y-m-d') . 'T' . $seance->heure_fin,
+                'start' => $seance->date->format('Y-m-d') . 'T' . \Carbon\Carbon::parse($seance->heure_debut)->format('H:i:s'),
+                'end' => $seance->date->format('Y-m-d') . 'T' . \Carbon\Carbon::parse($seance->heure_fin)->format('H:i:s'),
                 'backgroundColor' => $colors[$seance->type] ?? '#6366f1',
                 'borderColor' => $colors[$seance->type] ?? '#6366f1',
                 'extendedProps' => [

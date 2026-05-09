@@ -49,7 +49,8 @@
                     <tbody class="divide-y divide-slate-50 dark:divide-slate-800">
                         @forelse($notes as $note)
                         @php
-                            $moyenne = (($note->cc1 ?? 0) + ($note->cc2 ?? 0) + ($note->examen ?? 0)) / 3;
+                            $ccAvg = (($note->cc1 ?? 0) + ($note->cc2 ?? 0)) / 2;
+                            $moyenne = ($ccAvg * 0.4) + (($note->examen ?? 0) * 0.6);
                             $colorClass = $moyenne >= 10 ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400' : 'bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400';
                             if ($moyenne < 8) $colorClass = 'bg-rose-100 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400';
                         @endphp

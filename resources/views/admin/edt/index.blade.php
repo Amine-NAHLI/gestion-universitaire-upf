@@ -67,7 +67,7 @@
                 <button @click="modalOpen = false" class="text-gray-400 hover:text-gray-600">✕</button>
             </div>
             
-            <form action="{{ route('admin.edt.store') }}" method="POST" class="space-y-4">
+            <form @submit.prevent="submitSeance($event)" class="space-y-4">
                 @csrf
                 <div class="grid grid-cols-2 gap-4">
                     <div>
