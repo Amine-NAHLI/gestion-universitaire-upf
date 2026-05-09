@@ -114,7 +114,11 @@
                         </td>
                         <td class="px-6 py-4">
                             <span class="px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-[9px] font-black uppercase text-gray-500 mr-2">{{ strtoupper(pathinfo($support->fichier, PATHINFO_EXTENSION)) }}</span>
-                            <span class="text-xs text-gray-400">{{ round(Storage::size('public/'.$support->fichier) / 1024, 2) }} KB</span>
+                            @if(Storage::disk('public')->exists($support->fichier))
+                                <span class="text-xs text-gray-400">{{ round(Storage::disk('public')->size($support->fichier) / 1024, 2) }} KB</span>
+                            @else
+                                <span class="text-xs text-red-400">Introuvable</span>
+                            @endif
                         </td>
                         <td class="px-6 py-4">
                             <span class="text-xs text-gray-500">{{ $support->created_at->format('d/m/Y') }}</span>
