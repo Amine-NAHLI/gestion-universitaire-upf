@@ -91,7 +91,7 @@
                         @if(isset($demoUsers[$role]))
                         <div x-show="roleTab === '{{ $role }}'" x-transition class="space-y-2">
                             @foreach($demoUsers[$role] as $u)
-                            <button @click="fillAccount('{{ $u->email }}')" type="button" class="w-full flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 border border-gray-100 dark:border-gray-700 rounded-xl transition-colors text-left group">
+                            <button @click="fillAccount('{{ addslashes($u->email) }}')" type="button" class="w-full flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 border border-gray-100 dark:border-gray-700 rounded-xl transition-colors text-left group">
                                 <div>
                                     <p class="text-sm font-bold text-gray-800 dark:text-white group-hover:text-indigo-600 transition-colors">{{ $u->prenom }} {{ strtoupper($u->name) }}</p>
                                     <p class="text-[10px] text-gray-500">{{ $u->email }}</p>

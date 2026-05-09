@@ -25,9 +25,9 @@ class DashboardController extends Controller
 
         // 2. Étudiants suivis (Étudiants dans les groupes des modules du prof)
         $groupesIds = \Illuminate\Support\Facades\DB::table('module_professeur')
-            ->join('groupe_module', 'module_professeur.module_id', '=', 'groupe_module.module_id')
+            ->join('module_groupe', 'module_professeur.module_id', '=', 'module_groupe.module_id')
             ->where('module_professeur.professeur_id', $professeur->id)
-            ->pluck('groupe_module.groupe_id')
+            ->pluck('module_groupe.groupe_id')
             ->unique();
         $etudiantsSuivis = \App\Models\Etudiant::whereIn('groupe_id', $groupesIds)->count();
 
