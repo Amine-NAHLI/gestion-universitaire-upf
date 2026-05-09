@@ -8,27 +8,26 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <x-dashboard.stat-card 
             title="{{ __('Moyenne Générale') }}" 
-            value="15.42" 
+            value="{{ number_format($moyenneGenerale, 2) }}" 
             icon="fa-graduation-cap" 
             color="primary" />
             
         <x-dashboard.stat-card 
             title="{{ __('Absences') }}" 
-            value="3" 
+            value="{{ $absencesCount }}" 
             icon="fa-user-clock" 
             color="rose" 
-            trend="1" 
             trendUp="false" />
 
         <x-dashboard.stat-card 
             title="{{ __('Crédits validés') }}" 
-            value="24/30" 
+            value="{{ $creditsValides }}/{{ $totalModules }}" 
             icon="fa-check-circle" 
             color="emerald" />
 
         <x-dashboard.stat-card 
             title="{{ __('Supports de cours') }}" 
-            value="12" 
+            value="{{ $supportsCount }}" 
             icon="fa-file-download" 
             color="indigo" />
     </div>
@@ -48,18 +47,23 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-50 dark:divide-slate-800">
+                        @forelse($notes as $note)
+                        @php
+                            $moyenne = (($note->cc1 ?? 0) + ($note->cc2 ?? 0) + ($note->examen ?? 0)) / 3;
+                            $colorClass = $moyenne >= 10 ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400' : 'bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400';
+                            if ($moyenne < 8) $colorClass = 'bg-rose-100 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400';
+                        @endphp
                         <tr class="group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                            <td class="py-4 font-bold text-slate-700 dark:text-white">Technologie Web 2</td>
-                            <td class="py-4 text-slate-600 dark:text-slate-400">16.00</td>
-                            <td class="py-4 text-slate-600 dark:text-slate-400">14.50</td>
-                            <td class="py-4"><span class="bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold px-2 py-1 rounded-lg">15.25</span></td>
+                            <td class="py-4 font-bold text-slate-700 dark:text-white">{{ $note->module->nom }}</td>
+                            <td class="py-4 text-slate-600 dark:text-slate-400">{{ $note->cc1 !== null ? number_format($note->cc1, 2) : '--' }}</td>
+                            <td class="py-4 text-slate-600 dark:text-slate-400">{{ $note->cc2 !== null ? number_format($note->cc2, 2) : '--' }}</td>
+                            <td class="py-4"><span class="{{ $colorClass }} font-bold px-2 py-1 rounded-lg">{{ number_format($moyenne, 2) }}</span></td>
                         </tr>
-                        <tr class="group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                            <td class="py-4 font-bold text-slate-700 dark:text-white">Intelligence Artificielle</td>
-                            <td class="py-4 text-slate-600 dark:text-slate-400">12.00</td>
-                            <td class="py-4 text-slate-600 dark:text-slate-400">--</td>
-                            <td class="py-4"><span class="bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold px-2 py-1 rounded-lg">12.00</span></td>
+                        @empty
+                        <tr>
+                            <td colspan="4" class="py-4 text-center text-slate-500">{{ __('Aucune note enregistrée pour l\'instant.') }}</td>
                         </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -70,20 +74,18 @@
             <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-primary-500/20 rounded-full blur-3xl"></div>
             <h3 class="text-xl font-bold mb-6 relative">{{ __('Planning du jour') }}</h3>
             <div class="space-y-6 relative">
+                @forelse($planningJour as $seance)
                 <div class="border-l-4 border-primary-500 pl-4 py-1">
-                    <p class="text-xs font-bold text-primary-400 uppercase tracking-widest">08:00 - 10:00</p>
-                    <p class="font-bold">Cybersécurité</p>
-                    <p class="text-xs text-slate-400">Salle Info2</p>
+                    <p class="text-xs font-bold text-primary-400 uppercase tracking-widest">{{ \Carbon\Carbon::parse($seance->heure_debut)->format('H:i') }} - {{ \Carbon\Carbon::parse($seance->heure_fin)->format('H:i') }}</p>
+                    <h4 class="font-bold text-lg mt-1">{{ $seance->module->nom ?? 'Module' }}</h4>
+                    <p class="text-sm text-slate-400 mt-1"><i class="fas fa-map-marker-alt mr-2"></i>{{ $seance->salle->nom ?? 'À définir' }}</p>
                 </div>
-                <div class="border-l-4 border-slate-700 pl-4 py-1 opacity-50">
-                    <p class="text-xs font-bold text-slate-500 uppercase tracking-widest">10:00 - 12:00</p>
-                    <p class="font-bold">Pause</p>
+                @empty
+                <div class="text-center py-4 text-slate-400">
+                    <i class="fas fa-calendar-check text-4xl mb-3 opacity-50"></i>
+                    <p>{{ __('Aucune séance prévue aujourd\'hui.') }}</p>
                 </div>
-                <div class="border-l-4 border-emerald-500 pl-4 py-1">
-                    <p class="text-xs font-bold text-emerald-400 uppercase tracking-widest">14:00 - 16:00</p>
-                    <p class="font-bold">Technologie Web 2</p>
-                    <p class="text-xs text-slate-400">Salle TD1</p>
-                </div>
+                @endforelse
             </div>
             <button class="w-full mt-10 py-4 bg-white text-slate-900 font-black rounded-2xl hover:scale-105 transition-transform">
                 {{ __('Emploi du temps complet') }}

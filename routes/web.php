@@ -102,9 +102,7 @@ Route::middleware(['auth', 'role:professeur'])->prefix('professeur')->name('prof
 
 // Routes Étudiant
 Route::middleware(['auth', 'role:etudiant'])->prefix('etudiant')->name('etudiant.')->group(function () {
-    Route::get('dashboard', function () {
-        return view('etudiant.dashboard');
-    })->name('dashboard');
+    Route::get('dashboard', [\App\Http\Controllers\Etudiant\DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('notes', [\App\Http\Controllers\Etudiant\NoteController::class, 'index'])->name('notes.index');
     

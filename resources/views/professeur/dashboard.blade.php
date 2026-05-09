@@ -8,19 +8,19 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <x-dashboard.stat-card 
             title="{{ __('Heures assurées') }}" 
-            value="124h" 
+            value="{{ $heuresAssurees }}h" 
             icon="fa-clock" 
             color="indigo" />
             
         <x-dashboard.stat-card 
             title="{{ __('Étudiants suivis') }}" 
-            value="320" 
+            value="{{ $etudiantsSuivis }}" 
             icon="fa-users" 
             color="primary" />
 
         <x-dashboard.stat-card 
             title="{{ __('Modules actifs') }}" 
-            value="4" 
+            value="{{ $modulesActifs }}" 
             icon="fa-layer-group" 
             color="emerald" />
 
@@ -36,28 +36,27 @@
         <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm" data-aos="fade-up">
             <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-6">{{ __('Prochaines Séances') }}</h3>
             <div class="space-y-4">
+                @forelse($prochainesSeances as $seance)
+                @php
+                    $isCours = $seance->type === 'Cours';
+                    $colorName = $isCours ? 'primary' : 'emerald';
+                @endphp
                 <div class="flex items-center p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700">
-                    <div class="bg-primary-500 text-white p-3 rounded-xl text-center min-w-[60px]">
-                        <span class="block text-xs font-bold uppercase">MAI</span>
-                        <span class="block text-xl font-black">10</span>
+                    <div class="bg-{{ $colorName }}-500 text-white p-3 rounded-xl text-center min-w-[60px]">
+                        <span class="block text-xs font-bold uppercase">{{ \Carbon\Carbon::parse($seance->date)->translatedFormat('M') }}</span>
+                        <span class="block text-xl font-black">{{ \Carbon\Carbon::parse($seance->date)->format('d') }}</span>
                     </div>
                     <div class="ml-4 flex-1">
-                        <h4 class="font-bold text-slate-800 dark:text-white">Technologie Web 2</h4>
-                        <p class="text-xs text-slate-500">08:00 - 10:00 • Amphi Khaldoun</p>
+                        <h4 class="font-bold text-slate-800 dark:text-white">{{ $seance->module->nom ?? 'Module' }}</h4>
+                        <p class="text-xs text-slate-500">{{ \Carbon\Carbon::parse($seance->heure_debut)->format('H:i') }} - {{ \Carbon\Carbon::parse($seance->heure_fin)->format('H:i') }} • {{ $seance->salle->nom ?? 'À définir' }}</p>
                     </div>
-                    <span class="bg-primary-100 dark:bg-primary-500/20 text-primary-600 dark:text-primary-400 text-[10px] font-bold px-2 py-1 rounded-full uppercase">Cours</span>
+                    <span class="bg-{{ $colorName }}-100 dark:bg-{{ $colorName }}-500/20 text-{{ $colorName }}-600 dark:text-{{ $colorName }}-400 text-[10px] font-bold px-2 py-1 rounded-full uppercase">{{ $seance->type ?? 'Cours' }}</span>
                 </div>
-                <div class="flex items-center p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700">
-                    <div class="bg-emerald-500 text-white p-3 rounded-xl text-center min-w-[60px]">
-                        <span class="block text-xs font-bold uppercase">MAI</span>
-                        <span class="block text-xl font-black">10</span>
-                    </div>
-                    <div class="ml-4 flex-1">
-                        <h4 class="font-bold text-slate-800 dark:text-white">Base de Données</h4>
-                        <p class="text-xs text-slate-500">14:00 - 16:00 • Salle Info1</p>
-                    </div>
-                    <span class="bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold px-2 py-1 rounded-full uppercase">TP</span>
+                @empty
+                <div class="text-center py-6 text-slate-500">
+                    {{ __('Aucune séance programmée.') }}
                 </div>
+                @endforelse
             </div>
         </div>
 
@@ -65,24 +64,25 @@
         <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm" data-aos="fade-up" data-aos-delay="200">
             <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-6">{{ __('Saisie des Notes') }}</h3>
             <div class="space-y-6">
+                @forelse($modulesProgress as $index => $mod)
+                @php
+                    $colors = ['primary', 'amber', 'emerald', 'rose', 'indigo'];
+                    $color = $colors[$index % count($colors)];
+                @endphp
                 <div>
                     <div class="flex justify-between text-sm mb-2">
-                        <span class="font-bold text-slate-700 dark:text-slate-300">Technologie Web 2 (CC1)</span>
-                        <span class="text-primary-500 font-bold">85%</span>
+                        <span class="font-bold text-slate-700 dark:text-slate-300">{{ $mod['nom'] }}</span>
+                        <span class="text-{{ $color }}-500 font-bold">{{ $mod['progress'] }}%</span>
                     </div>
                     <div class="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                        <div class="h-full bg-primary-500 rounded-full w-[85%]"></div>
+                        <div class="h-full bg-{{ $color }}-500 rounded-full" style="width: {{ $mod['progress'] }}%"></div>
                     </div>
                 </div>
-                <div>
-                    <div class="flex justify-between text-sm mb-2">
-                        <span class="font-bold text-slate-700 dark:text-slate-300">Intelligence Artificielle (CC1)</span>
-                        <span class="text-amber-500 font-bold">40%</span>
-                    </div>
-                    <div class="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                        <div class="h-full bg-amber-500 rounded-full w-[40%]"></div>
-                    </div>
+                @empty
+                <div class="text-center text-sm text-slate-500 py-4">
+                    {{ __('Aucun module assigné.') }}
                 </div>
+                @endforelse
             </div>
             <button class="w-full mt-10 py-4 bg-slate-900 dark:bg-primary-600 text-white font-bold rounded-2xl hover:bg-slate-800 dark:hover:bg-primary-500 transition-all shadow-lg shadow-primary-500/20">
                 {{ __('Accéder à la saisie') }}
