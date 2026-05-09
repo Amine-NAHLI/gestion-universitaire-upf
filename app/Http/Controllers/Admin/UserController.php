@@ -133,7 +133,26 @@ class UserController extends Controller
                 ->with('error', 'Vous ne pouvez pas supprimer votre propre compte.');
         }
 
-        $user->delete();
+        \Illuminate\Support\Facades\DB::transaction(function () use ($user) {
+            // Supprimer les demandes administratives
+            \App\Models\DemandeAdministrative::where('user_id', $user->id)->delete();
+            \App\Models\NotificationApp::where('user_id', $user->id)->delete();
+
+            if ($user->isEtudiant() && $user->etudiant) {
+                // Supprimer les notes et absences de l'étudiant
+                \App\Models\Note::where('etudiant_id', $user->etudiant->id)->delete();
+                \App\Models\Absence::where('etudiant_id', $user->etudiant->id)->delete();
+                $user->etudiant()->delete();
+            }
+
+            if ($user->isProfesseur() && $user->professeur) {
+                // Détacher les modules si nécessaire
+                $user->professeur->modules()->detach();
+                $user->professeur()->delete();
+            }
+
+            $user->delete();
+        });
 
         return redirect()->route('admin.users.index')
             ->with('success', 'Utilisateur supprimé avec succès.');

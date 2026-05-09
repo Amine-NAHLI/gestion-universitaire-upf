@@ -21,6 +21,11 @@ class NoteController extends Controller
 
     public function saisir(Module $module, Groupe $groupe)
     {
+        $professeur = auth()->user()->professeur;
+        if (!$professeur->modules->contains($module->id)) {
+            abort(403, 'Vous n\'enseignez pas ce module.');
+        }
+
         $etudiants = Etudiant::with(['user', 'notes' => fn($q) => $q->where('module_id', $module->id)])
             ->where('groupe_id', $groupe->id)
             ->get();
@@ -30,14 +35,29 @@ class NoteController extends Controller
 
     public function enregistrer(Request $request, Module $module, Groupe $groupe)
     {
+        $professeur = auth()->user()->professeur;
+        if (!$professeur->modules->contains($module->id)) {
+            abort(403, 'Vous n\'enseignez pas ce module.');
+        }
+
+        $request->validate([
+            'notes' => 'required|array',
+            'notes.*.cc1' => 'nullable|numeric|min:0|max:20',
+            'notes.*.cc2' => 'nullable|numeric|min:0|max:20',
+            'notes.*.examen' => 'nullable|numeric|min:0|max:20',
+        ]);
+
         foreach ($request->notes as $etudiant_id => $noteData) {
+            $filteredData = array_filter($noteData, fn($v) => $v !== null && $v !== '');
+            if (empty($filteredData)) continue;
+
             Note::updateOrCreate(
                 [
                     'etudiant_id' => $etudiant_id, 
                     'module_id' => $module->id, 
-                    'annee_universitaire' => '2025-2026'
+                    'annee_universitaire' => config('scolarite.annee', '2025-2026')
                 ],
-                array_filter($noteData, fn($v) => $v !== null && $v !== '')
+                $filteredData
             );
 
             // Notifier l'étudiant

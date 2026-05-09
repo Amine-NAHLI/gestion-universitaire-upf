@@ -28,6 +28,10 @@ class AbsenceController extends Controller
 
     public function feuille(Seance $seance)
     {
+        if ($seance->professeur_id !== auth()->user()->professeur->id) {
+            abort(403, 'Vous ne pouvez pas faire l\'appel pour cette séance.');
+        }
+
         $etudiants = Etudiant::with(['user', 'absences' => fn($q) => $q->where('seance_id', $seance->id)])
             ->where('groupe_id', $seance->groupe_id)
             ->get();
@@ -37,6 +41,10 @@ class AbsenceController extends Controller
 
     public function enregistrer(Request $request, Seance $seance)
     {
+        if ($seance->professeur_id !== auth()->user()->professeur->id) {
+            abort(403, 'Vous ne pouvez pas faire l\'appel pour cette séance.');
+        }
+
         $absents = $request->input('absents', []);
         $etudiantsIds = Etudiant::where('groupe_id', $seance->groupe_id)->pluck('id');
 

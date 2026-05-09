@@ -78,7 +78,7 @@ class NoteController extends Controller
                 'cc1' => $request->cc1,
                 'cc2' => $request->cc2,
                 'examen' => $request->examen,
-                'annee_universitaire' => '2025-2026'
+                'annee_universitaire' => config('scolarite.annee', '2025-2026')
             ]
         );
 
