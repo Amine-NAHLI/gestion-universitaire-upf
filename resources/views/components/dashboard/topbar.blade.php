@@ -5,13 +5,41 @@
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
     </button>
 
-    <!-- Page Title -->
-    <div class="ml-4 flex-1">
-        <h1 class="text-lg font-bold text-gray-800 dark:text-white tracking-tight">@yield('page-title', 'Tableau de bord')</h1>
+    <!-- Page Title & Global Search -->
+    <div class="ml-4 flex-1 flex items-center justify-between">
+        <h1 class="text-lg font-bold text-gray-800 dark:text-white tracking-tight hidden md:block">@yield('page-title', 'Tableau de bord')</h1>
+        
+        <!-- Global Search -->
+        <div class="max-w-md w-full ml-0 md:ml-8 relative">
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </div>
+                <input type="text" placeholder="Rechercher (Étudiant, Module, Demande...)" class="block w-full pl-10 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-xl leading-5 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors">
+                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                    <span class="text-gray-400 sm:text-sm font-mono border border-gray-200 dark:border-gray-700 rounded px-1.5 text-[10px]">Ctrl+K</span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Right Side Actions -->
     <div class="flex items-center space-x-2 md:space-x-4">
+        
+        <!-- Language Switcher -->
+        <div x-data="{ open: false }" class="relative hidden sm:block">
+            <button @click="open = !open" class="flex items-center gap-1 p-2 rounded-lg text-sm font-bold text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors uppercase">
+                {{ app()->getLocale() }}
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+            <div x-show="open" @click.away="open = false" 
+                 x-transition
+                 class="absolute right-0 mt-2 w-32 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden z-50" x-cloak>
+                <a href="{{ route('lang.switch', 'fr') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 transition-colors">Français</a>
+                <a href="{{ route('lang.switch', 'en') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 transition-colors">English</a>
+                <a href="{{ route('lang.switch', 'ar') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 transition-colors">العربية</a>
+            </div>
+        </div>
         
         <!-- Notifications -->
         <div x-data="{ 
