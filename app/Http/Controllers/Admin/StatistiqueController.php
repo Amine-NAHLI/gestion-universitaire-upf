@@ -51,22 +51,23 @@ class StatistiqueController extends Controller
                 ->count();
         }
 
-        // Average grades per module (top 8)
-        $moyennesModules = Module::withCount(['notes as nb_notes' => fn($q) => $q->whereNotNull('note_finale')])
+        // Average grades per module (top 8) - Optimisé avec withAvg
+        $moyennesModules = Module::withAvg(['notes as moyenne' => fn($q) => $q->whereNotNull('note_finale')], 'note_finale')
+            ->orderByDesc('moyenne')
+            ->limit(8)
             ->get()
             ->map(fn($m) => [
                 'nom' => $m->code,
-                'moyenne' => round(Note::where('module_id', $m->id)->whereNotNull('note_finale')->avg('note_finale') ?? 0, 2)
-            ])
-            ->sortByDesc('moyenne')
-            ->take(8)
-            ->values();
+                'moyenne' => round($m->moyenne ?? 0, 2)
+            ]);
 
-        // Student distribution per Filière
-        $repartitionFilieres = Filiere::all()->map(fn($f) => [
-            'nom' => $f->nom,
-            'count' => Etudiant::whereHas('groupe.niveau.filiere', fn($q) => $q->where('filieres.id', $f->id))->count()
-        ]);
+        // Student distribution per Filière - Optimisé avec joins
+        $repartitionFilieres = Filiere::withCount('etudiants')
+            ->get()
+            ->map(fn($f) => [
+                'nom' => $f->nom,
+                'count' => $f->etudiants_count
+            ]);
 
         return view('admin.statistiques.index', compact('stats', 'distribution', 'absencesParMois', 'moyennesModules', 'repartitionFilieres'));
     }

@@ -84,9 +84,10 @@
                 </div>
                 @endforelse
             </div>
-            <button class="w-full mt-10 py-4 bg-slate-900 dark:bg-primary-600 text-white font-bold rounded-2xl hover:bg-slate-800 dark:hover:bg-primary-500 transition-all shadow-lg shadow-primary-500/20">
+            <a href="{{ route('professeur.notes.index') }}"
+               class="block text-center w-full mt-10 py-4 bg-slate-900 dark:bg-primary-600 text-white font-bold rounded-2xl hover:bg-slate-800 dark:hover:bg-primary-500 transition-all shadow-lg shadow-primary-500/20">
                 {{ __('Accéder à la saisie') }}
-            </button>
+            </a>
         </div>
     </div>
 @endsection

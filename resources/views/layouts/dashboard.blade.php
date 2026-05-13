@@ -1,11 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}" class="h-full" 
-      x-data="{ 
-        sidebarOpen: window.innerWidth >= 1024, 
-        darkMode: localStorage.getItem('darkMode') === 'true' 
-      }" 
-      x-init="$watch('darkMode', val => localStorage.setItem('darkMode', val))"
-      :class="{ 'dark': darkMode }">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}" class="h-full">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,7 +13,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- Scripts & Styles -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
 
@@ -31,9 +24,82 @@
         .sidebar-scroll::-webkit-scrollbar { width: 4px; }
         .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
         .sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+
+        /* Global Loading Bar */
+        #loading-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(to right, #4f46e5, #9333ea);
+            z-index: 9999;
+            width: 0;
+            transition: width 0.4s ease-in-out, opacity 0.3s;
+            pointer-events: none;
+        }
+        .loading #loading-bar { width: 70%; opacity: 1; }
+        .loaded #loading-bar { width: 100%; opacity: 0; }
     </style>
+    <script>
+        window.addEventListener('beforeunload', () => {
+            document.body.classList.add('loading');
+        });
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('loaded');
+            setTimeout(() => document.body.classList.remove('loading', 'loaded'), 500);
+        });
+    </script>
 </head>
-<body class="h-full bg-gray-100 dark:bg-gray-900 transition-colors duration-300 antialiased overflow-hidden">
+<body
+    class="h-full bg-gray-100 dark:bg-gray-900 transition-colors duration-300 antialiased overflow-hidden"
+    x-data="{
+        // Default true then sync with breakpoint in init for stability.
+        sidebarOpen: true,
+        windowWidth: window.innerWidth,
+        isDesktop() { return this.windowWidth >= 1024; },
+        toggleSidebar() { this.sidebarOpen = !this.sidebarOpen; },
+        darkMode: localStorage.getItem('darkMode') === 'true',
+        closeSidebarAndForwardClick(e) {
+            if (this.isDesktop()) return;
+            if (!this.sidebarOpen) return;
+
+            const { clientX, clientY } = e;
+
+            // Ensure the overlay doesn't still intercept hit-testing during transition.
+            if (e.currentTarget && e.currentTarget.style) {
+                e.currentTarget.style.pointerEvents = 'none';
+                setTimeout(() => { e.currentTarget.style.pointerEvents = ''; }, 400);
+            }
+
+            this.sidebarOpen = false;
+
+            this.$nextTick(() => {
+                const el = document.elementFromPoint(clientX, clientY);
+                if (!el) return;
+                const clickable = el.closest?.('a,button,[role=\"button\"],input,select,textarea');
+                if (clickable && clickable !== e.target) clickable.click();
+            });
+        }
+    }"
+    x-init="
+        // Dark mode: apply on <html> for Tailwind.
+        document.documentElement.classList.toggle('dark', darkMode);
+        $watch('darkMode', val => {
+            localStorage.setItem('darkMode', val);
+            document.documentElement.classList.toggle('dark', val);
+        });
+
+        const mq = window.matchMedia('(min-width: 1024px)');
+        windowWidth = window.innerWidth;
+        sidebarOpen = mq.matches;
+
+        window.addEventListener('resize', () => {
+            windowWidth = window.innerWidth;
+            if (mq.matches) sidebarOpen = true;
+        }, { passive: true });
+    "
+    x-cloak>
+    <div id="loading-bar"></div>
     
     <div class="flex h-screen overflow-hidden">
         
@@ -66,8 +132,8 @@
         </div>
 
         <!-- Mobile Sidebar Overlay -->
-        <div x-show="sidebarOpen && window.innerWidth < 1024" 
-             @click="sidebarOpen = false"
+        <div x-show="sidebarOpen && !isDesktop()" 
+             @click="closeSidebarAndForwardClick($event)"
              x-transition:enter="transition-opacity ease-linear duration-300"
              x-transition:enter-start="opacity-0"
              x-transition:enter-end="opacity-100"

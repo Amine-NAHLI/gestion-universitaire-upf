@@ -1,7 +1,7 @@
 <aside 
     class="fixed inset-y-0 left-0 z-30 flex flex-col transition-all duration-300 ease-in-out bg-gradient-to-b from-indigo-900 via-indigo-800 to-purple-900 text-white shadow-2xl lg:static lg:inset-auto"
     x-bind:class="sidebarOpen ? 'w-72' : 'w-20'"
-    :class="{ '-translate-x-full': !sidebarOpen && window.innerWidth < 1024, 'translate-x-0': sidebarOpen || window.innerWidth >= 1024 }">
+    :class="{ '-translate-x-full': !sidebarOpen && !isDesktop(), 'translate-x-0': sidebarOpen || isDesktop() }">
     
     <!-- SECTION A - Header -->
     <div class="flex items-center gap-3 p-4 border-b border-white/10 shrink-0 overflow-hidden">

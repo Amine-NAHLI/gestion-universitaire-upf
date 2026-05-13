@@ -4,6 +4,10 @@
 @section('header_title', __('Bienvenue, ') . Auth::user()->prenom)
 @section('header_subtitle', __('Voici ce qui se passe aujourd\'hui à l\'UPF.'))
 
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+@endpush
+
 @section('content')
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <x-dashboard.stat-card 
