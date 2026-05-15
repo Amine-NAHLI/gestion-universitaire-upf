@@ -2,14 +2,58 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+    :root {
+        --primary-600: 79 70 229;
+        --primary-700: 67 56 202;
+    }
+    
+    body {
+        @apply antialiased text-gray-900 bg-slate-50 dark:bg-slate-950 transition-colors duration-300;
+        font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+        @apply bg-transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+        @apply bg-slate-300 dark:bg-slate-800 rounded-full border-4 border-transparent bg-clip-content;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        @apply bg-slate-400 dark:bg-slate-700;
+    }
+}
+
 @layer components {
     .btn-primary {
-        @apply bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-xl transition-all duration-300 inline-block;
+        @apply relative overflow-hidden bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl 
+               transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0
+               shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 inline-flex items-center justify-center;
     }
+
     .btn-secondary {
-        @apply bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-gray-700 font-bold py-2 px-4 rounded-xl hover:bg-indigo-50 dark:hover:bg-gray-700 transition-all duration-300 inline-block;
+        @apply relative overflow-hidden bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 
+               border border-slate-200 dark:border-slate-800 font-bold py-2.5 px-6 rounded-xl 
+               hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-all duration-300 
+               transform hover:-translate-y-0.5 active:translate-y-0 inline-flex items-center justify-center;
     }
+
     .card {
-        @apply bg-white dark:bg-gray-800 p-8 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300;
+        @apply bg-white/80 dark:bg-slate-900/80 backdrop-blur-md p-8 rounded-3xl 
+               border border-white/20 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none
+               hover:shadow-2xl transition-all duration-500;
+    }
+
+    .input-field {
+        @apply block w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 
+               rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200;
+    }
+
+    .glass-nav {
+        @apply bg-white/70 dark:bg-slate-950/70 backdrop-blur-lg border-b border-white/20 dark:border-white/5 sticky top-0 z-50;
     }
 }
