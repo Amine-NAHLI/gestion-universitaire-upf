@@ -171,7 +171,7 @@
                 <strong>{{ $tr['apogee'] }} :</strong> {{ $user->etudiant->num_apogee ?? '---' }}<br>
                 <strong>{{ $tr['filiere'] }} :</strong> {{ $user->etudiant->groupe->niveau->filiere->nom ?? '---' }}
             </p>
-            <p>{{ $tr['enrolled'] }} <strong>2025-2026</strong>.</p>
+            <p>{{ $tr['enrolled'] }} <strong>{{ config('scolarite.annee', '2025-2026') }}</strong>.</p>
         
         @elseif($demande->type === 'releve_notes')
             <p>{{ $tr['transcript_of'] }} <strong>{{ strtoupper($user->name) }} {{ $user->prenom }}</strong></p>
@@ -207,7 +207,7 @@
                 <strong>{{ $tr['niveau'] }} :</strong> {{ $user->etudiant->groupe->niveau->nom ?? '---' }}<br>
                 <strong>{{ $tr['groupe'] }} :</strong> {{ $user->etudiant->groupe->nom ?? '---' }}
             </p>
-            <p>{{ $tr['for_year'] }} 2025-2026.</p>
+            <p>{{ $tr['for_year'] }} {{ config('scolarite.annee', '2025-2026') }}.</p>
 
         @elseif($demande->type === 'attestation_travail')
             <p>{{ $tr['certify_prof'] }}</p>
