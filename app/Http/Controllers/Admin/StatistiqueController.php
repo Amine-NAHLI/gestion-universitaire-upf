@@ -27,7 +27,12 @@ class StatistiqueController extends Controller
             'total_modules' => Module::count(),
             'total_seances' => Seance::count(),
             'moyenne_generale' => round(Note::whereNotNull('note_finale')->avg('note_finale') ?? 0, 2),
-            'taux_absence' => Seance::count() > 0 ? round((Absence::count() / (Seance::count() * 5)) * 100, 1) : 0,
+            'taux_absence' => (function () {
+                $seancesCount = Seance::count();
+                $etudiantsCount = Etudiant::count();
+                $denominator = $seancesCount * max($etudiantsCount, 1);
+                return $denominator > 0 ? round((Absence::count() / $denominator) * 100, 1) : 0;
+            })(),
         ];
 
         // Distribution of grades (by ranges)
@@ -62,12 +67,12 @@ class StatistiqueController extends Controller
             ]);
 
         // Student distribution per Filière - Optimisé avec joins
-        $repartitionFilieres = Filiere::withCount('etudiants')
-            ->get()
-            ->map(fn($f) => [
-                'nom' => $f->nom,
-                'count' => $f->etudiants_count
-            ]);
+        $repartitionFilieres = Filiere::leftJoin('niveaux', 'filieres.id', '=', 'niveaux.filiere_id')
+            ->leftJoin('groupes', 'niveaux.id', '=', 'groupes.niveau_id')
+            ->leftJoin('etudiants', 'groupes.id', '=', 'etudiants.groupe_id')
+            ->select('filieres.nom', \Illuminate\Support\Facades\DB::raw('count(etudiants.id) as count'))
+            ->groupBy('filieres.id', 'filieres.nom')
+            ->get();
 
         return view('admin.statistiques.index', compact('stats', 'distribution', 'absencesParMois', 'moyennesModules', 'repartitionFilieres'));
     }

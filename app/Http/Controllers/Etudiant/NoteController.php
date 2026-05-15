@@ -15,7 +15,7 @@ class NoteController extends Controller
         
         $notes = Note::with('module')
             ->where('etudiant_id', $etudiant->id)
-            ->where('annee_universitaire', '2025-2026')
+            ->where('annee_universitaire', config('scolarite.annee', '2025-2026'))
             ->get();
 
         $moyenne = round($notes->whereNotNull('note_finale')->avg('note_finale'), 2);
