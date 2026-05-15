@@ -5,18 +5,18 @@
 
 @section('content')
 <div x-data="{ activeTab: 'annonces' }" class="space-y-6">
-    
+
     <!-- Navigation Tabs -->
     <div class="flex gap-4 border-b border-gray-100 dark:border-gray-800">
-        <button @click="activeTab = 'annonces'" 
+        <button @click="activeTab = 'annonces'"
                 :class="activeTab === 'annonces' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-400'"
                 class="px-6 py-4 border-b-4 text-xs font-black uppercase tracking-widest transition-all">
-            Flux d'annonces
+            {{ __('Flux d\'annonces') }}
         </button>
-        <button @click="activeTab = 'supports'" 
+        <button @click="activeTab = 'supports'"
                 :class="activeTab === 'supports' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-400'"
                 class="px-6 py-4 border-b-4 text-xs font-black uppercase tracking-widest transition-all">
-            Supports de cours
+            {{ __('Supports de cours') }}
         </button>
     </div>
 
@@ -32,7 +32,7 @@
                         </div>
                         <div>
                             <h4 class="font-bold text-gray-800 dark:text-white">{{ $annonce->professeur->user->full_name }}</h4>
-                            <p class="text-[10px] text-gray-400 font-bold uppercase">{{ $annonce->created_at->locale('fr')->diffForHumans() }}</p>
+                            <p class="text-[10px] text-gray-400 font-bold uppercase">{{ $annonce->created_at->locale(app()->getLocale())->diffForHumans() }}</p>
                         </div>
                     </div>
                     @if($annonce->epinglee)
@@ -47,8 +47,8 @@
 
                 <!-- Comments Section -->
                 <div class="mt-8 pt-8 border-t border-gray-50 dark:border-gray-700 space-y-6">
-                    <h5 class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Commentaires ({{ $annonce->commentaires->count() }})</h5>
-                    
+                    <h5 class="text-[10px] font-black text-gray-400 uppercase tracking-widest">{{ __('Commentaires') }} ({{ $annonce->commentaires->count() }})</h5>
+
                     <div class="space-y-4">
                         @foreach($annonce->commentaires as $com)
                         <div class="flex gap-3">
@@ -69,7 +69,7 @@
                     <!-- Post Comment Form -->
                     <form action="{{ route('etudiant.classroom.commenter', $annonce) }}" method="POST" class="mt-4 flex gap-3">
                         @csrf
-                        <input name="contenu" required minlength="2" maxlength="500" placeholder="Ajouter un commentaire..." 
+                        <input name="contenu" required minlength="2" maxlength="500" placeholder="{{ __('Ajouter un commentaire...') }}"
                                class="flex-1 bg-gray-50 dark:bg-gray-900/50 border-transparent rounded-xl text-xs focus:ring-indigo-500 dark:text-white">
                         <button type="submit" class="bg-indigo-600 text-white p-2 rounded-xl hover:bg-indigo-700 transition-colors">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -82,7 +82,7 @@
         </div>
         @empty
         <div class="text-center py-20 bg-white dark:bg-gray-800 rounded-3xl border border-dashed border-gray-200 dark:border-gray-700">
-            <p class="text-gray-400 italic">Aucune annonce pour ce module.</p>
+            <p class="text-gray-400 italic">{{ __('Aucune annonce pour ce module.') }}</p>
         </div>
         @endforelse
     </div>
@@ -93,10 +93,10 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-gray-50 dark:bg-gray-900/50">
-                        <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Document</th>
-                        <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Type / Taille</th>
-                        <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Publié le</th>
-                        <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Action</th>
+                        <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">{{ __('Document') }}</th>
+                        <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">{{ __('Type / Taille') }}</th>
+                        <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">{{ __('Publié le') }}</th>
+                        <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">{{ __('Action') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
@@ -117,7 +117,7 @@
                             @if(Storage::disk('public')->exists($support->fichier))
                                 <span class="text-xs text-gray-400">{{ round(Storage::disk('public')->size($support->fichier) / 1024, 2) }} KB</span>
                             @else
-                                <span class="text-xs text-red-400">Introuvable</span>
+                                <span class="text-xs text-red-400">{{ __('Introuvable') }}</span>
                             @endif
                         </td>
                         <td class="px-6 py-4">
@@ -125,14 +125,14 @@
                         </td>
                         <td class="px-6 py-4 text-center">
                             <a href="{{ asset('storage/'.$support->fichier) }}" target="_blank" class="text-indigo-600 hover:text-indigo-700 font-black text-xs uppercase tracking-widest">
-                                Télécharger
+                                {{ __('Télécharger') }}
                             </a>
                         </td>
                     </tr>
                     @empty
                     <tr>
                         <td colspan="4" class="px-6 py-20 text-center text-gray-400 italic">
-                            Aucun support de cours disponible pour le moment.
+                            {{ __('Aucun support de cours disponible pour le moment.') }}
                         </td>
                     </tr>
                     @endforelse

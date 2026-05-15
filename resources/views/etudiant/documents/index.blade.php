@@ -1,13 +1,13 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Mes Documents')
-@section('page-title', 'Mes Documents Officiels')
+@section('title', __('Mes Documents'))
+@section('page-title', __('Mes Documents Officiels'))
 
 @section('content')
 <div class="space-y-8">
     <div class="bg-white dark:bg-gray-800 rounded-3xl p-8 border border-gray-100 dark:border-gray-700 shadow-xl">
-        <h3 class="text-xl font-black text-gray-800 dark:text-white mb-2 uppercase tracking-tight">Votre coffre-fort numérique</h3>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mb-8">Retrouvez ici tous vos documents officiels validés par l'administration.</p>
+        <h3 class="text-xl font-black text-gray-800 dark:text-white mb-2 uppercase tracking-tight">{{ __('Votre coffre-fort numérique') }}</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-8">{{ __('Retrouvez ici tous vos documents officiels validés par l\'administration.') }}</p>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @forelse($demandes_validees as $doc)
@@ -23,16 +23,16 @@
 
                 @php
                     $types = [
-                        'attestation_scolarite' => 'Attestation de Scolarité',
-                        'releve_notes' => 'Relevé de Notes',
-                        'certificat_inscription' => 'Certificat d\'Inscription'
+                        'attestation_scolarite' => __('Attestation de Scolarité'),
+                        'releve_notes' => __('Relevé de Notes'),
+                        'certificat_inscription' => __('Certificat d\'Inscription')
                     ];
                 @endphp
                 <h4 class="text-lg font-black text-gray-800 dark:text-white mb-2">{{ $types[$doc->type] ?? $doc->type }}</h4>
-                <p class="text-xs text-gray-500 mb-6">Document officiel signé électroniquement.</p>
+                <p class="text-xs text-gray-500 mb-6">{{ __('Document officiel signé électroniquement.') }}</p>
 
                 <a href="{{ route('etudiant.demandes.download', $doc) }}" class="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-black text-xs uppercase tracking-widest transition-all">
-                    Télécharger le PDF
+                    {{ __('Télécharger le PDF') }}
                     <svg class="w-4 h-4 group-hover:translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                     </svg>
@@ -45,7 +45,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
                     </svg>
                 </div>
-                <p class="text-gray-500 dark:text-gray-400 font-bold italic">Aucun document officiel n'est disponible pour le moment.</p>
+                <p class="text-gray-500 dark:text-gray-400 font-bold italic">{{ __("Aucun document officiel n'est disponible pour le moment.") }}</p>
             </div>
             @endforelse
         </div>
