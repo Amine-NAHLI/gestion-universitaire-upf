@@ -1,21 +1,21 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Demandes Administratives')
-@section('page-title', 'Demandes Administratives')
+@section('title', __('Gestion des Demandes'))
+@section('page-title', __('Liste des Demandes'))
 
 @section('content')
 <div class="space-y-6">
     <!-- Stats Row -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <x-dashboard.stat-card title="Total Demandes" value="{{ $stats['total'] }}" icon="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" color="indigo" />
-        <x-dashboard.stat-card title="En attente" value="{{ $stats['en_attente'] }}" icon="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" color="orange" />
-        <x-dashboard.stat-card title="Validées" value="{{ $stats['validees'] }}" icon="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" color="green" />
-        <x-dashboard.stat-card title="Refusées" value="{{ $stats['refusees'] }}" icon="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" color="red" />
+        <x-dashboard.stat-card title="{{ __('Total Demandes') }}" value="{{ $stats['total'] }}" icon="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" color="indigo" />
+        <x-dashboard.stat-card title="{{ __('En attente') }}" value="{{ $stats['en_attente'] }}" icon="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" color="orange" />
+        <x-dashboard.stat-card title="{{ __('Validées') }}" value="{{ $stats['validees'] }}" icon="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" color="green" />
+        <x-dashboard.stat-card title="{{ __('Refusées') }}" value="{{ $stats['refusees'] }}" icon="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" color="red" />
     </div>
 
     <!-- Filters -->
     <div class="flex flex-wrap items-center gap-2 bg-white dark:bg-gray-800 p-2 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
-        @foreach(['tous' => 'Tous', 'en_attente' => 'En attente', 'validee' => 'Validées', 'refusee' => 'Refusées'] as $key => $label)
+        @foreach(['tous' => __('Tous'), 'en_attente' => __('En attente'), 'validee' => __('Validées'), 'refusee' => __('Refusées')] as $key => $label)
             <a href="{{ route('admin.demandes.index', ['statut' => $key]) }}" 
                class="px-4 py-2 rounded-xl text-sm font-bold transition-all {{ $statut === $key ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200 dark:shadow-none' : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700' }}">
                 {{ $label }}
@@ -28,21 +28,20 @@
         <table class="w-full text-left border-collapse">
             <thead>
                 <tr class="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-100 dark:border-gray-700">
-                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Demandeur</th>
-                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Type de document</th>
-                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">Date Demande</th>
-                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">Statut</th>
-                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-right">Actions</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('Demandeur') }}</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('Type de document') }}</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">{{ __('Date Demande') }}</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">{{ __('Statut') }}</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-right">{{ __('Actions') }}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                 @php
                     $typeLabels = [
-                        'attestation_scolarite' => 'Attestation de scolarité',
-                        'releve_notes' => 'Relevé de notes',
-                        'certificat_inscription' => 'Certificat d\'inscription',
-                        'attestation_travail' => 'Attestation de travail',
-                        'ordre_mission' => 'Ordre de mission',
+                        'releve_notes' => __('Relevé de Notes'),
+                        'certificat_inscription' => __('Certificat d\'Inscription'),
+                        'attestation_travail' => __('Attestation de travail'),
+                        'ordre_mission' => __('Ordre de mission'),
                     ];
                 @endphp
                 @forelse($demandes as $demande)
@@ -72,7 +71,7 @@
                                     'validee' => 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
                                     'refusee' => 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
                                 ];
-                                $statutLabels = ['en_attente' => 'En attente', 'validee' => 'Validée', 'refusee' => 'Refusée'];
+                                $statutLabels = ['en_attente' => __('En attente'), 'validee' => __('Validée'), 'refusee' => __('Refusée')];
                             @endphp
                             <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider {{ $statutColors[$demande->statut] }}">
                                 {{ $statutLabels[$demande->statut] }}
@@ -92,14 +91,14 @@
                                         </button>
                                     </form>
                                     <button type="button" @click="Swal.fire({
-                                        title: 'Refuser la demande',
+                                        title: '{{ __('Refuser la demande') }}',
                                         input: 'textarea',
-                                        inputLabel: 'Motif du refus',
-                                        inputPlaceholder: 'Expliquez pourquoi la demande est refusée...',
+                                        inputLabel: '{{ __('Motif du refus') }}',
+                                        inputPlaceholder: '{{ __('Expliquez pourquoi la demande est refusée...') }}',
                                         showCancelButton: true,
                                         confirmButtonColor: '#ef4444',
-                                        confirmButtonText: 'Refuser',
-                                        cancelButtonText: 'Annuler'
+                                        confirmButtonText: '{{ __('Refuser') }}',
+                                        cancelButtonText: '{{ __('Annuler') }}'
                                     }).then((result) => {
                                         if (result.isConfirmed) {
                                             const form = document.createElement('form');
@@ -125,7 +124,7 @@
                 @empty
                     <tr>
                         <td colspan="5" class="px-6 py-10 text-center text-gray-500 dark:text-gray-400 font-medium">
-                            Aucune demande dans cette catégorie.
+                            {{ __('Aucune demande dans cette catégorie.') }}
                         </td>
                     </tr>
                 @endforelse

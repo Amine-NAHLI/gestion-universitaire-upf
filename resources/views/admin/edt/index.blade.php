@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Emploi du Temps')
-@section('page-title', 'Emploi du Temps Global')
+@section('title', __('Emploi du Temps'))
+@section('page-title', __('Emploi du Temps Global'))
 
 @push('styles')
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css' rel='stylesheet' />
@@ -28,10 +28,10 @@
 
     <!-- Legend -->
     <div class="flex flex-wrap items-center gap-4 bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm mb-6">
-        <span class="text-xs font-bold text-gray-500 uppercase mr-2">Légende :</span>
+        <span class="text-xs font-bold text-gray-500 uppercase mr-2">{{ __('Légende :') }}</span>
         <div class="flex items-center gap-2">
             <span class="w-3 h-3 rounded-full bg-indigo-500"></span>
-            <span class="text-xs font-medium dark:text-gray-300">Cours</span>
+            <span class="text-xs font-medium dark:text-gray-300">{{ __('Cours') }}</span>
         </div>
         <div class="flex items-center gap-2">
             <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
@@ -43,7 +43,7 @@
         </div>
         <div class="flex items-center gap-2">
             <span class="w-3 h-3 rounded-full bg-red-500"></span>
-            <span class="text-xs font-medium dark:text-gray-300">Examen</span>
+            <span class="text-xs font-medium dark:text-gray-300">{{ __('Examen') }}</span>
         </div>
     </div>
 
@@ -63,78 +63,78 @@
     <div x-show="modalOpen" x-transition class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" style="display: none;">
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg p-6" @click.stop>
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Nouvelle Séance</h3>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ __('Nouvelle Séance') }}</h3>
                 <button @click="modalOpen = false" class="text-gray-400 hover:text-gray-600">✕</button>
             </div>
-            
+
             <form @submit.prevent="submitSeance($event)" class="space-y-4">
                 @csrf
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Module</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('Module') }}</label>
                         <select name="module_id" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
-                            <option value="">-- Choisir --</option>
+                            <option value="">{{ __('-- Choisir --') }}</option>
                             @foreach($modules as $module)
                                 <option value="{{ $module->id }}">{{ $module->nom }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Professeur</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('Professeur') }}</label>
                         <select name="professeur_id" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
-                            <option value="">-- Choisir --</option>
+                            <option value="">{{ __('-- Choisir --') }}</option>
                             @foreach($professeurs as $prof)
                                 <option value="{{ $prof->id }}">{{ $prof->user->prenom }} {{ $prof->user->name }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Groupe</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('Groupe') }}</label>
                         <select name="groupe_id" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
-                            <option value="">-- Choisir --</option>
+                            <option value="">{{ __('-- Choisir --') }}</option>
                             @foreach($groupes as $groupe)
                                 <option value="{{ $groupe->id }}">{{ $groupe->nom }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Salle</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('Salle') }}</label>
                         <select name="salle_id" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
-                            <option value="">-- Optionnel --</option>
+                            <option value="">{{ __('-- Optionnel --') }}</option>
                             @foreach($salles as $salle)
                                 <option value="{{ $salle->id }}">{{ $salle->nom }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Date</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('Date') }}</label>
                         <input type="date" name="date" x-model="date" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Type</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('Type') }}</label>
                         <select name="type" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
-                            <option value="cours">Cours</option>
+                            <option value="cours">{{ __('Cours') }}</option>
                             <option value="td">TD</option>
                             <option value="tp">TP</option>
-                            <option value="examen">Examen</option>
+                            <option value="examen">{{ __('Examen') }}</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Heure début</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('Heure début') }}</label>
                         <input type="time" name="heure_debut" x-model="heureDebut" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Heure fin</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('Heure fin') }}</label>
                         <input type="time" name="heure_fin" x-model="heureFin" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
                     </div>
                 </div>
-                
+
                 <div class="flex gap-3 justify-end mt-6">
                     <button type="button" @click="modalOpen = false" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white rounded-lg">
-                        Annuler
+                        {{ __('Annuler') }}
                     </button>
                     <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium">
-                        Créer la séance
+                        {{ __('Créer la séance') }}
                     </button>
                 </div>
             </form>
@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const calendarEl = document.getElementById('calendar');
     const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'timeGridWeek',
-        locale: 'fr',
+        locale: '{{ app()->getLocale() }}',
         firstDay: 1,
         slotMinTime: '08:00:00',
         slotMaxTime: '20:00:00',
@@ -160,20 +160,14 @@ document.addEventListener('DOMContentLoaded', function() {
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay'
         },
-        buttonText: {
-            today: 'Aujourd\'hui',
-            month: 'Mois',
-            week: 'Semaine',
-            day: 'Jour'
-        },
         events: '{{ route("admin.edt.data") }}',
         editable: true,
         selectable: true,
-        
+
         select: function(info) {
             const container = document.getElementById('edt-container');
             const data = container._x_dataStack ? container._x_dataStack[0] : container.__x.$data;
-            
+
             data.modalOpen = true;
             data.date = info.startStr.split('T')[0];
             data.heureDebut = info.startStr.split('T')[1]?.substring(0,5) || '08:00';
@@ -194,9 +188,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 `,
                 showCancelButton: true,
                 showConfirmButton: true,
-                confirmButtonText: 'Supprimer',
+                confirmButtonText: '{{ __('Supprimer') }}',
                 confirmButtonColor: '#ef4444',
-                cancelButtonText: 'Fermer',
+                cancelButtonText: '{{ __('Fermer') }}',
                 customClass: { popup: 'rounded-3xl dark:bg-gray-800 dark:text-white' }
             }).then((result) => {
                 if (result.isConfirmed) {
@@ -209,7 +203,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }).then(res => res.json()).then(data => {
                         if(data.success) {
                             info.event.remove();
-                            if(typeof notyf !== 'undefined') notyf.success('Séance supprimée');
+                            if(typeof notyf !== 'undefined') notyf.success('{{ __('Séances') }}');
                         }
                     });
                 }
@@ -226,7 +220,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     calendar.render();
 
-    // Helper update function
     function updateSeance(event) {
         fetch(`/admin/edt/${event.id}`, {
             method: 'PUT',
@@ -244,11 +237,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Form submission
     window.submitSeance = function(e) {
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData.entries());
-        
+
         fetch('{{ route("admin.edt.store") }}', {
             method: 'POST',
             headers: {
@@ -263,7 +255,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 calendar.refetchEvents();
                 document.querySelector('[x-data]').__x.$data.modalOpen = false;
                 e.target.reset();
-                if(typeof notyf !== 'undefined') notyf.success('Séance planifiée !');
+                if(typeof notyf !== 'undefined') notyf.success('{{ __('Créer la séance') }}');
             }
         });
     }

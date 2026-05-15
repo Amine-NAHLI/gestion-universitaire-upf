@@ -1,15 +1,15 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Gestion des Filières')
-@section('page-title', 'Filières')
+@section('title', __('Gestion des Filières'))
+@section('page-title', __('Liste des Filières'))
 
 @section('content')
 <div class="space-y-6">
     <div class="flex flex-col md:flex-row justify-between items-center gap-4 bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
-        <h2 class="text-lg font-bold text-gray-800 dark:text-white">Liste des filières académiques</h2>
+        <h2 class="text-lg font-bold text-gray-800 dark:text-white">{{ __('Liste des filières académiques') }}</h2>
         <a href="{{ route('admin.filieres.create') }}" class="btn-primary flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-            Ajouter une filière
+            {{ __('Ajouter') }}
         </a>
     </div>
 
@@ -17,11 +17,11 @@
         <table class="w-full text-left border-collapse">
             <thead>
                 <tr class="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-100 dark:border-gray-700">
-                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Filière</th>
-                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Code</th>
-                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">Niveaux</th>
-                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Description</th>
-                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-right">Actions</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('Filière') }}</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('Code') }}</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">{{ __('Niveaux') }}</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('Description') }}</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-right">{{ __('Actions') }}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
@@ -36,10 +36,10 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium text-gray-600 dark:text-gray-300">
-                            {{ $filiere->niveaux_count }} niveaux
+                            {{ $filiere->niveaux_count }} {{ __('niveaux') }}
                         </td>
                         <td class="px-6 py-4">
-                            <p class="text-xs text-gray-500 dark:text-gray-400 truncate max-w-xs">{{ $filiere->description ?? 'Aucune description' }}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 truncate max-w-xs">{{ $filiere->description ?? __('Aucune description') }}</p>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right">
                             <div class="flex items-center justify-end gap-2">
@@ -59,7 +59,7 @@
                 @empty
                     <tr>
                         <td colspan="5" class="px-6 py-10 text-center text-gray-500 dark:text-gray-400 font-medium">
-                            Aucune filière trouvée.
+                            {{ __('Aucune filière trouvée.') }}
                         </td>
                     </tr>
                 @endforelse
@@ -79,13 +79,13 @@ document.querySelectorAll('.btn-delete').forEach(btn => {
         e.preventDefault();
         const form = this.closest('form');
         Swal.fire({
-            title: 'Supprimer la filière ?',
-            text: 'Cela supprimera tous les niveaux et modules associés !',
+            title: '{{ __('Supprimer la filière ?') }}',
+            text: '{{ __('Cela supprimera tous les niveaux et modules associés !') }}',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#ef4444',
-            confirmButtonText: 'Oui, supprimer',
-            cancelButtonText: 'Annuler',
+            confirmButtonText: '{{ __('Oui, supprimer') }}',
+            cancelButtonText: '{{ __('Annuler') }}',
             customClass: { popup: 'rounded-3xl dark:bg-gray-800 dark:text-white' }
         }).then((result) => {
             if (result.isConfirmed) form.submit();

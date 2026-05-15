@@ -1,20 +1,20 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Saisie des Notes')
-@section('page-title', 'Saisie des Notes')
+@section('title', __('Saisie des Notes'))
+@section('page-title', __('Saisie des Notes'))
 
 @section('content')
 <div class="max-w-3xl mx-auto">
     <div class="mb-6">
         <a href="{{ route('admin.notes.index', ['groupe_id' => $etudiant->groupe_id, 'module_id' => $module->id]) }}" class="flex items-center text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-indigo-600 transition-colors">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-            Retour au groupe
+            {{ __('Retour au groupe') }}
         </a>
     </div>
 
-    <div class="bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-xl overflow-hidden" x-data="{ 
-        cc1: {{ $note->cc1 ?? 0 }}, 
-        cc2: {{ $note->cc2 ?? 0 }}, 
+    <div class="bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-xl overflow-hidden" x-data="{
+        cc1: {{ $note->cc1 ?? 0 }},
+        cc2: {{ $note->cc2 ?? 0 }},
         examen: {{ $note->examen ?? 0 }},
         get noteFinale() {
             if (this.cc1 === '' || this.cc2 === '' || this.examen === '') return '--';
@@ -39,7 +39,6 @@
             @method('PUT')
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- CC1 -->
                 <div class="space-y-3">
                     <label class="block text-sm font-bold text-gray-700 dark:text-gray-300">CC1 (20%)</label>
                     <div class="relative">
@@ -50,7 +49,6 @@
                     @error('cc1') <p class="text-xs font-bold text-red-500">{{ $message }}</p> @enderror
                 </div>
 
-                <!-- CC2 -->
                 <div class="space-y-3">
                     <label class="block text-sm font-bold text-gray-700 dark:text-gray-300">CC2 (20%)</label>
                     <div class="relative">
@@ -61,9 +59,8 @@
                     @error('cc2') <p class="text-xs font-bold text-red-500">{{ $message }}</p> @enderror
                 </div>
 
-                <!-- Examen -->
                 <div class="space-y-3">
-                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300">Examen (60%)</label>
+                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300">{{ __('Examen') }} (60%)</label>
                     <div class="relative">
                         <input type="number" step="0.01" min="0" max="20" name="examen" x-model="examen"
                                class="w-full px-4 py-4 rounded-2xl border-2 border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-white text-xl font-bold focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all text-center">
@@ -73,10 +70,9 @@
                 </div>
             </div>
 
-            <!-- Total Preview -->
             <div class="p-6 rounded-3xl bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 flex items-center justify-between">
                 <div>
-                    <h4 class="text-sm font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Note Finale Prévisionnelle</h4>
+                    <h4 class="text-sm font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider">{{ __('Note Finale Prévisionnelle') }}</h4>
                     <p class="text-xs text-gray-400 mt-1">Formule : (Moyenne CC * 0.4) + (Examen * 0.6)</p>
                 </div>
                 <div class="text-right">
@@ -86,9 +82,9 @@
             </div>
 
             <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-100 dark:border-gray-700">
-                <a href="{{ route('admin.notes.index', ['groupe_id' => $etudiant->groupe_id, 'module_id' => $module->id]) }}" class="btn-secondary">Annuler</a>
+                <a href="{{ route('admin.notes.index', ['groupe_id' => $etudiant->groupe_id, 'module_id' => $module->id]) }}" class="btn-secondary">{{ __('Annuler') }}</a>
                 <button type="submit" class="btn-primary px-10 py-4">
-                    Enregistrer les notes
+                    {{ __('Enregistrer les notes') }}
                 </button>
             </div>
         </form>

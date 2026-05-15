@@ -1,19 +1,18 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Gestion des Notes')
-@section('page-title', 'Gestion des Notes')
+@section('title', __('Gestion des Notes'))
+@section('page-title', __('Gestion des Notes'))
 
 @section('content')
 <div class="space-y-6">
     <!-- Selection Filters -->
     <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-xl">
         <form action="{{ route('admin.notes.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
-            <!-- Groupe Selection -->
             <div class="space-y-2">
-                <label for="groupe_id" class="text-sm font-bold text-gray-700 dark:text-gray-300">Sélectionner un Groupe</label>
+                <label for="groupe_id" class="text-sm font-bold text-gray-700 dark:text-gray-300">{{ __('Sélectionner un Groupe') }}</label>
                 <select name="groupe_id" id="groupe_id" onchange="this.form.submit()"
                         class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-indigo-500">
-                    <option value="">-- Choisir un groupe --</option>
+                    <option value="">{{ __('-- Choisir un groupe --') }}</option>
                     @foreach($filieres as $filiere)
                         <optgroup label="{{ $filiere->nom }}">
                             @foreach($filiere->niveaux as $niveau)
@@ -28,12 +27,11 @@
                 </select>
             </div>
 
-            <!-- Module Selection -->
             <div class="space-y-2">
-                <label for="module_id" class="text-sm font-bold text-gray-700 dark:text-gray-300">Sélectionner un Module</label>
+                <label for="module_id" class="text-sm font-bold text-gray-700 dark:text-gray-300">{{ __('Sélectionner un Module') }}</label>
                 <select name="module_id" id="module_id" {{ $modules->isEmpty() ? 'disabled' : '' }}
                         class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-indigo-500 disabled:opacity-50">
-                    <option value="">-- Choisir un module --</option>
+                    <option value="">{{ __('-- Choisir un module --') }}</option>
                     @foreach($modules as $module)
                         <option value="{{ $module->id }}" {{ $module_id == $module->id ? 'selected' : '' }}>
                             {{ $module->nom }} ({{ $module->code }})
@@ -42,13 +40,12 @@
                 </select>
             </div>
 
-            <!-- Submit -->
             <div class="flex gap-2">
                 <button type="submit" class="btn-primary flex-1 justify-center py-3">
-                    Afficher les notes
+                    {{ __('Afficher les notes') }}
                 </button>
                 @if($groupe_id || $module_id)
-                    <a href="{{ route('admin.notes.index') }}" class="btn-secondary py-3" title="Réinitialiser">
+                    <a href="{{ route('admin.notes.index') }}" class="btn-secondary py-3" title="{{ __('Réinitialiser') }}">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                     </a>
                 @endif
@@ -56,37 +53,35 @@
         </form>
     </div>
 
-    <!-- Notes Table -->
     @if($groupe_id && $module_id)
         <div class="bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-xl overflow-hidden overflow-x-auto">
             <div class="px-6 py-4 bg-gray-50/50 dark:bg-gray-900/30 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
                 <div>
                     <h3 class="text-sm font-bold text-gray-800 dark:text-white">{{ $groupe->nom }}</h3>
-                    <p class="text-xs text-gray-500">{{ $notes->count() }} étudiants inscrits</p>
+                    <p class="text-xs text-gray-500">{{ $notes->count() }} {{ __('étudiants inscrits') }}</p>
                 </div>
                 <div class="flex items-center gap-4">
                     <a href="{{ route('admin.notes.export', ['groupe_id' => $groupe_id, 'module_id' => $module_id]) }}" class="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-emerald-100 dark:shadow-none">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                        Exporter Excel
+                        {{ __('Exporter Excel') }}
                     </a>
-                    <span class="px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-[10px] font-bold uppercase tracking-widest">Saisie autorisée</span>
+                    <span class="px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-[10px] font-bold uppercase tracking-widest">{{ __('Saisie autorisée') }}</span>
                 </div>
             </div>
-            
+
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-gray-50 dark:bg-gray-900/50 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                        <th class="px-6 py-4">Étudiant</th>
+                        <th class="px-6 py-4">{{ __('Étudiant') }}</th>
                         <th class="px-6 py-4 text-center">CC1 (20%)</th>
                         <th class="px-6 py-4 text-center">CC2 (20%)</th>
-                        <th class="px-6 py-4 text-center">Examen (60%)</th>
-                        <th class="px-6 py-4 text-center">Note Finale</th>
-                        <th class="px-6 py-4 text-right">Actions</th>
+                        <th class="px-6 py-4 text-center">{{ __('Examen') }} (60%)</th>
+                        <th class="px-6 py-4 text-center">{{ __('Note Finale') }}</th>
+                        <th class="px-6 py-4 text-right">{{ __('Actions') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                     @php
-                        // On récupère tous les étudiants du groupe, même s'ils n'ont pas de note encore
                         $etudiants = $groupe->etudiants()->with('user')->get();
                     @endphp
                     @foreach($etudiants as $etudiant)
@@ -138,8 +133,8 @@
             <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
             </div>
-            <h3 class="text-lg font-bold text-gray-800 dark:text-white">Prêt à saisir les notes ?</h3>
-            <p class="text-gray-500 dark:text-gray-400 max-w-xs mx-auto">Sélectionnez un groupe et un module dans les filtres ci-dessus pour afficher la liste des étudiants.</p>
+            <h3 class="text-lg font-bold text-gray-800 dark:text-white">{{ __('Prêt à saisir les notes ?') }}</h3>
+            <p class="text-gray-500 dark:text-gray-400 max-w-xs mx-auto">{{ __('Sélectionnez un groupe et un module dans les filtres ci-dessus pour afficher la liste des étudiants.') }}</p>
         </div>
     @endif
 </div>

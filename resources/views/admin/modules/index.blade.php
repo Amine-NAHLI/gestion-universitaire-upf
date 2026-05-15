@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Gestion des Modules')
-@section('page-title', 'Modules')
+@section('title', __('Gestion des Modules'))
+@section('page-title', __('Liste des Modules'))
 
 @section('content')
 <div class="space-y-6">
@@ -9,7 +9,7 @@
     <div class="flex flex-col md:flex-row justify-between items-center gap-4 bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
         <form action="{{ route('admin.modules.index') }}" method="GET" class="flex items-center gap-3 w-full md:w-auto">
             <select name="filiere_id" onchange="this.form.submit()" class="px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-700 border-none text-sm font-bold text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-indigo-500">
-                <option value="">Toutes les filières</option>
+                <option value="">{{ __('Toutes les filières') }}</option>
                 @foreach($filieres as $filiere)
                     <option value="{{ $filiere->id }}" {{ request('filiere_id') == $filiere->id ? 'selected' : '' }}>{{ $filiere->nom }}</option>
                 @endforeach
@@ -18,7 +18,7 @@
         
         <a href="{{ route('admin.modules.create') }}" class="btn-primary flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-            Ajouter un module
+            {{ __('Ajouter') }}
         </a>
     </div>
 
@@ -27,12 +27,12 @@
         <table class="w-full text-left border-collapse">
             <thead>
                 <tr class="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-100 dark:border-gray-700">
-                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Module</th>
-                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Code</th>
-                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Filière / Niveau</th>
-                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">Coeff / Sem.</th>
-                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">Heures (C/TD/TP)</th>
-                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-right">Actions</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('Module') }}</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('Code') }}</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('Filière / Niveau') }}</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">{{ __('Coeff / Sem.') }}</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">{{ __('Heures (C/TD/TP)') }}</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-right">{{ __('Actions') }}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
@@ -77,7 +77,7 @@
                 @empty
                     <tr>
                         <td colspan="6" class="px-6 py-10 text-center text-gray-500 dark:text-gray-400 font-medium">
-                            Aucun module trouvé.
+                            {{ __('Aucun module trouvé.') }}
                         </td>
                     </tr>
                 @endforelse
@@ -97,12 +97,12 @@ document.querySelectorAll('.btn-delete').forEach(btn => {
         e.preventDefault();
         const form = this.closest('form');
         Swal.fire({
-            title: 'Supprimer ce module ?',
+            title: '{{ __('Supprimer ce module ?') }}',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#ef4444',
-            confirmButtonText: 'Oui, supprimer',
-            cancelButtonText: 'Annuler',
+            confirmButtonText: '{{ __('Oui, supprimer') }}',
+            cancelButtonText: '{{ __('Annuler') }}',
             customClass: { popup: 'rounded-3xl dark:bg-gray-800 dark:text-white' }
         }).then((result) => {
             if (result.isConfirmed) form.submit();

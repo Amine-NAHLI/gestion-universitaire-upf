@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Détails Utilisateur')
-@section('page-title', 'Profil de ' . $user->full_name)
+@section('title', __('Détails Utilisateur'))
+@section('page-title', __('Profil de ') . $user->full_name)
 
 @section('content')
 <div class="max-w-4xl mx-auto space-y-8">
