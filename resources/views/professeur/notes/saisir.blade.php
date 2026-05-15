@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Saisie - ' . $module->nom)
-@section('page-title', 'Notes — ' . $module->nom . ' | ' . $groupe->nom)
+@section('title', __('Saisie des Notes') . ' - ' . $module->nom)
+@section('page-title', __('Notes') . ' — ' . $module->nom . ' | ' . $groupe->nom)
 
 @section('content')
 <div class="space-y-6">
@@ -14,13 +14,13 @@
                 </svg>
             </div>
             <div>
-                <h3 class="text-sm font-black text-gray-800 dark:text-white uppercase tracking-wider">Calcul de la Note Finale</h3>
-                <p class="text-[10px] font-bold text-gray-400">Formule : ((CC1 + CC2) / 2 × 0.4) + (Examen × 0.6)</p>
+                <h3 class="text-sm font-black text-gray-800 dark:text-white uppercase tracking-wider">{{ __('Calcul de la Note Finale') }}</h3>
+                <p class="text-[10px] font-bold text-gray-400">{{ __('Formule : ((CC1 + CC2) / 2 × 0.4) + (Examen × 0.6)') }}</p>
             </div>
         </div>
         <div class="text-right">
-            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest block">Année Universitaire</span>
-            <span class="text-sm font-black text-indigo-600">2025 - 2026</span>
+            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest block">{{ __('Année Universitaire') }}</span>
+            <span class="text-sm font-black text-indigo-600">{{ config('scolarite.annee', '2025-2026') }}</span>
         </div>
     </div>
 
@@ -32,11 +32,11 @@
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-gray-50 dark:bg-gray-900/50">
-                            <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest w-1/3">Étudiant</th>
-                            <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">CC1 (40%)</th>
-                            <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">CC2 (40%)</th>
-                            <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Examen (60%)</th>
-                            <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Note Finale</th>
+                            <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest w-1/3">{{ __('Étudiant') }}</th>
+                            <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">{{ __('CC1 (20%)') }}</th>
+                            <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">{{ __('CC2 (20%)') }}</th>
+                            <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">{{ __('Examen (60%)') }}</th>
+                            <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">{{ __('Note Finale') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
@@ -67,7 +67,7 @@
                                        class="w-20 rounded-xl border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white text-center text-sm font-bold focus:ring-indigo-500">
                             </td>
                             <td class="px-6 py-4 text-center">
-                                <span class="text-base font-black" 
+                                <span class="text-base font-black"
                                       :class="(parseFloat(cc1) || parseFloat(cc2) || parseFloat(examen)) ? (((( (parseFloat(cc1)||0) + (parseFloat(cc2)||0) ) / 2) * 0.4) + ((parseFloat(examen)||0) * 0.6) >= 10 ? 'text-emerald-500' : 'text-red-500') : 'text-gray-300'"
                                       x-text="(parseFloat(cc1) || parseFloat(cc2) || parseFloat(examen)) ? (((( (parseFloat(cc1)||0) + (parseFloat(cc2)||0) ) / 2) * 0.4) + ((parseFloat(examen)||0) * 0.6)).toFixed(2) : '--'">
                                 </span>
@@ -79,7 +79,7 @@
             </div>
             <div class="p-8 bg-gray-50 dark:bg-gray-900/50 flex justify-end">
                 <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all shadow-xl shadow-indigo-200 dark:shadow-none">
-                    Enregistrer toutes les notes
+                    {{ __('Enregistrer toutes les notes') }}
                 </button>
             </div>
         </div>

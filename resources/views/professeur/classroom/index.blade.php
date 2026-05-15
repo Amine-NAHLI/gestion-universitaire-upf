@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Gestion Classroom')
-@section('page-title', 'Gestion Classroom')
+@section('title', __('Gestion Classroom'))
+@section('page-title', __('Gestion Classroom'))
 
 @section('content')
 <div class="space-y-6">
@@ -14,13 +14,13 @@
                     <span class="text-[10px] font-black text-indigo-500 uppercase tracking-widest">{{ $module->code }}</span>
                     <span class="text-[9px] font-bold text-gray-400 uppercase tracking-tighter">{{ $module->annonces->count() }} annonces | {{ $module->supportsCours->count() }} supports</span>
                 </div>
-                
+
                 <h3 class="text-xl font-black text-gray-800 dark:text-white mb-6 leading-tight min-h-[3rem] line-clamp-2">
                     {{ $module->nom }}
                 </h3>
 
                 <a href="{{ route('professeur.classroom.show', $module) }}" class="flex items-center justify-center w-full py-4 bg-indigo-600 group-hover:bg-indigo-700 text-white rounded-2xl font-black uppercase tracking-widest text-xs transition-all shadow-lg shadow-indigo-100 dark:shadow-none">
-                    Gérer le cours
+                    {{ __('Gérer le cours') }}
                     <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                     </svg>
@@ -29,7 +29,7 @@
         </div>
         @empty
         <div class="col-span-full py-20 text-center">
-            <p class="text-gray-500 font-bold italic">Aucun module assigné pour la gestion Classroom.</p>
+            <p class="text-gray-500 font-bold italic">{{ __('Aucun module assigné pour la gestion Classroom.') }}</p>
         </div>
         @endforelse
     </div>

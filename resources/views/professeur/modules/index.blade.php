@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Mes Modules')
-@section('page-title', 'Mes Modules')
+@section('title', __('Mes Modules'))
+@section('page-title', __('Mes Modules'))
 
 @section('content')
 <div class="space-y-6">
@@ -18,19 +18,19 @@
                         @endforeach
                     </div>
                 </div>
-                
+
                 <h3 class="text-xl font-black text-gray-800 dark:text-white mb-2 leading-tight min-h-[3rem] line-clamp-2">
                     {{ $module->nom }}
                 </h3>
-                
+
                 <div class="mb-6">
-                    <p class="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Niveau & Filière</p>
+                    <p class="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">{{ __('Niveau & Filière') }}</p>
                     <p class="text-sm font-bold text-gray-700 dark:text-gray-300">{{ $module->niveau->nom }} — {{ $module->niveau->filiere->nom }}</p>
                 </div>
 
                 <div class="grid grid-cols-3 gap-2 mb-8 bg-gray-50 dark:bg-gray-900/50 p-3 rounded-2xl">
                     <div class="text-center">
-                        <span class="text-[9px] font-black text-gray-400 uppercase">Cours</span>
+                        <span class="text-[9px] font-black text-gray-400 uppercase">{{ __('Cours') }}</span>
                         <p class="text-sm font-bold text-gray-800 dark:text-white">{{ $module->heures_cours }}h</p>
                     </div>
                     <div class="text-center border-x border-gray-100 dark:border-gray-700">
@@ -45,17 +45,17 @@
 
                 <div class="grid grid-cols-2 gap-4">
                     <a href="{{ route('professeur.notes.index') }}" class="flex items-center justify-center py-3 bg-gray-100 dark:bg-gray-700 hover:bg-indigo-600 hover:text-white text-gray-600 dark:text-gray-300 rounded-xl font-black uppercase tracking-widest text-[9px] transition-all">
-                        Saisir Notes
+                        {{ __('Saisir Notes') }}
                     </a>
                     <a href="{{ route('professeur.absences.index') }}" class="flex items-center justify-center py-3 bg-gray-100 dark:bg-gray-700 hover:bg-indigo-600 hover:text-white text-gray-600 dark:text-gray-300 rounded-xl font-black uppercase tracking-widest text-[9px] transition-all">
-                        Absences
+                        {{ __('Absences') }}
                     </a>
                 </div>
             </div>
         </div>
         @empty
         <div class="col-span-full py-20 text-center">
-            <p class="text-gray-500 font-bold italic">Vous n'avez aucun module assigné pour le moment.</p>
+            <p class="text-gray-500 font-bold italic">{{ __("Vous n'avez aucun module assigné pour le moment.") }}</p>
         </div>
         @endforelse
     </div>

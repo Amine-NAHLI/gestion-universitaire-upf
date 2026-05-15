@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Saisie des Notes')
-@section('page-title', 'Saisie des Notes')
+@section('title', __('Saisie des Notes'))
+@section('page-title', __('Saisie des Notes'))
 
 @section('content')
 <div class="space-y-8">
@@ -16,7 +16,7 @@
                 @forelse($module->groupes as $groupe)
                 <a href="{{ route('professeur.notes.saisir', [$module, $groupe]) }}" class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900/30 rounded-2xl hover:ring-2 hover:ring-indigo-500 transition-all group">
                     <div>
-                        <span class="text-xs font-black text-gray-400 uppercase tracking-widest block mb-1">Groupe</span>
+                        <span class="text-xs font-black text-gray-400 uppercase tracking-widest block mb-1">{{ __('Groupe') }}</span>
                         <span class="text-base font-black text-gray-800 dark:text-white">{{ $groupe->nom }}</span>
                     </div>
                     <div class="bg-white dark:bg-gray-800 p-2 rounded-xl shadow-sm text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
@@ -26,7 +26,7 @@
                     </div>
                 </a>
                 @empty
-                <p class="text-xs text-gray-400 italic">Aucun groupe assigné à ce module.</p>
+                <p class="text-xs text-gray-400 italic">{{ __('Aucun groupe assigné à ce module.') }}</p>
                 @endforelse
             </div>
         </div>
