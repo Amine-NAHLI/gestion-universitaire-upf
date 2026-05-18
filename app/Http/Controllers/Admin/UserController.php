@@ -61,7 +61,7 @@ class UserController extends Controller
             'is_active' => ['boolean'],
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'prenom' => $request->prenom,
             'email' => $request->email,
@@ -69,7 +69,36 @@ class UserController extends Controller
             'role' => $request->role,
             'telephone' => $request->telephone,
             'is_active' => $request->has('is_active'),
+            'email_verified_at' => now(), // Manually created users are pre-verified
         ]);
+
+        if ($user->is_active) {
+            if ($user->isEtudiant()) {
+                $groupe = \App\Models\Groupe::where('nom', 'GINFO3A')->first() ?: \App\Models\Groupe::first();
+                $latestEtu = \App\Models\Etudiant::orderBy('id', 'desc')->first();
+                $nextId = $latestEtu ? ($latestEtu->id + 1) : 1;
+                
+                \App\Models\Etudiant::create([
+                    'user_id' => $user->id,
+                    'cne' => 'CNE' . str_pad($nextId, 3, '0', STR_PAD_LEFT),
+                    'matricule' => 'E' . str_pad($nextId, 3, '0', STR_PAD_LEFT),
+                    'groupe_id' => $groupe ? $groupe->id : null,
+                    'date_inscription' => now(),
+                    'statut' => 'inscrit',
+                ]);
+            } elseif ($user->isProfesseur()) {
+                $latestProf = \App\Models\Professeur::orderBy('id', 'desc')->first();
+                $nextId = $latestProf ? ($latestProf->id + 1) : 1;
+                
+                \App\Models\Professeur::create([
+                    'user_id' => $user->id,
+                    'matricule' => 'P' . str_pad($nextId, 3, '0', STR_PAD_LEFT),
+                    'specialite' => 'Informatique',
+                    'grade' => 'professeur',
+                    'date_recrutement' => now(),
+                ]);
+            }
+        }
 
         return redirect()->route('admin.users.index')
             ->with('success', 'Utilisateur créé avec succès.');
@@ -202,6 +231,18 @@ class UserController extends Controller
                     'groupe_id' => $groupe ? $groupe->id : null,
                     'date_inscription' => now(),
                     'statut' => 'inscrit',
+                ]);
+            } elseif ($user->isProfesseur() && !$user->professeur) {
+                // Création automatique du profil professeur s'il n'existe pas
+                $latestProf = \App\Models\Professeur::orderBy('id', 'desc')->first();
+                $nextId = $latestProf ? ($latestProf->id + 1) : 1;
+                
+                \App\Models\Professeur::create([
+                    'user_id' => $user->id,
+                    'matricule' => 'P' . str_pad($nextId, 3, '0', STR_PAD_LEFT),
+                    'specialite' => 'Informatique',
+                    'grade' => 'professeur',
+                    'date_recrutement' => now(),
                 ]);
             }
 

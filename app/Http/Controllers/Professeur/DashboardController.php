@@ -17,7 +17,8 @@ class DashboardController extends Controller
         $professeur = auth()->user()->professeur;
         
         if (!$professeur) {
-            return view('professeur.dashboard')->with('error', 'Profil professeur introuvable.');
+            auth()->logout();
+            return redirect()->route('login')->with('error', 'Profil professeur introuvable. Veuillez contacter l\'administration.');
         }
 
         // 1. Heures assurées (Somme des durées des séances effectuées)

@@ -17,7 +17,8 @@ class DashboardController extends Controller
         $etudiant = auth()->user()->etudiant;
         
         if (!$etudiant) {
-            return view('etudiant.dashboard')->with('error', 'Profil étudiant introuvable.');
+            auth()->logout();
+            return redirect()->route('login')->with('error', 'Profil étudiant introuvable. Veuillez contacter l\'administration.');
         }
 
         // 1. Absences
