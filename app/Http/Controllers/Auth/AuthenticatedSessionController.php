@@ -26,9 +26,20 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
-        $request->session()->regenerate();
-
         $user = Auth::user();
+
+        if (!$user->is_active) {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            if ($user->email_verified_at === null) {
+                return redirect()->route('login')->with('error', 'Veuillez d\'abord valider votre adresse email en cliquant sur le lien reçu.');
+            }
+            return redirect()->route('login')->with('error', 'Votre inscription a été validée par email. Elle est maintenant en cours d\'approbation par l\'administration.');
+        }
+
+        $request->session()->regenerate();
 
         return match ($user->role) {
             'admin' => redirect()->route('admin.dashboard'),

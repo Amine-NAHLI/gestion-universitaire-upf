@@ -46,6 +46,8 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        return redirect()->route('login')->with('success', 'Votre demande de création de compte a été soumise avec succès. L\'administration validera votre compte sous peu.');
+        Auth::login($user);
+
+        return redirect()->route('verification.notice');
     }
 }

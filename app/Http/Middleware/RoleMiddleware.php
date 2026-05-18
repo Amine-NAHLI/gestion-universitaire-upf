@@ -27,7 +27,10 @@ class RoleMiddleware
         // Vérification si l'utilisateur est actif
         if (!$user->is_active) {
             Auth::logout();
-            return redirect()->route('login')->with('error', 'Votre compte a été désactivé.');
+            if ($user->email_verified_at === null) {
+                return redirect()->route('login')->with('error', 'Veuillez d\'abord valider votre adresse email en cliquant sur le lien reçu.');
+            }
+            return redirect()->route('login')->with('error', 'Votre inscription a été validée par email. Elle est maintenant en cours d\'approbation par l\'administration.');
         }
 
         // Vérification du rôle

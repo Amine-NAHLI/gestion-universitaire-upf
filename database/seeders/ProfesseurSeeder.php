@@ -23,13 +23,9 @@ class ProfesseurSeeder extends Seeder
             ]);
         }
 
-        // 2. Créer 5 nouveaux profs
+        // 2. Créer 1 nouveau prof (total = 2)
         $newProfs = [
             ['name' => 'NAJI', 'prenom' => 'Said', 'email' => 'naji@upf.ma', 'specialite' => 'Réseaux', 'grade' => 'maitre_assistant'],
-            ['name' => 'ALAMI', 'prenom' => 'Fatima', 'email' => 'alami@upf.ma', 'specialite' => 'Bases de Données', 'grade' => 'professeur'],
-            ['name' => 'TAZI', 'prenom' => 'Mohamed', 'email' => 'tazi@upf.ma', 'specialite' => 'Intelligence Artificielle', 'grade' => 'maitre_assistant'],
-            ['name' => 'BENJELLOUN', 'prenom' => 'Sara', 'email' => 'benjelloun@upf.ma', 'specialite' => 'Cybersécurité', 'grade' => 'assistant'],
-            ['name' => 'IDRISSI', 'prenom' => 'Karim', 'email' => 'idrissi@upf.ma', 'specialite' => 'Génie Civil', 'grade' => 'professeur'],
         ];
 
         foreach ($newProfs as $i => $data) {

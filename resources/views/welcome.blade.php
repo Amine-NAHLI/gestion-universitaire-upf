@@ -28,7 +28,7 @@
     <nav class="glass-nav">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
-                <div class="flex items-center space-x-3 group cursor-pointer">
+                <a href="{{ url('/') }}" class="flex items-center space-x-3 group cursor-pointer">
                     <div class="w-12 h-12 bg-gradient-to-tr from-indigo-600 to-violet-600 rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-lg shadow-indigo-500/30 transform group-hover:rotate-12 transition-transform duration-300">
                         U
                     </div>
@@ -36,7 +36,7 @@
                         <span class="text-xl font-black text-slate-800 dark:text-white tracking-tight leading-none">UPF GESTION</span>
                         <span class="text-[10px] font-bold text-indigo-500 uppercase tracking-widest mt-1">Université Privée de Fès</span>
                     </div>
-                </div>
+                </a>
                 <div class="flex items-center space-x-6">
                     {{-- Language Switcher --}}
                     <div x-data="{ open: false }" class="relative">
@@ -55,7 +55,7 @@
                         <a href="{{ route('dashboard') }}" class="btn-primary">{{ __('Tableau de bord') }}</a>
                     @else
                         <a href="{{ route('login') }}" class="text-slate-600 dark:text-slate-400 font-bold hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">{{ __('Connexion') }}</a>
-                        <a href="{{ route('login') }}" class="btn-primary">{{ __('Commencer') }}</a>
+                        <a href="{{ route('register') }}" class="btn-primary">{{ __('Commencer') }}</a>
                     @endauth
                 </div>
             </div>
@@ -87,10 +87,17 @@
                 </p>
                 
                 <div class="flex flex-wrap gap-4 justify-center">
-                    <a href="{{ route('login') }}" class="btn-primary text-lg px-10 py-4 group">
-                        {{ __('Accéder à mon espace') }}
-                        <svg class="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-                    </a>
+                    @auth
+                        <a href="{{ route('dashboard') }}" class="btn-primary text-lg px-10 py-4 group">
+                            {{ __('Accéder à mon espace') }}
+                            <svg class="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                        </a>
+                    @else
+                        <a href="{{ route('login') }}" class="btn-primary text-lg px-10 py-4 group">
+                            {{ __('Accéder à mon espace') }}
+                            <svg class="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                        </a>
+                    @endauth
                     <a href="#features" class="btn-secondary text-lg px-10 py-4">
                         {{ __('En savoir plus') }}
                     </a>

@@ -10,6 +10,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/registration-submitted', function () {
+    return view('auth.registration-submitted');
+})->name('registration.submitted');
+
 Route::get('/dashboard', function () {
     $user = auth()->user();
     return match($user->role) {

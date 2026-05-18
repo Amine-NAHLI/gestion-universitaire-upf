@@ -25,8 +25,8 @@ class RegistrationTest extends TestCase
             'password_confirmation' => 'password',
         ]);
 
-        $this->assertGuest();
-        $response->assertRedirect('/login');
+        $this->assertAuthenticated();
+        $response->assertRedirect(route('verification.notice', absolute: false));
         
         // Assert the user was created but is inactive (pending validation)
         $this->assertDatabaseHas('users', [

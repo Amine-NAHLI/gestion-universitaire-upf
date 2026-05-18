@@ -50,9 +50,9 @@ class RoleMiddlewareTest extends TestCase
     }
 
     /**
-     * Test inactive user is logged out and redirected to login.
+     * Test inactive and unverified user is logged out with email verification error.
      */
-    public function test_inactive_user_is_logged_out_automatically(): void
+    public function test_inactive_unverified_user_is_logged_out_with_verification_error(): void
     {
         $inactiveUser = User::create([
             'name' => 'Blocked',
@@ -60,18 +60,36 @@ class RoleMiddlewareTest extends TestCase
             'email' => 'blocked@upf.ma',
             'password' => bcrypt('password'),
             'role' => 'etudiant',
-            'is_active' => false // Inactive
+            'is_active' => false
         ]);
 
         $response = $this->actingAs($inactiveUser)->get(route('etudiant.dashboard'));
 
-        // Assert redirect to login
         $response->assertRedirect(route('login'));
-        
-        // Assert user has been logged out of session
         $this->assertGuest();
-        
-        // Assert error message is present in session
-        $response->assertSessionHas('error', 'Votre compte a été désactivé.');
+        $response->assertSessionHas('error', 'Veuillez d\'abord valider votre adresse email en cliquant sur le lien reçu.');
+    }
+
+    /**
+     * Test inactive but verified user is logged out with pending approval error.
+     */
+    public function test_inactive_verified_user_is_logged_out_with_pending_approval_error(): void
+    {
+        $inactiveUser = User::create([
+            'name' => 'Blocked',
+            'prenom' => 'User',
+            'email' => 'blocked@upf.ma',
+            'password' => bcrypt('password'),
+            'role' => 'etudiant',
+            'is_active' => false,
+        ]);
+        $inactiveUser->email_verified_at = now();
+        $inactiveUser->save();
+
+        $response = $this->actingAs($inactiveUser)->get(route('etudiant.dashboard'));
+
+        $response->assertRedirect(route('login'));
+        $this->assertGuest();
+        $response->assertSessionHas('error', 'Votre inscription a été validée par email. Elle est maintenant en cours d\'approbation par l\'administration.');
     }
 }

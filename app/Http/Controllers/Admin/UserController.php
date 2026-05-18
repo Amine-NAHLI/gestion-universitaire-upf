@@ -136,6 +136,20 @@ class UserController extends Controller
                 ->with('error', 'Vous ne pouvez pas supprimer votre propre compte.');
         }
 
+        // Si le compte supprimé était inactif (rejet de demande d'inscription)
+        if (!$user->is_active) {
+            try {
+                \Illuminate\Support\Facades\Mail::send('emails.account-rejected', [
+                    'name' => $user->full_name
+                ], function ($message) use ($user) {
+                    $message->to($user->email)
+                            ->subject('Mise à jour concernant votre demande d\'inscription UPF');
+                });
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error("Erreur d'envoi d'email de refus : " . $e->getMessage());
+            }
+        }
+
         \Illuminate\Support\Facades\DB::transaction(function () use ($user) {
             // Supprimer les demandes administratives
             \App\Models\DemandeAdministrative::where('user_id', $user->id)->delete();
@@ -173,6 +187,37 @@ class UserController extends Controller
 
         $user->is_active = !$user->is_active;
         $user->save();
+
+        if ($user->is_active) {
+            // Création automatique du profil étudiant s'il n'existe pas
+            if ($user->isEtudiant() && !$user->etudiant) {
+                $groupe = \App\Models\Groupe::where('nom', 'GINFO3A')->first() ?: \App\Models\Groupe::first();
+                $latestEtu = \App\Models\Etudiant::orderBy('id', 'desc')->first();
+                $nextId = $latestEtu ? ($latestEtu->id + 1) : 1;
+                
+                \App\Models\Etudiant::create([
+                    'user_id' => $user->id,
+                    'cne' => 'CNE' . str_pad($nextId, 3, '0', STR_PAD_LEFT),
+                    'matricule' => 'E' . str_pad($nextId, 3, '0', STR_PAD_LEFT),
+                    'groupe_id' => $groupe ? $groupe->id : null,
+                    'date_inscription' => now(),
+                    'statut' => 'inscrit',
+                ]);
+            }
+
+            try {
+                \Illuminate\Support\Facades\Mail::send('emails.account-approved', [
+                    'name' => $user->full_name,
+                    'email' => $user->email,
+                    'loginUrl' => route('login')
+                ], function ($message) use ($user) {
+                    $message->to($user->email)
+                            ->subject('Félicitations ! Votre compte UPF a été approuvé 🎉');
+                });
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error("Erreur d'envoi d'email de validation : " . $e->getMessage());
+            }
+        }
 
         $status = $user->is_active ? 'activé' : 'désactivé';
         $type = $user->is_active ? 'success' : 'warning';
