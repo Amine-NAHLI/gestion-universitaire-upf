@@ -14,6 +14,10 @@ class AffectationSeeder extends Seeder
         $annee = '2025-2026';
         $profs = Professeur::all();
         
+        if ($profs->isEmpty()) {
+            return;
+        }
+        
         $groupesGINFO3 = Groupe::whereIn('nom', ['GINFO3A', 'GINFO3B'])->get();
         $groupesGC3 = Groupe::whereIn('nom', ['GC3A'])->get();
         $groupesGIND3 = Groupe::whereIn('nom', ['GIND3A'])->get();
