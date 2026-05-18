@@ -41,17 +41,11 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => 'etudiant', // Default role for registration
+            'is_active' => false, // Must be validated by admin
         ]);
 
         event(new Registered($user));
 
-        Auth::login($user);
-
-        return match ($user->role) {
-            'admin' => redirect()->route('admin.dashboard'),
-            'professeur' => redirect()->route('professeur.dashboard'),
-            'etudiant' => redirect()->route('etudiant.dashboard'),
-            default => redirect()->route('dashboard'),
-        };
+        return redirect()->route('login')->with('success', 'Votre demande de création de compte a été soumise avec succès. L\'administration validera votre compte sous peu.');
     }
 }

@@ -17,8 +17,10 @@ class UserController extends Controller
     {
         $query = User::query();
 
-        // Filtre par rôle
-        if ($request->has('role') && in_array($request->role, ['admin', 'professeur', 'etudiant'])) {
+        // Filtre par statut en attente ou par rôle
+        if ($request->has('status') && $request->status === 'pending') {
+            $query->where('is_active', false);
+        } elseif ($request->has('role') && in_array($request->role, ['admin', 'professeur', 'etudiant'])) {
             $query->where('role', $request->role);
         }
 
@@ -30,6 +32,7 @@ class UserController extends Controller
             'admins' => User::where('role', 'admin')->count(),
             'professeurs' => User::where('role', 'professeur')->count(),
             'etudiants' => User::where('role', 'etudiant')->count(),
+            'pending' => User::where('is_active', false)->count(),
         ];
 
         return view('admin.users.index', compact('users', 'stats'));

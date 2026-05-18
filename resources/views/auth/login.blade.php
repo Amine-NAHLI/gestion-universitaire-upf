@@ -78,6 +78,13 @@
             <button type="submit" class="btn-primary w-full py-4 text-base tracking-tight">
                 {{ __('Se connecter') }}
             </button>
+
+            <div class="text-center mt-4">
+                <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">{{ __('Pas encore de compte ?') }}</span>
+                <a href="{{ route('register') }}" class="text-xs font-bold text-indigo-600 hover:text-indigo-500 transition-colors ml-1">
+                    {{ __('Créer un compte étudiant') }}
+                </a>
+            </div>
         </form>
 
         <!-- Mode Démo / Soutenance -->

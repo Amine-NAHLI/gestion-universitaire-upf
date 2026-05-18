@@ -37,7 +37,7 @@
     <div class="flex flex-col md:flex-row justify-between items-center gap-4 bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
         <div class="flex flex-wrap items-center gap-2">
             <a href="{{ route('admin.users.index') }}" 
-               class="px-4 py-2 rounded-xl text-sm font-bold transition-all {{ !request('role') ? 'bg-indigo-600 text-white shadow-lg' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600' }}">
+               class="px-4 py-2 rounded-xl text-sm font-bold transition-all {{ !request('role') && !request('status') ? 'bg-indigo-600 text-white shadow-lg' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600' }}">
                 {{ __('Tous') }}
             </a>
             <a href="{{ route('admin.users.index', ['role' => 'admin']) }}" 
@@ -51,6 +51,15 @@
             <a href="{{ route('admin.users.index', ['role' => 'etudiant']) }}" 
                class="px-4 py-2 rounded-xl text-sm font-bold transition-all {{ request('role') == 'etudiant' ? 'bg-green-600 text-white shadow-lg' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600' }}">
                 Étudiants
+            </a>
+            <a href="{{ route('admin.users.index', ['status' => 'pending']) }}" 
+               class="px-4 py-2 rounded-xl text-sm font-bold transition-all relative {{ request('status') == 'pending' ? 'bg-yellow-600 text-white shadow-lg' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600' }}">
+                {{ __('En attente de validation') }}
+                @if($stats['pending'] > 0)
+                    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-black animate-pulse">
+                        {{ $stats['pending'] }}
+                    </span>
+                @endif
             </a>
         </div>
         
@@ -117,6 +126,19 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right">
                             <div class="flex items-center justify-end gap-2">
+                                <!-- Quick Approve (Active Toggle) -->
+                                @if(!$user->is_active)
+                                    <form method="POST" action="{{ route('admin.users.toggle-active', $user) }}" class="inline-block">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="p-2 rounded-lg text-green-500 hover:bg-green-100 dark:hover:bg-green-900/30 hover:text-green-600 transition-all animate-bounce" title="{{ __('Valider le compte') }}">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                @endif
+
                                 <!-- View Details -->
                                 <a href="{{ route('admin.users.show', $user) }}" class="p-2 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all" title="{{ __('Détails') }}">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>

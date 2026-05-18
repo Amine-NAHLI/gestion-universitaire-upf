@@ -25,7 +25,13 @@ class RegistrationTest extends TestCase
             'password_confirmation' => 'password',
         ]);
 
-        $this->assertAuthenticated();
-        $response->assertRedirect('/etudiant/dashboard');
+        $this->assertGuest();
+        $response->assertRedirect('/login');
+        
+        // Assert the user was created but is inactive (pending validation)
+        $this->assertDatabaseHas('users', [
+            'email' => 'test@example.com',
+            'is_active' => false
+        ]);
     }
 }
