@@ -27,9 +27,25 @@ class Seance extends Model
 
     protected $casts = [
         'date' => 'date',
-        'heure_debut' => 'datetime',
-        'heure_fin' => 'datetime',
+        // heure_debut and heure_fin are stored as TIME strings (HH:MM:SS)
+        // We use Carbon::parse() manually when formatting is needed
     ];
+
+    /**
+     * Get heure_debut as a Carbon instance by parsing the time string.
+     */
+    public function getHeureDebutAttribute($value): ?\Carbon\Carbon
+    {
+        return $value ? \Carbon\Carbon::parse($value) : null;
+    }
+
+    /**
+     * Get heure_fin as a Carbon instance by parsing the time string.
+     */
+    public function getHeureFinAttribute($value): ?\Carbon\Carbon
+    {
+        return $value ? \Carbon\Carbon::parse($value) : null;
+    }
 
     public function module(): BelongsTo
     {
