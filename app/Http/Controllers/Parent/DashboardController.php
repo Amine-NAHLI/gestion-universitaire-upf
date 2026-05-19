@@ -10,7 +10,7 @@ use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function index(): View
+    private function getStudentData(): array
     {
         $parent = Auth::user();
 
@@ -40,7 +40,7 @@ class DashboardController extends Controller
         ];
 
         if (! $student) {
-            return view('parent.dashboard', $blank);
+            return $blank;
         }
 
         $student->load([
@@ -157,7 +157,7 @@ class DashboardController extends Controller
         }
         $suggestionsChat = array_slice($suggestions, 0, 3);
 
-        return view('parent.dashboard', [
+        return [
             'student'               => $student,
             'studentName'           => $student->user->prenom,
             'moyenne'               => $moyenne,
@@ -176,6 +176,26 @@ class DashboardController extends Controller
             'lundiFmt'              => $lundiFmt,
             'vendrediFmt'           => $vendrediFmt,
             'suggestionsChat'       => $suggestionsChat,
-        ]);
+        ];
+    }
+
+    public function index(): View
+    {
+        return view('parent.dashboard', $this->getStudentData());
+    }
+
+    public function notes(): View
+    {
+        return view('parent.notes', $this->getStudentData());
+    }
+
+    public function edt(): View
+    {
+        return view('parent.edt', $this->getStudentData());
+    }
+
+    public function absences(): View
+    {
+        return view('parent.absences', $this->getStudentData());
     }
 }

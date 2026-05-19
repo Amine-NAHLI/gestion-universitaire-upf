@@ -143,6 +143,9 @@ Route::middleware('auth')->group(function () {
 // Routes Parent
 Route::middleware(['auth', 'role:parent'])->prefix('parent')->name('parent.')->group(function () {
     Route::get('dashboard', [\App\Http\Controllers\Parent\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('notes', [\App\Http\Controllers\Parent\DashboardController::class, 'notes'])->name('notes');
+    Route::get('edt', [\App\Http\Controllers\Parent\DashboardController::class, 'edt'])->name('edt');
+    Route::get('absences', [\App\Http\Controllers\Parent\DashboardController::class, 'absences'])->name('absences');
     Route::post('chatbot', [\App\Http\Controllers\Parent\ChatbotController::class, 'ask'])->name('chatbot')->middleware('throttle:20,1440');
     Route::get('chatbot/welcome', [\App\Http\Controllers\Parent\ChatbotController::class, 'welcome'])->name('chatbot.welcome');
     Route::get('chatbot/history', [\App\Http\Controllers\Parent\ChatbotController::class, 'history'])->name('chatbot.history');

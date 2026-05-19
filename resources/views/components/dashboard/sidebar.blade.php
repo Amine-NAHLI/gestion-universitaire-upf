@@ -188,10 +188,26 @@
             <!-- Parent Links -->
             <a href="{{ route('parent.dashboard') }}" 
                class="flex items-center gap-3 px-4 py-3 mx-2 rounded-xl transition-all duration-300 group {{ request()->routeIs('parent.dashboard') ? 'bg-white/20 text-white shadow-lg' : 'text-indigo-100 hover:bg-white/10 hover:text-white' }}">
-                <svg class="w-5 h-5 shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                </svg>
-                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">Dashboard Parent</span>
+                <i class="fa-solid fa-robot text-lg shrink-0 group-hover:scale-110 transition-transform w-5 text-center"></i>
+                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">Assistant E-UPF</span>
+            </a>
+
+            <a href="{{ route('parent.notes') }}" 
+               class="flex items-center gap-3 px-4 py-3 mx-2 rounded-xl transition-all duration-300 group {{ request()->routeIs('parent.notes') ? 'bg-white/20 text-white shadow-lg' : 'text-indigo-100 hover:bg-white/10 hover:text-white' }}">
+                <i class="fa-solid fa-graduation-cap text-lg shrink-0 group-hover:scale-110 transition-transform w-5 text-center"></i>
+                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">Notes & Bulletins</span>
+            </a>
+
+            <a href="{{ route('parent.edt') }}" 
+               class="flex items-center gap-3 px-4 py-3 mx-2 rounded-xl transition-all duration-300 group {{ request()->routeIs('parent.edt') ? 'bg-white/20 text-white shadow-lg' : 'text-indigo-100 hover:bg-white/10 hover:text-white' }}">
+                <i class="fa-solid fa-calendar-days text-lg shrink-0 group-hover:scale-110 transition-transform w-5 text-center"></i>
+                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">Emploi du Temps</span>
+            </a>
+
+            <a href="{{ route('parent.absences') }}" 
+               class="flex items-center gap-3 px-4 py-3 mx-2 rounded-xl transition-all duration-300 group {{ request()->routeIs('parent.absences') ? 'bg-white/20 text-white shadow-lg' : 'text-indigo-100 hover:bg-white/10 hover:text-white' }}">
+                <i class="fa-solid fa-user-xmark text-lg shrink-0 group-hover:scale-110 transition-transform w-5 text-center"></i>
+                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">Absences & Suivi</span>
             </a>
         @else
             <!-- Student Links -->
