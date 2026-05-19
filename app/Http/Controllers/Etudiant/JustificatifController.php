@@ -60,8 +60,12 @@ class JustificatifController extends Controller
                 'message' => 'Un étudiant a déposé un justificatif pour son absence.',
                 'lien' => route('admin.absences.index'),
             ]);
-            
-            Mail::to($admin->email)->send(new NouveauJustificatifAdmin($justificatif));
+
+            try {
+                Mail::to($admin->email)->send(new NouveauJustificatifAdmin($justificatif));
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error("Erreur email justificatif admin {$admin->id}: " . $e->getMessage());
+            }
         }
 
         return back()->with('success', 'Justificatif déposé avec succès. Les administrateurs ont été notifiés.');

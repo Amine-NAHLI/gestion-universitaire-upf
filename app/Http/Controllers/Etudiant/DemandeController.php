@@ -43,8 +43,12 @@ class DemandeController extends Controller
                 'message' => 'Un étudiant a soumis une demande de ' . str_replace('_', ' ', $demande->type),
                 'lien' => route('admin.demandes.index'),
             ]);
-            
-            Mail::to($admin->email)->send(new NouvelleDemandeAdmin($demande));
+
+            try {
+                Mail::to($admin->email)->send(new NouvelleDemandeAdmin($demande));
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error("Erreur email demande admin {$admin->id}: " . $e->getMessage());
+            }
         }
 
         return back()->with('success', 'Demande soumise avec succès. Les administrateurs ont été notifiés.');
