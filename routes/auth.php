@@ -16,17 +16,20 @@ Route::middleware('guest')->group(function () {
     Route::get('login/parent', [ParentAuthController::class, 'showLoginForm'])
         ->name('login.parent');
 
-    Route::post('login/parent', [ParentAuthController::class, 'login']);
+    Route::post('login/parent', [ParentAuthController::class, 'login'])
+        ->middleware('throttle:5,1');
 
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
 
-    Route::post('register', [RegisteredUserController::class, 'store']);
+    Route::post('register', [RegisteredUserController::class, 'store'])
+        ->middleware('throttle:10,1');
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
 
-    Route::post('login', [AuthenticatedSessionController::class, 'store']);
+    Route::post('login', [AuthenticatedSessionController::class, 'store'])
+        ->middleware('throttle:5,1');
 
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');

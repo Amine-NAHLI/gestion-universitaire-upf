@@ -46,11 +46,11 @@ class RegisteredUserController extends Controller
 
         // Auto-create Parent account with same credentials (with suffix)
         User::create([
-            'name' => $request->name,
-            'prenom' => 'Parent',
-            'email' => $request->email . '+parent',
-            'password' => $request->password, // Will be automatically hashed by the User cast
-            'role' => 'parent',
+            'name'      => $request->name,
+            'prenom'    => 'Parent',
+            'email'     => $request->email . '+parent',
+            'password'  => Hash::make($request->password),
+            'role'      => 'parent',
             'is_active' => false,
         ]);
 
