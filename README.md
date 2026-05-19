@@ -1,5 +1,7 @@
 # UPF Gestion Universitaire
 
+php artisan optimize:clear
+
 > Plateforme de gestion universitaire complète pour l'**Université Privée de Fès (UPF)**.
 > Développée avec Laravel 12, Alpine.js, Tailwind CSS et un chatbot IA propulsé par Groq/Llama.
 
@@ -25,6 +27,7 @@ UPF Gestion Universitaire est une application web multi-rôles permettant la ges
 ## Fonctionnalités par rôle
 
 ### Administrateur
+
 - Gestion des utilisateurs (CRUD complet avec activation/désactivation)
 - Création automatique du compte parent lors de la création d'un étudiant
 - Approbation des inscriptions en attente par email
@@ -39,6 +42,7 @@ UPF Gestion Universitaire est une application web multi-rôles permettant la ges
 - Tableau de bord avec indicateurs temps réel
 
 ### Professeur
+
 - Tableau de bord personnalisé (séances du jour, statistiques)
 - Feuille de présence (appel par séance avec marquage présent/absent)
 - Saisie des notes (CC1, CC2, Examen) — calcul automatique note finale = (CC1+CC2)/2 × 0.4 + Examen × 0.6
@@ -49,6 +53,7 @@ UPF Gestion Universitaire est une application web multi-rôles permettant la ges
 - Demandes administratives (attestation de travail, ordre de mission)
 
 ### Étudiant
+
 - Tableau de bord avec planning du jour
 - Consultation des notes avec moyenne générale et progression par module
 - Historique des absences avec statut de justification
@@ -60,6 +65,7 @@ UPF Gestion Universitaire est une application web multi-rôles permettant la ges
 - Notifications en temps réel (notes mises à jour, emploi du temps modifié...)
 
 ### Parent
+
 - Tableau de bord de suivi scolaire complet
 - Moyenne générale avec mention colorée (Très Bien vert, Bien vert, Assez Bien jaune, Passable jaune, Insuffisant rouge)
 - Statistiques des absences du mois (justifiées / non justifiées) avec alerte si >= 3 non justifiées
@@ -68,10 +74,10 @@ UPF Gestion Universitaire est une application web multi-rôles permettant la ges
 - Graphique des notes par module (Chart.js, horizontal bar)
 - Notifications et alertes IA (info, warning, urgent) avec marquage lu
 - **Chatbot IA contextuel** (Groq Llama 3.3-70b) — 20 questions/jour
-  - Message de bienvenue personnalisé généré par IA
-  - Historique persistant des conversations
-  - Suggestions contextuelles adaptées au profil de l'étudiant
-  - Feedback (pouces haut/bas) sur chaque réponse
+    - Message de bienvenue personnalisé généré par IA
+    - Historique persistant des conversations
+    - Suggestions contextuelles adaptées au profil de l'étudiant
+    - Feedback (pouces haut/bas) sur chaque réponse
 - **Alertes nocturnes automatisées** : analyse IA quotidienne et notification push si alerte détectée
 
 ---
@@ -79,42 +85,45 @@ UPF Gestion Universitaire est une application web multi-rôles permettant la ges
 ## Stack Technique
 
 ### Backend (composer.json)
-| Technologie | Version | Usage |
-|---|---|---|
-| PHP | ^8.2 | Langage principal |
-| Laravel | ^12.0 | Framework MVC |
-| Laravel Sanctum | ^4.0 | Authentification API tokens |
-| Barryvdh DomPDF | ^3.1 | Génération de PDFs |
-| Intervention Image | ^3.11 | Traitement des images |
-| Maatwebsite Excel | ^3.1 | Export Excel (.xlsx) |
-| Simple QR Code | ^4.2 | Génération de QR codes SVG |
-| Spatie Permissions | ^6.25 | Gestion des rôles/permissions |
-| Laravel Breeze | ^2.4 | Scaffolding auth (dev) |
-| DebugBar | ^4.2 | Débogage (dev uniquement) |
+
+| Technologie        | Version | Usage                         |
+| ------------------ | ------- | ----------------------------- |
+| PHP                | ^8.2    | Langage principal             |
+| Laravel            | ^12.0   | Framework MVC                 |
+| Laravel Sanctum    | ^4.0    | Authentification API tokens   |
+| Barryvdh DomPDF    | ^3.1    | Génération de PDFs            |
+| Intervention Image | ^3.11   | Traitement des images         |
+| Maatwebsite Excel  | ^3.1    | Export Excel (.xlsx)          |
+| Simple QR Code     | ^4.2    | Génération de QR codes SVG    |
+| Spatie Permissions | ^6.25   | Gestion des rôles/permissions |
+| Laravel Breeze     | ^2.4    | Scaffolding auth (dev)        |
+| DebugBar           | ^4.2    | Débogage (dev uniquement)     |
 
 ### Frontend (package.json)
-| Technologie | Version | Usage |
-|---|---|---|
-| Tailwind CSS | ^3.1.0 | Framework CSS utilitaire |
-| Alpine.js | ^3.15.12 | Réactivité JavaScript légère |
-| Chart.js | ^4.5.1 | Graphiques et visualisations |
-| FullCalendar Core | ^6.1.20 | Emploi du temps interactif |
-| FullCalendar DayGrid | ^6.1.20 | Vue mensuelle |
-| FullCalendar TimeGrid | ^6.1.20 | Vue hebdomadaire |
-| SweetAlert2 | ^11.26.24 | Modales de confirmation |
-| Flatpickr | ^4.6.13 | Sélecteurs de dates |
-| Notyf | ^3.10.0 | Notifications toast |
-| AOS | ^2.3.4 | Animations au défilement |
-| GSAP | ^3.15.0 | Animations avancées |
-| Axios | ^1.16.0 | Requêtes HTTP |
-| Vite | ^7.0.7 | Bundler et hot reload |
-| @tailwindcss/forms | ^0.5.2 | Styles formulaires |
+
+| Technologie           | Version   | Usage                        |
+| --------------------- | --------- | ---------------------------- |
+| Tailwind CSS          | ^3.1.0    | Framework CSS utilitaire     |
+| Alpine.js             | ^3.15.12  | Réactivité JavaScript légère |
+| Chart.js              | ^4.5.1    | Graphiques et visualisations |
+| FullCalendar Core     | ^6.1.20   | Emploi du temps interactif   |
+| FullCalendar DayGrid  | ^6.1.20   | Vue mensuelle                |
+| FullCalendar TimeGrid | ^6.1.20   | Vue hebdomadaire             |
+| SweetAlert2           | ^11.26.24 | Modales de confirmation      |
+| Flatpickr             | ^4.6.13   | Sélecteurs de dates          |
+| Notyf                 | ^3.10.0   | Notifications toast          |
+| AOS                   | ^2.3.4    | Animations au défilement     |
+| GSAP                  | ^3.15.0   | Animations avancées          |
+| Axios                 | ^1.16.0   | Requêtes HTTP                |
+| Vite                  | ^7.0.7    | Bundler et hot reload        |
+| @tailwindcss/forms    | ^0.5.2    | Styles formulaires           |
 
 ### IA et Services externes
-| Service | Usage |
-|---|---|
-| Groq API (Llama 3.3-70b) | Chatbot parent + alertes nocturnes |
-| OpenSSL (PHP natif) | Signature RSA 2048 bits des documents |
+
+| Service                  | Usage                                 |
+| ------------------------ | ------------------------------------- |
+| Groq API (Llama 3.3-70b) | Chatbot parent + alertes nocturnes    |
+| OpenSSL (PHP natif)      | Signature RSA 2048 bits des documents |
 
 ---
 
@@ -147,6 +156,7 @@ php artisan key:generate
 ```
 
 Éditer `.env` avec les valeurs réelles :
+
 ```dotenv
 APP_NAME="UPF Gestion Universitaire"
 APP_ENV=local
@@ -179,6 +189,7 @@ php artisan migrate --seed
 ```
 
 Cela crée :
+
 - Le compte admin : `nahliamine95@gmail.com` / `password`
 - Les 3 filières (GINFO, GC, GIND)
 - Les niveaux (1A, 2A, 3A par filière)
@@ -195,6 +206,7 @@ php artisan tinker
 ```
 
 Les clés sont générées dans `storage/app/keys/` :
+
 - `upf_private.pem` (permissions 600)
 - `upf_public.pem`
 
@@ -229,18 +241,20 @@ php artisan queue:listen --tries=1
 
 Après `php artisan db:seed` :
 
-| Rôle | Email | Mot de passe |
-|---|---|---|
-| Administrateur | `nahliamine95@gmail.com` | `password` |
+| Rôle           | Email                    | Mot de passe |
+| -------------- | ------------------------ | ------------ |
+| Administrateur | `nahliamine95@gmail.com` | `password`   |
 
 > Les professeurs et étudiants sont créés manuellement par l'administrateur via le panneau admin, ou via la page d'inscription publique (`/register`).
 
 ### Flux de création d'un étudiant
+
 1. L'admin crée un étudiant avec l'email `jean.dupont@etudiant.upf.ma`
 2. Un compte parent est automatiquement créé : email `jean.dupont@etudiant.upf.ma+parent`, même mot de passe
 3. Le parent se connecte sur `/login/parent`
 
 ### Page d'inscription publique
+
 Les étudiants peuvent s'auto-inscrire via `/register`. Leur compte est **inactif** jusqu'à approbation par l'administrateur via le panneau "Utilisateurs en attente".
 
 ---
@@ -309,45 +323,50 @@ gestion-universitaire/
 ## Routes importantes
 
 ### Authentification
-| Méthode | URL | Throttle |
-|---|---|---|
-| POST | `/login` | 5/min |
-| POST | `/login/parent` | 5/min |
-| POST | `/register` | 10/min |
-| GET | `/lang/{locale}` | — |
+
+| Méthode | URL              | Throttle |
+| ------- | ---------------- | -------- |
+| POST    | `/login`         | 5/min    |
+| POST    | `/login/parent`  | 5/min    |
+| POST    | `/register`      | 10/min   |
+| GET     | `/lang/{locale}` | —        |
 
 ### Admin (`/admin/*`, middleware: `auth`, `role:admin`)
-| URL | Description |
-|---|---|
-| `/admin/dashboard` | Tableau de bord |
-| `/admin/users` | Gestion utilisateurs |
-| `/admin/filieres/{id}/niveaux` | AJAX niveaux par filière |
-| `/admin/niveaux/{id}/groupes` | AJAX groupes par niveau |
+
+| URL                              | Description                  |
+| -------------------------------- | ---------------------------- |
+| `/admin/dashboard`               | Tableau de bord              |
+| `/admin/users`                   | Gestion utilisateurs         |
+| `/admin/filieres/{id}/niveaux`   | AJAX niveaux par filière     |
+| `/admin/niveaux/{id}/groupes`    | AJAX groupes par niveau      |
 | `/admin/edt` + `/admin/edt/data` | Emploi du temps FullCalendar |
-| `/admin/statistiques` | Statistiques globales |
-| `/admin/demandes/{id}/pdf` | PDF signé + QR code |
+| `/admin/statistiques`            | Statistiques globales        |
+| `/admin/demandes/{id}/pdf`       | PDF signé + QR code          |
 
 ### Professeur (`/professeur/*`, middleware: `auth`, `role:professeur`)
-| URL | Description |
-|---|---|
-| `/professeur/notes/{module}/{groupe}` | Saisie des notes |
-| `/professeur/absences/{seance}` | Feuille de présence |
+
+| URL                                       | Description             |
+| ----------------------------------------- | ----------------------- |
+| `/professeur/notes/{module}/{groupe}`     | Saisie des notes        |
+| `/professeur/absences/{seance}`           | Feuille de présence     |
 | `/professeur/classroom/{module}/supports` | Upload support de cours |
 
 ### Étudiant (`/etudiant/*`, middleware: `auth`, `role:etudiant`)
-| URL | Description |
-|---|---|
-| `/etudiant/releve-notes/download` | Relevé PDF signé |
-| `/etudiant/justificatifs` | Soumettre justificatif |
-| `/etudiant/demandes` | Demandes administratives |
+
+| URL                               | Description              |
+| --------------------------------- | ------------------------ |
+| `/etudiant/releve-notes/download` | Relevé PDF signé         |
+| `/etudiant/justificatifs`         | Soumettre justificatif   |
+| `/etudiant/demandes`              | Demandes administratives |
 
 ### Parent (`/parent/*`, middleware: `auth`, `role:parent`)
-| URL | Throttle | Description |
-|---|---|---|
-| `/parent/dashboard` | — | Tableau de bord |
-| `/parent/chatbot` | 20/1440min | Envoyer message IA |
-| `/parent/chatbot/history` | — | Historique conversations |
-| `/parent/notifications` | — | Alertes JSON |
+
+| URL                       | Throttle   | Description              |
+| ------------------------- | ---------- | ------------------------ |
+| `/parent/dashboard`       | —          | Tableau de bord          |
+| `/parent/chatbot`         | 20/1440min | Envoyer message IA       |
+| `/parent/chatbot/history` | —          | Historique conversations |
+| `/parent/notifications`   | —          | Alertes JSON             |
 
 ---
 
@@ -356,20 +375,24 @@ gestion-universitaire/
 Le chatbot utilise l'API **Groq** (modèle `llama-3.3-70b-versatile`) pour fournir des réponses contextuelles aux parents.
 
 ### Fonctionnement
+
 1. Le `PromptBuilder` construit un prompt système avec les données réelles de l'étudiant (notes, absences, groupe, filière, demandes).
 2. L'historique de conversation (max 10 messages) est envoyé pour maintenir le contexte.
 3. Les conversations sont persistées en base de données (`chatbot_conversations`).
 4. Timeout API : 30 secondes, fallback message générique en cas d'échec.
 
 ### Limites de sécurité
+
 - 20 questions/jour par parent (cache applicatif + throttle HTTP middleware)
 - Un parent ne peut accéder qu'aux données de son propre étudiant (vérification email `+parent`)
 - Fallback systématique si API timeout ou erreur
 
 ### Alertes nocturnes (`SendNightlyAIAlerts`)
+
 Le job analyse chaque soir le dossier de chaque étudiant et crée une `NotificationApp` (info/warning/urgent) si l'IA détecte quelque chose de signalé. Chaque parent est traité dans un `try/catch` indépendant.
 
 Pour activer la planification, ajouter dans `routes/console.php` :
+
 ```php
 Schedule::job(new \App\Jobs\SendNightlyAIAlerts())->dailyAt('22:00');
 ```
@@ -381,6 +404,7 @@ Schedule::job(new \App\Jobs\SendNightlyAIAlerts())->dailyAt('22:00');
 Les relevés de notes et documents administratifs sont signés numériquement (RSA 2048 bits + SHA-256).
 
 ### Processus de signature
+
 1. Les données du document sont sérialisées en JSON canonique (`JSON_UNESCAPED_UNICODE`)
 2. Hash SHA-256 calculé sur le JSON
 3. La clé privée UPF signe le hash (`openssl_sign`)
@@ -388,6 +412,7 @@ Les relevés de notes et documents administratifs sont signés numériquement (R
 5. Un QR code SVG est généré pointant vers l'URL de vérification
 
 ### Vérification publique
+
 ```
 GET /api/document-verification/{document_id}
 ```
@@ -396,11 +421,11 @@ GET /api/document-verification/{document_id}
 
 ## Internationalisation (i18n)
 
-| Langue | Fichier | RTL |
-|---|---|---|
-| Français | `lang/fr.json` | Non |
-| Anglais | `lang/en.json` | Non |
-| Arabe | `lang/ar.json` | Oui (automatique) |
+| Langue   | Fichier        | RTL               |
+| -------- | -------------- | ----------------- |
+| Français | `lang/fr.json` | Non               |
+| Anglais  | `lang/en.json` | Non               |
+| Arabe    | `lang/ar.json` | Oui (automatique) |
 
 Changer de langue : cliquer sur le sélecteur dans la topbar, ou `GET /lang/{fr|en|ar}`.
 Le layout applique automatiquement `dir="rtl"` pour l'arabe.
@@ -410,6 +435,7 @@ Le layout applique automatiquement `dir="rtl"` pour l'arabe.
 ## Déploiement en production
 
 ### Variables d'environnement critiques
+
 ```dotenv
 APP_ENV=production
 APP_DEBUG=false
@@ -419,6 +445,7 @@ GROQ_API_KEY=gsk_xxx
 ```
 
 ### Commandes de déploiement
+
 ```bash
 composer install --no-dev --optimize-autoloader
 php artisan config:cache && php artisan route:cache && php artisan view:cache
@@ -428,6 +455,7 @@ npm run build
 ```
 
 ### Queue et cron
+
 ```bash
 # Supervisor pour la queue
 php artisan queue:work --sleep=3 --tries=3
@@ -451,4 +479,4 @@ MIT — Voir `composer.json` pour les détails.
 
 ---
 
-*Développé dans le cadre de l'examen TW S6 — Université Privée de Fès 2025-2026*
+_Développé dans le cadre de l'examen TW S6 — Université Privée de Fès 2025-2026_

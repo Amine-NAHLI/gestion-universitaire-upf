@@ -24,7 +24,34 @@
 @endpush
 
 @section('content')
-<div id="edt-container" x-data="{ modalOpen: false, date: '', heureDebut: '', heureFin: '' }">
+<script>
+    window.professeursData = @json($professeurs->map(function($p) {
+        return [
+            'id' => $p->id,
+            'name' => $p->user->prenom . ' ' . $p->user->name,
+            'modules' => $p->modules->pluck('id')->toArray()
+        ];
+    }));
+    window.modulesData = @json($modules->map(function($m) {
+        return ['id' => $m->id, 'nom' => $m->nom];
+    }));
+</script>
+<div id="edt-container" x-data="{ 
+    modalOpen: false, 
+    date: '', 
+    heureDebut: '', 
+    heureFin: '',
+    professeurId: '',
+    moduleId: '',
+    professeurs: window.professeursData,
+    allModules: window.modulesData,
+    get filteredModules() {
+        if (!this.professeurId) return [];
+        let prof = this.professeurs.find(p => p.id == this.professeurId);
+        if (!prof) return [];
+        return this.allModules.filter(m => prof.modules.includes(m.id));
+    }
+}">
 
     <!-- Legend -->
     <div class="flex flex-wrap items-center gap-4 bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm mb-6">
@@ -71,21 +98,21 @@
                 @csrf
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('Module') }}</label>
-                        <select name="module_id" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('Professeur') }}</label>
+                        <select name="professeur_id" x-model="professeurId" required @change="moduleId = ''" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
                             <option value="">{{ __('-- Choisir --') }}</option>
-                            @foreach($modules as $module)
-                                <option value="{{ $module->id }}">{{ $module->nom }}</option>
-                            @endforeach
+                            <template x-for="prof in professeurs" :key="prof.id">
+                                <option :value="prof.id" x-text="prof.name"></option>
+                            </template>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('Professeur') }}</label>
-                        <select name="professeur_id" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('Module') }}</label>
+                        <select name="module_id" x-model="moduleId" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" :disabled="!professeurId">
                             <option value="">{{ __('-- Choisir --') }}</option>
-                            @foreach($professeurs as $prof)
-                                <option value="{{ $prof->id }}">{{ $prof->user->prenom }} {{ $prof->user->name }}</option>
-                            @endforeach
+                            <template x-for="module in filteredModules" :key="module.id">
+                                <option :value="module.id" x-text="module.nom"></option>
+                            </template>
                         </select>
                     </div>
                     <div>

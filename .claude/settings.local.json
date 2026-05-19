@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php -l app/Services/AI/PromptBuilder.php)",
+      "Bash(php -l app/Services/AI/ChatbotService.php)",
+      "Bash(php -l app/Http/Controllers/Parent/ChatbotController.php)",
+      "Bash(php artisan *)",
+      "Bash(php -l app/Http/Controllers/Parent/DashboardController.php)",
+      "Bash(php -l routes/web.php)",
+      "Bash(php -l app/Models/ChatbotConversation.php)",
+      "Bash(php -l app/Jobs/SendNightlyAIAlerts.php)",
+      "Bash(php -l app/Http/Controllers/Parent/NotificationController.php)",
+      "Bash(php -l routes/console.php)",
+      "Bash(not exist *)",
+      "Bash(New-Item *)",
+      "PowerShell(New-Item *)",
+      "Bash(Test-Path *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)"
+    ]
+  }
+}

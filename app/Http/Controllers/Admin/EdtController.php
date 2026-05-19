@@ -20,7 +20,7 @@ class EdtController extends Controller
     public function index()
     {
         $modules = Module::with('niveau.filiere')->get();
-        $professeurs = Professeur::with('user')->get();
+        $professeurs = Professeur::with(['user', 'modules'])->get();
         $groupes = Groupe::with('niveau.filiere')->get();
         $salles = Salle::where('is_disponible', true)->get();
         

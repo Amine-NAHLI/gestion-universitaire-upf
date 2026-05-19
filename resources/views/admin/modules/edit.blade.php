@@ -83,6 +83,28 @@
                 </div>
             </div>
 
+            @if(isset($groupes))
+            <div class="space-y-2 md:col-span-2" x-data="{ search: '' }">
+                <label class="text-sm font-bold text-gray-700 dark:text-gray-300">{{ __('Groupes affectés à ce module') }}</label>
+                <div class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-2xl border border-gray-100 dark:border-gray-700">
+                    <input type="text" x-model="search" placeholder="Rechercher un groupe par nom ou niveau..." class="w-full px-4 py-2 mb-4 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm text-gray-800 dark:text-white focus:ring-2 focus:ring-indigo-500">
+                    <div class="max-h-48 overflow-y-auto space-y-2">
+                        @foreach($groupes as $groupe)
+                            <label class="flex items-center gap-3 p-2 hover:bg-white dark:hover:bg-gray-800 rounded-lg cursor-pointer transition-colors" x-show="search === '' || '{{ strtolower($groupe->nom . ' ' . ($groupe->niveau->nom ?? '')) }}'.includes(search.toLowerCase())">
+                                <input type="checkbox" name="groupes[]" value="{{ $groupe->id }}" 
+                                    {{ in_array($groupe->id, old('groupes', isset($module) ? $module->groupes->pluck('id')->toArray() : [])) ? 'checked' : '' }}
+                                    class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                <div>
+                                    <div class="text-sm font-bold text-gray-800 dark:text-white">{{ $groupe->nom }}</div>
+                                    <div class="text-xs text-gray-500">{{ $groupe->niveau->filiere->nom ?? '' }} - {{ $groupe->niveau->nom ?? '' }}</div>
+                                </div>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            @endif
+
             <div class="space-y-2">
                 <label for="description" class="text-sm font-bold text-gray-700 dark:text-gray-300">{{ __('Description / Objectifs') }}</label>
                 <textarea name="description" id="description" rows="3"

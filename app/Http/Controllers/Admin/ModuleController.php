@@ -67,7 +67,8 @@ class ModuleController extends Controller
     public function edit(Module $module)
     {
         $niveaux = Niveau::with('filiere')->get();
-        return view('admin.modules.edit', compact('module', 'niveaux'));
+        $groupes = \App\Models\Groupe::with('niveau.filiere')->get();
+        return view('admin.modules.edit', compact('module', 'niveaux', 'groupes'));
     }
 
     /**
@@ -85,9 +86,19 @@ class ModuleController extends Controller
             'heures_tp' => ['required', 'integer', 'min:0'],
             'niveau_id' => ['required', 'exists:niveaux,id'],
             'semestre' => ['required', 'integer', 'in:1,2,3,4,5,6'],
+            'groupes' => ['nullable', 'array'],
+            'groupes.*' => ['exists:groupes,id'],
         ]);
 
-        $module->update($request->all());
+        $module->update($request->except('groupes'));
+
+        $syncData = [];
+        if ($request->has('groupes')) {
+            foreach ($request->groupes as $groupeId) {
+                $syncData[$groupeId] = ['annee_universitaire' => '2025-2026'];
+            }
+        }
+        $module->groupes()->sync($syncData);
 
         return redirect()->route('admin.modules.index')
             ->with('success', 'Module mis à jour avec succès.');
