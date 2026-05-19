@@ -6,6 +6,10 @@ use App\Http\Controllers\Api\NoteController;
 use App\Http\Controllers\Api\EdtController;
 use App\Http\Controllers\Api\AbsenceController;
 use App\Http\Controllers\Api\ModuleController;
+use App\Http\Controllers\Api\DocumentVerificationController;
+
+// Public document verification (called by React frontend via QR code)
+Route::get('/verify/{documentId}', [DocumentVerificationController::class, 'verify']);
 
 // Auth publique
 Route::post('/login', [AuthController::class, 'login']);

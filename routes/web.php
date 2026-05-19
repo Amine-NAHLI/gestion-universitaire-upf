@@ -20,6 +20,7 @@ Route::get('/dashboard', function () {
         'admin' => redirect()->route('admin.dashboard'),
         'professeur' => redirect()->route('professeur.dashboard'),
         'etudiant' => redirect()->route('etudiant.dashboard'),
+        'parent' => redirect()->route('parent.dashboard'),
         default => view('dashboard'),
     };
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -126,6 +127,8 @@ Route::middleware(['auth', 'role:etudiant'])->prefix('etudiant')->name('etudiant
     Route::post('classroom/annonces/{annonce}/commenter', [\App\Http\Controllers\Etudiant\ClassroomController::class, 'commenter'])->name('classroom.commenter');
     
     Route::get('documents', [\App\Http\Controllers\Etudiant\DocumentController::class, 'index'])->name('documents.index');
+    
+    Route::get('releve-notes/download', [\App\Http\Controllers\Etudiant\ReleveNotesController::class, 'download'])->name('releve-notes.download');
 });
 
 // Notifications system
@@ -133,6 +136,17 @@ Route::middleware('auth')->group(function () {
     Route::get('notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
     Route::post('notifications/{notification}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('notifications/read-all', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
+});
+
+// Routes Parent
+Route::middleware(['auth', 'role:parent'])->prefix('parent')->name('parent.')->group(function () {
+    Route::get('dashboard', [\App\Http\Controllers\Parent\DashboardController::class, 'index'])->name('dashboard');
+    Route::post('chatbot', [\App\Http\Controllers\Parent\ChatbotController::class, 'ask'])->name('chatbot');
+    Route::get('chatbot/welcome', [\App\Http\Controllers\Parent\ChatbotController::class, 'welcome'])->name('chatbot.welcome');
+    Route::get('chatbot/history', [\App\Http\Controllers\Parent\ChatbotController::class, 'history'])->name('chatbot.history');
+    Route::post('chatbot/feedback', [\App\Http\Controllers\Parent\ChatbotController::class, 'saveFeedback'])->name('chatbot.feedback');
+    Route::get('notifications', [\App\Http\Controllers\Parent\NotificationController::class, 'index'])->name('notifications');
+    Route::post('notifications/{notification}/read', [\App\Http\Controllers\Parent\NotificationController::class, 'markRead'])->name('notifications.read');
 });
 
 require __DIR__.'/auth.php';

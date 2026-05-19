@@ -125,25 +125,52 @@ class DemandeController extends Controller
         return back()->with('warning', 'Demande refusée et notifications envoyées.');
     }
 
-    /**
-     * Download or view the generated PDF.
-     */
     public function genererPdf(DemandeAdministrative $demande)
     {
         $demande->load('user');
+        $user = $demande->user;
         $langue = $demande->langue_document ?? 'fr';
-        $pdf = Pdf::loadView('pdf.demande', compact('demande', 'langue'));
         
         $typeLabels = [
-            'attestation_scolarite' => 'Attestation_Scolarite',
-            'releve_notes' => 'Releve_Notes',
-            'certificat_inscription' => 'Certificat_Inscription',
-            'attestation_travail' => 'Attestation_Travail',
-            'ordre_mission' => 'Ordre_Mission',
+            'attestation_scolarite' => 'Attestation de Scolarité',
+            'releve_notes' => 'Relevé de Notes',
+            'certificat_inscription' => 'Certificat d\'Inscription',
+            'attestation_travail' => 'Attestation de Travail',
+            'ordre_mission' => 'Ordre de Mission',
         ];
         
-        $label = $typeLabels[$demande->type] ?? 'Document_Administratif';
+        $documentTypeStr = $typeLabels[$demande->type] ?? 'Document Administratif';
+
+        // Prepare sealed data based on the type of document
+        $sealedData = [
+            'student_name' => trim(($user->prenom ?? '') . ' ' . $user->name),
+            'document_type' => $documentTypeStr,
+            'issue_date' => now()->format('Y-m-d'),
+        ];
         
-        return $pdf->download($label . '_' . $demande->user->name . '.pdf');
+        if ($user->isEtudiant() && $user->etudiant) {
+             $sealedData['cne'] = $user->etudiant->cne ?? 'N/A';
+             $sealedData['filiere'] = $user->etudiant->groupe->niveau->filiere->nom ?? 'N/A';
+        }
+
+        // Generate Crypto Signature
+        $cryptoService = app(\App\Services\CryptoSignatureService::class);
+        $docSignature = $cryptoService->signDocument($user, $demande->type, $sealedData);
+
+        // Generate QR Code
+        $frontendUrl = config('app.verification_frontend_url', 'http://localhost:5173');
+        $verificationUrl = rtrim($frontendUrl, '/') . '/verify/' . $docSignature->document_id;
+        $qrCode = \SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')
+            ->size(120)
+            ->errorCorrection('H')
+            ->generate($verificationUrl);
+        $qrCodeBase64 = base64_encode($qrCode);
+
+        // Load View with new data
+        $pdf = Pdf::loadView('pdf.demande', compact('demande', 'langue', 'docSignature', 'qrCodeBase64', 'verificationUrl'));
+        
+        $label = str_replace(' ', '_', $documentTypeStr);
+        
+        return $pdf->download($label . '_' . $user->name . '.pdf');
     }
 }

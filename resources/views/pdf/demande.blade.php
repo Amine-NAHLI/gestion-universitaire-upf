@@ -237,10 +237,33 @@
             $loc = $dateLocales[$lang] ?? 'fr';
         @endphp
         <div class="date-place">{{ $tr['done_at'] }} {{ now()->locale($loc)->isoFormat('D MMMM YYYY') }}</div>
-        <div class="signature">
-            {{ $tr['direction'] }}<br>
-            <div class="signature-name">{{ $tr['stamp'] }}</div>
-        </div>
+        
+        <table style="width: 100%; margin-top: 10px;">
+            <tr>
+                <td style="width: 50%; vertical-align: top; text-align: left;">
+                    @if(isset($qrCodeBase64))
+                    <div style="border: 1px dashed #999; padding: 10px; display: inline-block; text-align: center; background-color: #f8f9fa;">
+                        <img src="data:image/svg+xml;base64,{{ $qrCodeBase64 }}" alt="QR Code" style="width: 100px; height: 100px;">
+                        <div style="font-size: 8px; color: #555; margin-top: 5px; font-weight: bold;">
+                            DOCUMENT CERTIFIÉ PKI
+                        </div>
+                        <div style="font-size: 7px; color: #777;">
+                            Scannez pour vérifier l'authenticité
+                        </div>
+                        <div style="font-size: 6px; color: #999; margin-top: 3px; word-break: break-all; max-width: 120px;">
+                            ID: {{ $docSignature->document_id ?? '' }}
+                        </div>
+                    </div>
+                    @endif
+                </td>
+                <td style="width: 50%; vertical-align: top;">
+                    <div class="signature">
+                        {{ $tr['direction'] }}<br>
+                        <div class="signature-name">{{ $tr['stamp'] }}</div>
+                    </div>
+                </td>
+            </tr>
+        </table>
     </div>
 </body>
 </html>
