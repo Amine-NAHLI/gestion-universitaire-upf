@@ -28,7 +28,7 @@ class DashboardController extends Controller
         $notes = Note::with('module')->where('etudiant_id', $etudiant->id)->get();
         $totalSomes = 0;
         $creditsValides = 0;
-        $totalModules = $etudiant->groupe->modules()->count() ?: 1; // Éviter div par 0
+        $totalModules = ($etudiant->groupe ? $etudiant->groupe->modules()->count() : 0) ?: 1; // Éviter div par 0
         
         foreach ($notes as $note) {
             $ccAvg = (($note->cc1 ?? 0) + ($note->cc2 ?? 0)) / 2;
@@ -41,15 +41,19 @@ class DashboardController extends Controller
         $moyenneGenerale = $notes->count() > 0 ? ($totalSomes / $notes->count()) : 0;
 
         // 3. Supports de cours
-        $moduleIds = $etudiant->groupe ? $etudiant->groupe->modules()->pluck('modules.id') : collect();
+        $moduleIds = ($etudiant->groupe && $etudiant->groupe->niveau)
+            ? $etudiant->groupe->modules()->pluck('modules.id')
+            : collect();
         $supportsCount = $moduleIds->isNotEmpty() ? SupportCours::whereIn('module_id', $moduleIds)->count() : 0;
 
         // 4. Planning du jour
-        $planningJour = Seance::with(['module', 'salle', 'professeur.user'])
-            ->where('groupe_id', $etudiant->groupe_id)
-            ->whereDate('date', Carbon::today())
-            ->orderBy('heure_debut')
-            ->get();
+        $planningJour = $etudiant->groupe_id
+            ? Seance::with(['module', 'salle', 'professeur.user'])
+                ->where('groupe_id', $etudiant->groupe_id)
+                ->whereDate('date', Carbon::today())
+                ->orderBy('heure_debut')
+                ->get()
+            : collect();
 
         return view('etudiant.dashboard', compact(
             'etudiant',

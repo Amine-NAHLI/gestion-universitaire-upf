@@ -13,7 +13,11 @@ class ClassroomController extends Controller
     public function index()
     {
         $etudiant = auth()->user()->etudiant;
-        
+
+        if (! $etudiant || ! $etudiant->groupe) {
+            return view('etudiant.classroom.index', ['modules' => collect()]);
+        }
+
         $modules = $etudiant->groupe->niveau->modules()
             ->with(['professeurs.user', 'annonces' => fn($q) => $q->latest()->take(1)])
             ->get();
