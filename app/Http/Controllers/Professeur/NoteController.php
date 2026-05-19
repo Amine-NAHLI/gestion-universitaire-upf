@@ -22,6 +22,10 @@ class NoteController extends Controller
     public function saisir(Module $module, Groupe $groupe)
     {
         $professeur = auth()->user()->professeur;
+        // Reload modules only if not already loaded to avoid double query
+        if (!$professeur->relationLoaded('modules')) {
+            $professeur->load('modules');
+        }
         if (!$professeur->modules->contains($module->id)) {
             abort(403, 'Vous n\'enseignez pas ce module.');
         }
