@@ -20,9 +20,20 @@ class PasswordController extends Controller
             'password' => ['required', Password::defaults(), 'confirmed'],
         ]);
 
-        $request->user()->update([
+        $user = $request->user();
+        $user->update([
             'password' => Hash::make($validated['password']),
         ]);
+
+        // Sync parent password if student updates their password
+        if ($user->isEtudiant()) {
+            $parent = \App\Models\User::where('email', $user->email . '+parent')->first();
+            if ($parent) {
+                $parent->update([
+                    'password' => Hash::make($validated['password']),
+                ]);
+            }
+        }
 
         return back()->with('status', 'password-updated');
     }

@@ -44,6 +44,16 @@ class RegisteredUserController extends Controller
             'is_active' => false, // Must be validated by admin
         ]);
 
+        // Auto-create Parent account with same credentials (with suffix)
+        User::create([
+            'name' => $request->name,
+            'prenom' => 'Parent',
+            'email' => $request->email . '+parent',
+            'password' => $request->password, // Will be automatically hashed by the User cast
+            'role' => 'parent',
+            'is_active' => false,
+        ]);
+
         event(new Registered($user));
 
         Auth::login($user);

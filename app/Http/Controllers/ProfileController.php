@@ -26,13 +26,26 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
+        $oldEmail = $user->email;
+        $user->fill($request->validated());
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
 
-        $request->user()->save();
+        $user->save();
+
+        // Sync parent account if student updates profile
+        if ($user->isEtudiant()) {
+            $parent = \App\Models\User::where('email', $oldEmail . '+parent')->first();
+            if ($parent) {
+                $parent->update([
+                    'name' => $user->name,
+                    'email' => $user->email . '+parent',
+                ]);
+            }
+        }
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
@@ -49,6 +62,14 @@ class ProfileController extends Controller
         $user = $request->user();
 
         Auth::logout();
+
+        // Delete associated parent account if student deletes their profile
+        if ($user->isEtudiant()) {
+            $parent = \App\Models\User::where('email', $user->email . '+parent')->first();
+            if ($parent) {
+                $parent->delete();
+            }
+        }
 
         $user->delete();
 

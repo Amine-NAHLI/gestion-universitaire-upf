@@ -74,6 +74,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->role === 'etudiant';
     }
 
+    public function isParent(): bool
+    {
+        return $this->role === 'parent';
+    }
+
     public function getFullNameAttribute(): string
     {
         return "{$this->prenom} {$this->name}";

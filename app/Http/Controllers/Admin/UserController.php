@@ -72,6 +72,18 @@ class UserController extends Controller
             'email_verified_at' => now(), // Manually created users are pre-verified
         ]);
 
+        if ($user->isEtudiant()) {
+            User::create([
+                'name' => $user->name,
+                'prenom' => 'Parent',
+                'email' => $user->email . '+parent',
+                'password' => $request->password, // Will be automatically hashed by the User cast
+                'role' => 'parent',
+                'is_active' => $user->is_active,
+                'email_verified_at' => now(),
+            ]);
+        }
+
         if ($user->is_active) {
             if ($user->isEtudiant()) {
                 $groupe = \App\Models\Groupe::where('nom', 'GINFO3A')->first() ?: \App\Models\Groupe::first();
@@ -149,7 +161,24 @@ class UserController extends Controller
             $data['password'] = Hash::make($request->password);
         }
 
+        $oldEmail = $user->email;
         $user->update($data);
+
+        // Sync parent account if student is updated
+        if ($user->isEtudiant()) {
+            $parent = User::where('email', $oldEmail . '+parent')->first();
+            if ($parent) {
+                $parentData = [
+                    'name' => $user->name,
+                    'email' => $user->email . '+parent',
+                    'is_active' => $user->is_active,
+                ];
+                if ($request->filled('password')) {
+                    $parentData['password'] = Hash::make($request->password);
+                }
+                $parent->update($parentData);
+            }
+        }
 
         return redirect()->route('admin.users.index')
             ->with('success', 'Utilisateur mis à jour avec succès.');
@@ -184,11 +213,19 @@ class UserController extends Controller
             \App\Models\DemandeAdministrative::where('user_id', $user->id)->delete();
             \App\Models\NotificationApp::where('user_id', $user->id)->delete();
 
-            if ($user->isEtudiant() && $user->etudiant) {
-                // Supprimer les notes et absences de l'étudiant
-                \App\Models\Note::where('etudiant_id', $user->etudiant->id)->delete();
-                \App\Models\Absence::where('etudiant_id', $user->etudiant->id)->delete();
-                $user->etudiant()->delete();
+            if ($user->isEtudiant()) {
+                if ($user->etudiant) {
+                    // Supprimer les notes et absences de l'étudiant
+                    \App\Models\Note::where('etudiant_id', $user->etudiant->id)->delete();
+                    \App\Models\Absence::where('etudiant_id', $user->etudiant->id)->delete();
+                    $user->etudiant()->delete();
+                }
+                
+                // Supprimer le compte parent associé
+                $parent = User::where('email', $user->email . '+parent')->first();
+                if ($parent) {
+                    $parent->delete();
+                }
             }
 
             if ($user->isProfesseur() && $user->professeur) {
@@ -216,6 +253,15 @@ class UserController extends Controller
 
         $user->is_active = !$user->is_active;
         $user->save();
+
+        // Activer/Désactiver le compte parent associé
+        if ($user->isEtudiant()) {
+            $parent = User::where('email', $user->email . '+parent')->first();
+            if ($parent) {
+                $parent->is_active = $user->is_active;
+                $parent->save();
+            }
+        }
 
         if ($user->is_active) {
             // Création automatique du profil étudiant s'il n'existe pas

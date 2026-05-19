@@ -76,10 +76,61 @@
                     {{ __('Créer un compte étudiant') }}
                 </a>
             </div>
+
+            <div class="text-center mt-6 pt-6 border-t border-slate-100 dark:border-slate-800">
+                <a href="{{ route('login.parent') }}" class="inline-flex items-center justify-center px-4 py-2 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 transition-all">
+                    <svg class="w-4 h-4 mr-2 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    {{ __('Accéder à l\'Espace Parents') }}
+                </a>
+            </div>
         </form>
+
+        <!-- Accès Rapide (Mode Soutenance) -->
+        @if((isset($admins) && $admins->count() > 0) || (isset($professeurs) && $professeurs->count() > 0) || (isset($etudiants) && $etudiants->count() > 0))
+            <div class="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800" x-data="{ tab: 'admin' }">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ __('Accès Rapide (Soutenance)') }}</h3>
+                    <div class="flex space-x-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-lg">
+                        <button @click="tab = 'admin'" :class="tab === 'admin' ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'" class="text-[10px] font-bold px-2 py-1 rounded transition-all">Admin</button>
+                        <button @click="tab = 'prof'" :class="tab === 'prof' ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'" class="text-[10px] font-bold px-2 py-1 rounded transition-all">Profs</button>
+                        <button @click="tab = 'etu'" :class="tab === 'etu' ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'" class="text-[10px] font-bold px-2 py-1 rounded transition-all">Étudiants</button>
+                    </div>
+                </div>
+
+                <!-- Admin Tab -->
+                <div x-show="tab === 'admin'" x-transition class="flex flex-wrap gap-2">
+                    @foreach($admins ?? [] as $admin)
+                        <button type="button" @click="email = '{{ $admin->email }}'; password = 'password';" class="text-xs font-bold px-3 py-1.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg hover:bg-indigo-100 dark:hover:bg-indigo-800/50 transition-colors border border-indigo-100 dark:border-indigo-800/30">
+                            {{ trim(($admin->prenom ?? '') . ' ' . ($admin->name ?? '')) ?: $admin->email }}
+                        </button>
+                    @endforeach
+                </div>
+
+                <!-- Profs Tab -->
+                <div x-show="tab === 'prof'" x-transition x-cloak class="flex flex-wrap gap-2 max-h-32 overflow-y-auto pr-2 custom-scrollbar">
+                    @foreach($professeurs ?? [] as $prof)
+                        <button type="button" @click="email = '{{ $prof->email }}'; password = 'password';" class="text-xs font-bold px-3 py-1.5 bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-800/50 transition-colors border border-purple-100 dark:border-purple-800/30">
+                            {{ trim(($prof->prenom ?? '') . ' ' . ($prof->name ?? '')) ?: $prof->email }}
+                        </button>
+                    @endforeach
+                </div>
+
+                <!-- Etudiants Tab -->
+                <div x-show="tab === 'etu'" x-transition x-cloak class="flex flex-wrap gap-2 max-h-32 overflow-y-auto pr-2 custom-scrollbar">
+                    @foreach($etudiants ?? [] as $etu)
+                        <button type="button" @click="email = '{{ $etu->email }}'; password = 'password';" class="text-xs font-bold px-3 py-1.5 bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 rounded-lg hover:bg-teal-100 dark:hover:bg-teal-800/50 transition-colors border border-teal-100 dark:border-teal-800/30">
+                            {{ trim(($etu->prenom ?? '') . ' ' . ($etu->name ?? '')) ?: $etu->email }}
+                        </button>
+                    @endforeach
+                </div>
+            </div>
+        @endif
     </div>
 
     <style>
         [x-cloak] { display: none !important; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.2); border-radius: 4px; }
     </style>
 </x-guest-layout>
