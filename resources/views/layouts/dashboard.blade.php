@@ -158,7 +158,9 @@
             position: { x: 'right', y: 'top' },
             types: [
                 { type: 'success', background: '#4f46e5', icon: false },
-                { type: 'error', background: '#e11d48', icon: false }
+                { type: 'error', background: '#e11d48', icon: false },
+                { type: 'warning', background: '#d97706', icon: false },
+                { type: 'info', background: '#0ea5e9', icon: false }
             ]
         });
 
@@ -173,10 +175,16 @@
 
             // Handle Flash Messages
             @if(session('success'))
-                Notyf.success("{{ session('success') }}");
+                Notyf.success("{{ addslashes(session('success')) }}");
             @endif
             @if(session('error'))
-                Notyf.error("{{ session('error') }}");
+                Notyf.error("{{ addslashes(session('error')) }}");
+            @endif
+            @if(session('warning'))
+                Notyf.open({ type: 'warning', message: "{{ addslashes(session('warning')) }}", background: '#d97706', duration: 5000 });
+            @endif
+            @if(session('info'))
+                Notyf.open({ type: 'info', message: "{{ addslashes(session('info')) }}", background: '#0ea5e9', duration: 4000 });
             @endif
         });
 
