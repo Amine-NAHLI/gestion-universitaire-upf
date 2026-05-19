@@ -44,6 +44,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
     Route::patch('users/{user}/toggle-active', [\App\Http\Controllers\Admin\UserController::class, 'toggleActive'])->name('users.toggle-active');
+    Route::get('filieres/{filiere}/niveaux', [\App\Http\Controllers\Admin\FiliereController::class, 'niveaux'])->name('filieres.niveaux');
+    Route::get('niveaux/{niveau}/groupes', [\App\Http\Controllers\Admin\FiliereController::class, 'groupesByNiveau'])->name('niveaux.groupes');
     Route::resource('filieres', \App\Http\Controllers\Admin\FiliereController::class);
     Route::resource('modules', \App\Http\Controllers\Admin\ModuleController::class);
     Route::resource('salles', \App\Http\Controllers\Admin\SalleController::class);
@@ -141,7 +143,7 @@ Route::middleware('auth')->group(function () {
 // Routes Parent
 Route::middleware(['auth', 'role:parent'])->prefix('parent')->name('parent.')->group(function () {
     Route::get('dashboard', [\App\Http\Controllers\Parent\DashboardController::class, 'index'])->name('dashboard');
-    Route::post('chatbot', [\App\Http\Controllers\Parent\ChatbotController::class, 'ask'])->name('chatbot');
+    Route::post('chatbot', [\App\Http\Controllers\Parent\ChatbotController::class, 'ask'])->name('chatbot')->middleware('throttle:20,1440');
     Route::get('chatbot/welcome', [\App\Http\Controllers\Parent\ChatbotController::class, 'welcome'])->name('chatbot.welcome');
     Route::get('chatbot/history', [\App\Http\Controllers\Parent\ChatbotController::class, 'history'])->name('chatbot.history');
     Route::post('chatbot/feedback', [\App\Http\Controllers\Parent\ChatbotController::class, 'saveFeedback'])->name('chatbot.feedback');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Filiere;
+use App\Models\Niveau;
 use Illuminate\Http\Request;
 
 class FiliereController extends Controller
@@ -72,9 +73,29 @@ class FiliereController extends Controller
      */
     public function destroy(Filiere $filiere)
     {
+        // Check for dependent niveaux before deleting
+        if ($filiere->niveaux()->exists()) {
+            return redirect()->route('admin.filieres.index')
+                ->with('error', 'Impossible de supprimer cette filière : elle contient des niveaux. Supprimez d\'abord les niveaux associés.');
+        }
+
         $filiere->delete();
 
         return redirect()->route('admin.filieres.index')
             ->with('success', 'Filière supprimée avec succès.');
+    }
+
+    public function niveaux(Filiere $filiere): \Illuminate\Http\JsonResponse
+    {
+        return response()->json(
+            $filiere->niveaux()->select('id', 'nom', 'numero')->orderBy('numero')->get()
+        );
+    }
+
+    public function groupesByNiveau(Niveau $niveau): \Illuminate\Http\JsonResponse
+    {
+        return response()->json(
+            $niveau->groupes()->select('id', 'nom')->orderBy('nom')->get()
+        );
     }
 }
