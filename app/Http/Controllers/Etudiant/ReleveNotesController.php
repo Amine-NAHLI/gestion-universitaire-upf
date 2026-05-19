@@ -35,10 +35,10 @@ class ReleveNotesController extends Controller
             $coeff = $note->module->coefficient ?? 1;
             $notes[] = [
                 'module' => $moduleName,
-                'note' => number_format($note->note, 2),
+                'note' => number_format((float) ($note->note_finale ?? 0), 2),
                 'coefficient' => $coeff,
             ];
-            $totalWeighted += $note->note * $coeff;
+            $totalWeighted += ((float) ($note->note_finale ?? 0)) * $coeff;
             $totalCoeff += $coeff;
         }
 
