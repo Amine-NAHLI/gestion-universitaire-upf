@@ -60,7 +60,7 @@ class RoomReservationConflictTest extends TestCase
         // From 10:00 to 12:00 (overlapping with 09:00-11:00)
         $response = $this->actingAs($user)->post(route('professeur.reservations.store'), [
             'salle_id' => $salle->id,
-            'date' => now()->addDays(2)->format('Y-m-d 00:00:00'),
+            'date' => now()->addDays(2)->format('Y-m-d'),
             'heure_debut' => '10:00:00',
             'heure_fin' => '12:00:00',
             'motif' => 'Cours avancé Laravel 12'
@@ -119,7 +119,7 @@ class RoomReservationConflictTest extends TestCase
         // Non-overlapping reservation from 14:00 to 16:00
         $response = $this->actingAs($user)->post(route('professeur.reservations.store'), [
             'salle_id' => $salle->id,
-            'date' => now()->addDays(2)->format('Y-m-d 00:00:00'),
+            'date' => now()->addDays(2)->format('Y-m-d'),
             'heure_debut' => '14:00:00',
             'heure_fin' => '16:00:00',
             'motif' => 'Cours avancé Laravel 12'
