@@ -6,8 +6,12 @@ use App\Models\Note;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Concerns\WithStyles;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 
-class NotesExport implements FromCollection, WithHeadings, WithMapping
+class NotesExport implements FromCollection, WithHeadings, WithMapping, WithStyles, ShouldAutoSize
 {
     protected $groupe_id;
     protected $module_id;
@@ -28,29 +32,34 @@ class NotesExport implements FromCollection, WithHeadings, WithMapping
 
     public function headings(): array
     {
-        return [
-            'Étudiant',
-            'CNE',
-            'Module',
-            'CC1',
-            'CC2',
-            'Examen',
-            'Note Finale',
-            'Statut'
-        ];
+        return ['Étudiant', 'CNE', 'Module', 'CC1', 'CC2', 'Examen', 'Note Finale', 'Statut'];
     }
 
     public function map($note): array
     {
+        $statut = $note->note_finale === null
+            ? 'En attente'
+            : ($note->note_finale >= 10 ? 'Validé' : 'Ajourné');
+
         return [
-            $note->etudiant->user->full_name,
-            $note->etudiant->cne,
-            $note->module->nom,
+            $note->etudiant?->user?->full_name ?? '—',
+            $note->etudiant?->cne ?? '—',
+            $note->module?->nom ?? '—',
             $note->cc1 ?? 'N/A',
             $note->cc2 ?? 'N/A',
             $note->examen ?? 'N/A',
             $note->note_finale ?? 'N/A',
-            $note->note_finale >= 10 ? 'Validé' : ($note->note_finale ? 'Ajourné' : 'En attente')
+            $statut,
+        ];
+    }
+
+    public function styles(Worksheet $sheet): array
+    {
+        return [
+            1 => [
+                'font' => ['bold' => true, 'color' => ['argb' => 'FFFFFFFF'], 'size' => 11],
+                'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => 'FF4F46E5']],
+            ],
         ];
     }
 }

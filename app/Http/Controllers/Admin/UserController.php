@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\EtudiantsExport;
 
 class UserController extends Controller
 {
@@ -418,5 +420,12 @@ class UserController extends Controller
             ])
             ->values()
             ->toArray();
+    }
+
+    public function export(Request $request)
+    {
+        $groupe_id  = $request->query('groupe_id');
+        $filiere_id = $request->query('filiere_id');
+        return Excel::download(new EtudiantsExport($groupe_id, $filiere_id), 'etudiants.xlsx');
     }
 }

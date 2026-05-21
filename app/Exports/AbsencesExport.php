@@ -6,8 +6,12 @@ use App\Models\Absence;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Concerns\WithStyles;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 
-class AbsencesExport implements FromCollection, WithHeadings, WithMapping
+class AbsencesExport implements FromCollection, WithHeadings, WithMapping, WithStyles, ShouldAutoSize
 {
     protected $groupe_id;
 
@@ -25,25 +29,31 @@ class AbsencesExport implements FromCollection, WithHeadings, WithMapping
 
     public function headings(): array
     {
-        return [
-            'Étudiant',
-            'Groupe',
-            'Module',
-            'Date Séance',
-            'Heure',
-            'Justifiée'
-        ];
+        return ['Étudiant', 'Groupe', 'Module', 'Date Séance', 'Heure', 'Justifiée'];
     }
 
     public function map($absence): array
     {
+        $heureDebut = $absence->seance?->heure_debut ? $absence->seance->heure_debut->format('H:i') : '—';
+        $heureFin   = $absence->seance?->heure_fin   ? $absence->seance->heure_fin->format('H:i')   : '—';
+
         return [
-            $absence->etudiant->user->full_name,
-            $absence->etudiant->groupe->nom,
-            $absence->seance->module->nom,
-            $absence->seance->date->format('d/m/Y'),
-            $absence->seance->heure_debut->format('H:i') . ' - ' . $absence->seance->heure_fin->format('H:i'),
-            $absence->justifiee ? 'OUI' : 'NON'
+            $absence->etudiant?->user?->full_name ?? '—',
+            $absence->etudiant?->groupe?->nom     ?? '—',
+            $absence->seance?->module?->nom       ?? '—',
+            $absence->seance?->date?->format('d/m/Y') ?? '—',
+            $heureDebut . ' - ' . $heureFin,
+            $absence->justifiee ? 'OUI' : 'NON',
+        ];
+    }
+
+    public function styles(Worksheet $sheet): array
+    {
+        return [
+            1 => [
+                'font' => ['bold' => true, 'color' => ['argb' => 'FFFFFFFF'], 'size' => 11],
+                'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => 'FFEF4444']],
+            ],
         ];
     }
 }
