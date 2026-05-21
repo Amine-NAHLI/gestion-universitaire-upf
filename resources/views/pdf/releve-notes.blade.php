@@ -87,6 +87,9 @@
             text-align: center;
             font-weight: bold;
         }
+        .badge-valide  { background: #dcfce7; color: #15803d; padding: 1px 6px; border-radius: 4px; font-size: 9px; font-weight: bold; }
+        .badge-ajourne { background: #fee2e2; color: #b91c1c; padding: 1px 6px; border-radius: 4px; font-size: 9px; font-weight: bold; }
+        .badge-attente { background: #fef9c3; color: #92400e; padding: 1px 6px; border-radius: 4px; font-size: 9px; font-weight: bold; }
 
         /* Average */
         .moyenne-box {
@@ -215,17 +218,33 @@
     <table class="notes-table">
         <thead>
             <tr>
-                <th style="width: 50%;">Module</th>
-                <th style="width: 25%; text-align: center;">Note / 20</th>
-                <th style="width: 25%; text-align: center;">Coefficient</th>
+                <th style="width: 30%;">Module</th>
+                <th style="width: 10%; text-align: center;">CC1</th>
+                <th style="width: 10%; text-align: center;">CC2</th>
+                <th style="width: 10%; text-align: center;">Examen</th>
+                <th style="width: 12%; text-align: center;">Note / 20</th>
+                <th style="width: 8%; text-align: center;">Coeff.</th>
+                <th style="width: 20%; text-align: center;">Statut</th>
             </tr>
         </thead>
         <tbody>
             @foreach($sealedData['notes'] as $note)
             <tr>
                 <td>{{ $note['module'] }}</td>
-                <td class="note-cell">{{ $note['note'] }}</td>
+                <td class="note-cell">{{ $note['cc1'] }}</td>
+                <td class="note-cell">{{ $note['cc2'] }}</td>
+                <td class="note-cell">{{ $note['examen'] }}</td>
+                <td class="note-cell" style="font-size: 13px;">{{ $note['note'] }}</td>
                 <td class="note-cell">{{ $note['coefficient'] }}</td>
+                <td class="note-cell">
+                    @if($note['statut'] === 'Validé')
+                        <span class="badge-valide">Validé</span>
+                    @elseif($note['statut'] === 'Ajourné')
+                        <span class="badge-ajourne">Ajourné</span>
+                    @else
+                        <span class="badge-attente">En attente</span>
+                    @endif
+                </td>
             </tr>
             @endforeach
         </tbody>

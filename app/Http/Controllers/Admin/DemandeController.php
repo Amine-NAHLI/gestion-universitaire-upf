@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\DemandeAdministrative;
 use Barryvdh\DomPDF\Facade\Pdf;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
@@ -62,12 +63,34 @@ class DemandeController extends Controller
             Storage::disk('public')->makeDirectory('demandes');
         }
 
-        // Generate the PDF with the chosen language
+        // Generate the certified PDF with QR code
+        $user = $demande->user;
         $langue = $demande->langue_document ?? 'fr';
-        $pdf = Pdf::loadView('pdf.demande', compact('demande', 'langue'));
-        $filename = 'demande_' . $demande->id . '_' . $demande->type . '.pdf';
+        $sealedData = [
+            'type'            => $demande->type,
+            'user_id'         => $user->id,
+            'nom'             => $user->name,
+            'prenom'          => $user->prenom,
+            'date_validation' => now()->toISOString(),
+            'validateur'      => auth()->user()->name,
+            'langue'          => $langue,
+            'donnees'         => $demande->donnees_supplementaires,
+        ];
+
+        $cryptoService = app(\App\Services\CryptoSignatureService::class);
+        $docSignature = $cryptoService->signDocument($user, $demande->type, $sealedData);
+
+        $frontendUrl = config('app.verification_frontend_url', 'http://localhost:5173');
+        $verificationUrl = rtrim($frontendUrl, '/') . '/verify/' . $docSignature->document_id;
+        $qrCode = QrCode::format('svg')->size(120)->errorCorrection('H')->generate($verificationUrl);
+        $qrCodeBase64 = base64_encode($qrCode);
+
+        $pdf = Pdf::loadView('pdf.demande', compact(
+            'demande', 'langue', 'docSignature', 'qrCodeBase64', 'verificationUrl'
+        ));
+        $filename = 'demande_' . $demande->id . '_' . $demande->type . '_certified.pdf';
         Storage::disk('public')->put('demandes/' . $filename, $pdf->output());
-        
+
         $demande->update(['fichier_pdf' => 'demandes/' . $filename]);
         
         // Envoi de l'email de notification (try-catch pour ne pas bloquer la notification interne)
