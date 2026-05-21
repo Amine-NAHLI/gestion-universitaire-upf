@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Module;
+use App\Models\Salle;
 
 class SearchController extends Controller
 {
@@ -62,7 +63,7 @@ class SearchController extends Controller
             ];
         }
 
-        // Seuls les admins peuvent chercher dans les modules
+        // Seuls les admins peuvent chercher dans les modules et salles
         if ($authUser->isAdmin()) {
             $modules = Module::where('nom', 'like', "%{$q}%")
                 ->orWhere('code', 'like', "%{$q}%")
@@ -71,11 +72,26 @@ class SearchController extends Controller
 
             foreach ($modules as $module) {
                 $results[] = [
-                    'type' => 'Module',
-                    'icon' => 'fa-book',
-                    'title' => $module->nom,
+                    'type'     => 'Module',
+                    'icon'     => 'fa-book',
+                    'title'    => $module->nom,
                     'subtitle' => $module->code ?? '',
-                    'link' => route('admin.modules.index'),
+                    'link'     => route('admin.modules.index'),
+                ];
+            }
+
+            $salles = Salle::where('nom', 'like', "%{$q}%")
+                ->orWhere('type', 'like', "%{$q}%")
+                ->limit(3)
+                ->get();
+
+            foreach ($salles as $salle) {
+                $results[] = [
+                    'type'     => 'Salle',
+                    'icon'     => 'fa-door-open',
+                    'title'    => $salle->nom,
+                    'subtitle' => ucfirst($salle->type ?? '') . ($salle->capacite ? ' · ' . $salle->capacite . ' places' : ''),
+                    'link'     => route('admin.salles.index'),
                 ];
             }
         }
