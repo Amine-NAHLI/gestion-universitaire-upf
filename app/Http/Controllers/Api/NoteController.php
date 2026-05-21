@@ -24,7 +24,7 @@ class NoteController extends Controller
                     'cc2' => $n->cc2,
                     'examen' => $n->examen,
                     'note_finale' => $n->note_finale,
-                    'statut' => $n->note_finale >= 10 ? 'validé' : ($n->note_finale ? 'ajourné' : 'en_attente'),
+                    'statut' => $n->note_finale === null ? 'en_attente' : ($n->note_finale >= 10 ? 'validé' : 'ajourné'),
                 ]);
 
             $moyenne = round($notes->whereNotNull('note_finale')->avg('note_finale'), 2);

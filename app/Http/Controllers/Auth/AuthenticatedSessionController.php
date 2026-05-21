@@ -16,9 +16,16 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
-        $admins = \App\Models\User::where('role', 'admin')->get();
-        $professeurs = \App\Models\User::where('role', 'professeur')->get();
-        $etudiants = \App\Models\User::where('role', 'etudiant')->get();
+        $admins = collect();
+        $professeurs = collect();
+        $etudiants = collect();
+
+        // Accès rapide disponible uniquement en environnement local (soutenance)
+        if (app()->isLocal()) {
+            $admins = \App\Models\User::where('role', 'admin')->get();
+            $professeurs = \App\Models\User::where('role', 'professeur')->get();
+            $etudiants = \App\Models\User::where('role', 'etudiant')->get();
+        }
 
         return view('auth.login', compact('admins', 'professeurs', 'etudiants'));
     }

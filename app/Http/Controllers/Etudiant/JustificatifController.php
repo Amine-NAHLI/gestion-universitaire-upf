@@ -34,17 +34,24 @@ class JustificatifController extends Controller
 
     public function store(Request $request)
     {
+        $etudiant = auth()->user()->etudiant;
+
         $request->validate([
             'absence_id' => 'required|exists:absences,id',
             'motif' => 'required|string|min:10',
             'fichier' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ]);
 
+        // Vérification que l'absence appartient bien à cet étudiant (protection IDOR)
+        $absence = Absence::where('id', $request->absence_id)
+            ->where('etudiant_id', $etudiant->id)
+            ->firstOrFail();
+
         $path = $request->file('fichier')->store('justificatifs', 'public');
 
         $justificatif = Justificatif::create([
-            'etudiant_id' => auth()->user()->etudiant->id,
-            'absence_id' => $request->absence_id,
+            'etudiant_id' => $etudiant->id,
+            'absence_id' => $absence->id,
             'fichier' => $path,
             'motif' => $request->motif,
             'statut' => 'en_attente',

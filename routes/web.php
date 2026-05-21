@@ -42,6 +42,7 @@ Route::middleware('auth')->group(function () {
 // Routes Admin
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
+    Route::get('users/export', [\App\Http\Controllers\Admin\UserController::class, 'export'])->name('users.export');
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
     Route::patch('users/{user}/toggle-active', [\App\Http\Controllers\Admin\UserController::class, 'toggleActive'])->name('users.toggle-active');
     Route::get('filieres/{filiere}/niveaux', [\App\Http\Controllers\Admin\FiliereController::class, 'niveaux'])->name('filieres.niveaux');
@@ -57,8 +58,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('absences', [\App\Http\Controllers\Admin\AbsenceController::class, 'index'])->name('absences.index');
     Route::get('absences/export', [\App\Http\Controllers\Admin\AbsenceController::class, 'export'])->name('absences.export');
     Route::patch('absences/{absence}/toggle-justifiee', [\App\Http\Controllers\Admin\AbsenceController::class, 'toggleJustifiee'])->name('absences.toggle-justifiee');
-    Route::get('justificatifs/{justificatif}/valider', [\App\Http\Controllers\Admin\AbsenceController::class, 'validerJustificatif'])->name('justificatifs.valider');
-    Route::get('justificatifs/{justificatif}/refuser', [\App\Http\Controllers\Admin\AbsenceController::class, 'refuserJustificatif'])->name('justificatifs.refuser');
+    Route::patch('justificatifs/{justificatif}/valider', [\App\Http\Controllers\Admin\AbsenceController::class, 'validerJustificatif'])->name('justificatifs.valider');
+    Route::patch('justificatifs/{justificatif}/refuser', [\App\Http\Controllers\Admin\AbsenceController::class, 'refuserJustificatif'])->name('justificatifs.refuser');
 
     Route::get('demandes', [\App\Http\Controllers\Admin\DemandeController::class, 'index'])->name('demandes.index');
     Route::get('demandes/{demande}', [\App\Http\Controllers\Admin\DemandeController::class, 'show'])->name('demandes.show');
@@ -93,6 +94,7 @@ Route::middleware(['auth', 'role:professeur'])->prefix('professeur')->name('prof
     Route::post('cahier/{seance}', [\App\Http\Controllers\Professeur\CahierController::class, 'store'])->name('cahier.store');
     
     Route::get('edt', [\App\Http\Controllers\Professeur\EdtController::class, 'index'])->name('edt.index');
+    Route::get('edt/data', [\App\Http\Controllers\Professeur\EdtController::class, 'data'])->name('edt.data');
     
     Route::get('reservations', [\App\Http\Controllers\Professeur\ReservationController::class, 'index'])->name('reservations.index');
     Route::post('reservations', [\App\Http\Controllers\Professeur\ReservationController::class, 'store'])->name('reservations.store');
@@ -114,6 +116,7 @@ Route::middleware(['auth', 'role:etudiant'])->prefix('etudiant')->name('etudiant
     Route::get('notes', [\App\Http\Controllers\Etudiant\NoteController::class, 'index'])->name('notes.index');
     
     Route::get('edt', [\App\Http\Controllers\Etudiant\EdtController::class, 'index'])->name('edt.index');
+    Route::get('edt/data', [\App\Http\Controllers\Etudiant\EdtController::class, 'data'])->name('edt.data');
     
     Route::get('absences', [\App\Http\Controllers\Etudiant\AbsenceController::class, 'index'])->name('absences.index');
     

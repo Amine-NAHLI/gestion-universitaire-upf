@@ -53,13 +53,10 @@ class Note extends Model
 
     public function calculateFinalNote()
     {
-        $cc1 = floatval($this->cc1 ?? 0);
-        $cc2 = floatval($this->cc2 ?? 0);
-        $examen = floatval($this->examen ?? 0);
-
-        // Si au moins une note est saisie, on calcule la note finale
-        if ($this->cc1 !== null || $this->cc2 !== null || $this->examen !== null) {
-            $this->note_finale = (($cc1 + $cc2) / 2) * 0.4 + $examen * 0.6;
+        // La note finale n'est calculée que quand les trois composantes sont saisies
+        if ($this->cc1 !== null && $this->cc2 !== null && $this->examen !== null) {
+            $this->note_finale = ((floatval($this->cc1) + floatval($this->cc2)) / 2) * 0.4
+                               + floatval($this->examen) * 0.6;
         } else {
             $this->note_finale = null;
         }

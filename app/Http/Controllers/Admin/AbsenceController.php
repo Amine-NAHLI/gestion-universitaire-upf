@@ -92,10 +92,14 @@ class AbsenceController extends Controller
      */
     public function refuserJustificatif(Justificatif $justificatif, Request $request)
     {
+        $request->validate([
+            'motif_refus' => 'required|string|min:3|max:500',
+        ]);
+
         $justificatif->update([
             'statut' => 'refuse',
             'validateur_id' => auth()->id(),
-            'motif_refus' => $request->query('motif_refus', 'Non conforme')
+            'motif_refus' => $request->input('motif_refus'),
         ]);
         
         NotificationApp::create([

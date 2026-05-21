@@ -40,6 +40,9 @@ class NoteController extends Controller
     public function enregistrer(Request $request, Module $module, Groupe $groupe)
     {
         $professeur = auth()->user()->professeur;
+        if (!$professeur->relationLoaded('modules')) {
+            $professeur->load('modules');
+        }
         if (!$professeur->modules->contains($module->id)) {
             abort(403, 'Vous n\'enseignez pas ce module.');
         }
@@ -51,30 +54,45 @@ class NoteController extends Controller
             'notes.*.examen' => 'nullable|numeric|min:0|max:20',
         ]);
 
+        // Récupérer uniquement les étudiants du groupe concerné (protection IDOR)
+        $etudiantsGroupe = Etudiant::where('groupe_id', $groupe->id)
+            ->pluck('user_id', 'id');
+
+        $allowedIds = $etudiantsGroupe->keys()->toArray();
+        $notifications = [];
+
         foreach ($request->notes as $etudiant_id => $noteData) {
+            // Ignorer tout etudiant_id qui n'appartient pas au groupe
+            if (!in_array((int) $etudiant_id, $allowedIds)) {
+                continue;
+            }
+
             $filteredData = array_filter($noteData, fn($v) => $v !== null && $v !== '');
             if (empty($filteredData)) continue;
 
             Note::updateOrCreate(
                 [
-                    'etudiant_id' => $etudiant_id, 
-                    'module_id' => $module->id, 
+                    'etudiant_id' => $etudiant_id,
+                    'module_id' => $module->id,
                     'annee_universitaire' => config('scolarite.annee', '2025-2026')
                 ],
                 $filteredData
             );
 
-            // Notifier l'étudiant
-            $etudiant = Etudiant::find($etudiant_id);
-            if ($etudiant) {
-                NotificationApp::create([
-                    'user_id' => $etudiant->user_id,
-                    'type' => 'NOTES',
-                    'titre' => 'Notes mises à jour : ' . $module->nom,
-                    'message' => 'Vos notes pour le module ' . $module->nom . ' ont été mises à jour par le professeur.',
-                    'lien' => route('etudiant.notes.index'),
-                ]);
-            }
+            $notifications[] = [
+                'user_id' => $etudiantsGroupe[$etudiant_id],
+                'type' => 'NOTES',
+                'titre' => 'Notes mises à jour : ' . $module->nom,
+                'message' => 'Vos notes pour le module ' . $module->nom . ' ont été mises à jour par le professeur.',
+                'lien' => route('etudiant.notes.index'),
+                'lue' => false,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        if (!empty($notifications)) {
+            NotificationApp::insert($notifications);
         }
 
         return back()->with('success', 'Notes enregistrées et étudiants notifiés.');

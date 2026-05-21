@@ -131,9 +131,18 @@
 
                                 @if($absence->justificatif && $absence->justificatif->statut === 'en_attente')
                                     <div class="flex items-center gap-1 border-l border-gray-100 dark:border-gray-700 pl-2">
-                                        <a href="{{ route('admin.justificatifs.valider', $absence->justificatif) }}" class="p-2 rounded-lg text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                        </a>
+                                        <form action="{{ route('admin.justificatifs.valider', $absence->justificatif) }}" method="POST">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="p-2 rounded-lg text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                            </button>
+                                        </form>
+                                        <form id="form-refuser-{{ $absence->justificatif->id }}" action="{{ route('admin.justificatifs.refuser', $absence->justificatif) }}" method="POST" style="display:none;">
+                                            @csrf
+                                            @method('PATCH')
+                                            <input type="hidden" name="motif_refus" id="motif-{{ $absence->justificatif->id }}">
+                                        </form>
                                         <button type="button" @click="Swal.fire({
                                             title: '{{ __('Refuser la demande') }}',
                                             input: 'text',
@@ -144,8 +153,9 @@
                                             confirmButtonText: '{{ __('Confirmer') }}',
                                             cancelButtonText: '{{ __('Annuler') }}'
                                         }).then((result) => {
-                                            if (result.isConfirmed) {
-                                                window.location.href = '{{ route('admin.justificatifs.refuser', $absence->justificatif) }}?motif_refus=' + encodeURIComponent(result.value);
+                                            if (result.isConfirmed && result.value) {
+                                                document.getElementById('motif-{{ $absence->justificatif->id }}').value = result.value;
+                                                document.getElementById('form-refuser-{{ $absence->justificatif->id }}').submit();
                                             }
                                         })" class="p-2 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>

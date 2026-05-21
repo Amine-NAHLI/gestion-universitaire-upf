@@ -27,6 +27,16 @@ class ClassroomController extends Controller
 
     public function show(Module $module)
     {
+        $etudiant = auth()->user()->etudiant;
+
+        // Vérifier que le groupe de l'étudiant est inscrit à ce module
+        if ($etudiant && $etudiant->groupe) {
+            $inscrit = $etudiant->groupe->modules()->where('modules.id', $module->id)->exists();
+            if (!$inscrit) {
+                abort(403, 'Vous n\'êtes pas inscrit à ce module.');
+            }
+        }
+
         $annonces = $module->annonces()
             ->with(['professeur.user', 'commentaires.user'])
             ->latest()

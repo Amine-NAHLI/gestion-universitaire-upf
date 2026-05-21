@@ -56,9 +56,8 @@ class DemandeController extends Controller
 
     public function download(DemandeAdministrative $demande)
     {
-        // Vérification de la propriété
         if ($demande->user_id !== auth()->id()) {
-            abort(403, "Vous n'êtes pas autorisé à télécharger ce document.");
+            abort(403);
         }
 
         // Vérification de l'existence du fichier

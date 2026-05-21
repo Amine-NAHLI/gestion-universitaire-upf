@@ -24,6 +24,10 @@ class AuthController extends Controller
             return response()->json(['message' => 'Identifiants incorrects.'], 401);
         }
 
+        if (!$user->is_active) {
+            return response()->json(['message' => 'Votre compte est en attente de validation par l\'administration.'], 403);
+        }
+
         $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([
