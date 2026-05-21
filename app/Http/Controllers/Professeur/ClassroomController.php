@@ -19,20 +19,24 @@ class ClassroomController extends Controller
         $modules = $professeur->modules()
             ->with(['annonces' => fn($q) => $q->latest()->take(3), 'supportsCours' => fn($q) => $q->latest()->take(3)])
             ->get();
-            
+
         return view('professeur.classroom.index', compact('modules'));
     }
 
     public function show(Module $module)
     {
+        $this->authorize('manageClassroom', $module);
+
         $annonces = $module->annonces()->with('commentaires.user')->latest()->get();
         $supports = $module->supportsCours()->latest()->get();
-        
+
         return view('professeur.classroom.show', compact('module', 'annonces', 'supports'));
     }
 
     public function publierAnnonce(Request $request, Module $module)
     {
+        $this->authorize('manageClassroom', $module);
+
         $request->validate([
             'titre' => 'required|string|max:255',
             'contenu' => 'required|string|min:10',
@@ -47,22 +51,23 @@ class ClassroomController extends Controller
             'epinglee' => $request->boolean('epinglee'),
         ]);
 
-        // Notifier tous les étudiants concernés par ce module
-        // Un module appartient à un Niveau, et un Niveau a des Groupes qui ont des Étudiants
-        $etudiants = Etudiant::whereHas('groupe.niveau', function($q) use ($module) {
-            $q->whereHas('modules', function($q2) use ($module) {
-                $q2->where('modules.id', $module->id);
-            });
-        })->get();
+        $etudiants = Etudiant::whereHas('groupe', function ($q) use ($module) {
+            $q->whereHas('modules', fn($q2) => $q2->where('modules.id', $module->id));
+        })->pluck('user_id');
 
-        foreach ($etudiants as $etudiant) {
-            NotificationApp::create([
-                'user_id' => $etudiant->user_id,
-                'type' => 'CLASSROOM',
-                'titre' => 'Nouvelle annonce : ' . $module->nom,
-                'message' => 'Votre professeur a publié une nouvelle annonce.',
-                'lien' => route('etudiant.classroom.show', $module->id),
-            ]);
+        $notifications = $etudiants->map(fn($userId) => [
+            'user_id' => $userId,
+            'type' => 'CLASSROOM',
+            'titre' => 'Nouvelle annonce : ' . $module->nom,
+            'message' => 'Votre professeur a publié une nouvelle annonce.',
+            'lien' => route('etudiant.classroom.show', $module->id),
+            'lue' => false,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ])->toArray();
+
+        if (!empty($notifications)) {
+            NotificationApp::insert($notifications);
         }
 
         return back()->with('success', 'L\'annonce a été publiée et les étudiants ont été notifiés.');
@@ -70,9 +75,11 @@ class ClassroomController extends Controller
 
     public function uploadSupport(Request $request, Module $module)
     {
+        $this->authorize('manageClassroom', $module);
+
         $request->validate([
             'titre' => 'required|string|max:255',
-            'fichier' => 'required|file|max:20480', // 20MB max
+            'fichier' => 'required|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,zip,jpg,jpeg,png|max:20480',
             'description' => 'nullable|string'
         ]);
 
@@ -88,21 +95,23 @@ class ClassroomController extends Controller
             'taille' => $request->file('fichier')->getSize(),
         ]);
 
-        // Notifier tous les étudiants concernés
-        $etudiants = Etudiant::whereHas('groupe.niveau', function($q) use ($module) {
-            $q->whereHas('modules', function($q2) use ($module) {
-                $q2->where('modules.id', $module->id);
-            });
-        })->get();
+        $etudiants = Etudiant::whereHas('groupe', function ($q) use ($module) {
+            $q->whereHas('modules', fn($q2) => $q2->where('modules.id', $module->id));
+        })->pluck('user_id');
 
-        foreach ($etudiants as $etudiant) {
-            NotificationApp::create([
-                'user_id' => $etudiant->user_id,
-                'type' => 'CLASSROOM',
-                'titre' => 'Nouveau support : ' . $module->nom,
-                'message' => 'Un nouveau support de cours a été mis en ligne.',
-                'lien' => route('etudiant.classroom.show', $module->id),
-            ]);
+        $notifications = $etudiants->map(fn($userId) => [
+            'user_id' => $userId,
+            'type' => 'CLASSROOM',
+            'titre' => 'Nouveau support : ' . $module->nom,
+            'message' => 'Un nouveau support de cours a été mis en ligne.',
+            'lien' => route('etudiant.classroom.show', $module->id),
+            'lue' => false,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ])->toArray();
+
+        if (!empty($notifications)) {
+            NotificationApp::insert($notifications);
         }
 
         return back()->with('success', 'Le support de cours a été mis en ligne et les étudiants notifiés.');

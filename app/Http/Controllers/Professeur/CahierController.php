@@ -24,12 +24,16 @@ class CahierController extends Controller
 
     public function create(Seance $seance)
     {
+        $this->authorize('manageCahier', $seance);
+
         $cahier = $seance->cahierTexte ?? new CahierTexte(['seance_id' => $seance->id]);
         return view('professeur.cahier.create', compact('seance', 'cahier'));
     }
 
     public function store(Request $request, Seance $seance)
     {
+        $this->authorize('manageCahier', $seance);
+
         $request->validate([
             'objectif' => 'required|min:10',
             'contenu' => 'nullable',
@@ -39,8 +43,8 @@ class CahierController extends Controller
         CahierTexte::updateOrCreate(
             ['seance_id' => $seance->id],
             [
-                'objectif' => $request->objectif, 
-                'contenu' => $request->contenu, 
+                'objectif' => $request->objectif,
+                'contenu' => $request->contenu,
                 'nature' => $request->nature
             ]
         );

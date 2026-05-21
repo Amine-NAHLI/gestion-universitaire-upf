@@ -32,17 +32,25 @@ class ReservationController extends Controller
             'motif' => 'required|min:5',
         ]);
 
-        // Check for time conflicts in confirmed reservations
+        // Détection complète des conflits horaires (4 cas possibles)
         $conflit = ReservationSalle::where('salle_id', $request->salle_id)
             ->where('date', $request->date)
             ->where('statut', 'confirmee')
             ->where(function ($query) use ($request) {
+                // Cas 1 : début existant dans l'intervalle nouveau
                 $query->where(function ($q) use ($request) {
                     $q->where('heure_debut', '>=', $request->heure_debut)
                       ->where('heure_debut', '<', $request->heure_fin);
-                })->orWhere(function ($q) use ($request) {
+                })
+                // Cas 2 : fin existante dans l'intervalle nouveau
+                ->orWhere(function ($q) use ($request) {
                     $q->where('heure_fin', '>', $request->heure_debut)
                       ->where('heure_fin', '<=', $request->heure_fin);
+                })
+                // Cas 3 : réservation existante englobe complètement la nouvelle
+                ->orWhere(function ($q) use ($request) {
+                    $q->where('heure_debut', '<=', $request->heure_debut)
+                      ->where('heure_fin', '>=', $request->heure_fin);
                 });
             })->exists();
 
@@ -65,9 +73,7 @@ class ReservationController extends Controller
 
     public function destroy(ReservationSalle $reservation)
     {
-        if ($reservation->professeur_id !== auth()->user()->professeur->id) {
-            abort(403);
-        }
+        $this->authorize('delete', $reservation);
 
         $reservation->delete();
         return back()->with('success', 'Réservation annulée avec succès.');
