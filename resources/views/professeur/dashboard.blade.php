@@ -4,6 +4,10 @@
 @section('header_title', __('Espace Enseignant'))
 @section('header_subtitle', __('Gérez vos cours, notes et absences en toute simplicité.'))
 
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+@endpush
+
 @section('content')
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <x-dashboard.stat-card 
@@ -90,4 +94,88 @@
             </a>
         </div>
     </div>
+
+    {{-- Charts row --}}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+        <!-- Bar Chart — Moyennes par module -->
+        <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm" data-aos="fade-up">
+            <div class="mb-6">
+                <h3 class="text-xl font-bold text-slate-800 dark:text-white">{{ __('Moyennes par module') }}</h3>
+                <p class="text-sm text-slate-500">{{ __('Moyenne des notes finales des étudiants') }}</p>
+            </div>
+            <div class="h-[280px]">
+                <canvas id="moyennesChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Bar Chart — Taux de présence par module -->
+        <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm" data-aos="fade-up" data-aos-delay="150">
+            <div class="mb-6">
+                <h3 class="text-xl font-bold text-slate-800 dark:text-white">{{ __('Taux de présence par module') }}</h3>
+                <p class="text-sm text-slate-500">{{ __('Pourcentage de présence aux séances effectuées') }}</p>
+            </div>
+            <div class="h-[280px]">
+                <canvas id="presenceChart"></canvas>
+            </div>
+        </div>
+    </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const moyennesData = @json(collect($moyennesGraphData));
+    const presenceData = @json(collect($tauxPresenceGraphData));
+
+    // Bar Chart — Moyennes par module
+    new Chart(document.getElementById('moyennesChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: moyennesData.map(d => d.nom),
+            datasets: [{
+                label: '{{ __('Moyenne /20') }}',
+                data: moyennesData.map(d => d.moyenne),
+                backgroundColor: 'rgba(99, 102, 241, 0.75)',
+                borderRadius: 8,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, max: 20, ticks: { color: '#94a3b8' }, grid: { color: 'rgba(148,163,184,0.1)' } },
+                x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+            }
+        }
+    });
+
+    // Bar Chart — Taux de présence
+    new Chart(document.getElementById('presenceChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: presenceData.map(d => d.nom),
+            datasets: [{
+                label: '{{ __('Taux (%)') }}',
+                data: presenceData.map(d => d.taux),
+                backgroundColor: presenceData.map(d =>
+                    d.taux >= 80 ? 'rgba(16,185,129,0.75)' :
+                    d.taux >= 60 ? 'rgba(245,158,11,0.75)' :
+                                   'rgba(239,68,68,0.75)'
+                ),
+                borderRadius: 8,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, max: 100, ticks: { color: '#94a3b8', callback: v => v + '%' }, grid: { color: 'rgba(148,163,184,0.1)' } },
+                x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+            }
+        }
+    });
+});
+</script>
+@endpush

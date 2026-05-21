@@ -18,6 +18,8 @@ class DashboardController extends Controller
         $studentUser  = User::where('email', $studentEmail)->first();
         $student      = $studentUser?->etudiant;
 
+        $dotColors = ['#818cf8', '#a78bfa', '#f472b6', '#34d399', '#fb923c', '#60a5fa', '#e879f9'];
+
         $blank = [
             'student'               => null,
             'studentName'           => null,
@@ -33,6 +35,9 @@ class DashboardController extends Controller
             'notesData'             => [],
             'notesMoyenne'          => null,
             'emploiDuTemps'         => array_fill_keys(['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'], []),
+            'jours'                 => ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'],
+            'edtTotal'              => 0,
+            'dotColors'             => $dotColors,
             'jourActuel'            => null,
             'lundiFmt'              => null,
             'vendrediFmt'           => null,
@@ -172,6 +177,9 @@ class DashboardController extends Controller
             'notesData'             => $notesData,
             'notesMoyenne'          => $moyenne,
             'emploiDuTemps'         => $emploiDuTemps,
+            'jours'                 => array_values($dayMap),
+            'edtTotal'              => $seancesSemaine->count(),
+            'dotColors'             => $dotColors,
             'jourActuel'            => $jourActuel,
             'lundiFmt'              => $lundiFmt,
             'vendrediFmt'           => $vendrediFmt,

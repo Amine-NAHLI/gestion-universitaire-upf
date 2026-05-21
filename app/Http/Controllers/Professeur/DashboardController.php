@@ -75,17 +75,59 @@ class DashboardController extends Controller
         }
 
         foreach ($modules as $module) {
-            // On compte le total d'étudiants attendus pour ce module
             $totalEtudiants = (int)($totalEtudiantsParModule[$module->id] ?? 0);
-
-            // On compte le nombre de notes déjà saisies pour ce module
-            $notesSaisies = (int)($notesSaisiesParModule[$module->id] ?? 0);
-            
+            $notesSaisies   = (int)($notesSaisiesParModule[$module->id] ?? 0);
             $progress = $totalEtudiants > 0 ? round(($notesSaisies / $totalEtudiants) * 100) : 0;
             $modulesProgress[] = [
-                'nom' => $module->nom,
-                'progress' => $progress
+                'nom'      => $module->nom,
+                'progress' => $progress,
             ];
+        }
+
+        // 6. Moyennes par module pour bar chart
+        $moyennesGraphData = [];
+        $tauxPresenceGraphData = [];
+        if (!empty($moduleIds)) {
+            $moyennesRaw = Note::whereIn('module_id', $moduleIds)
+                ->whereNotNull('note_finale')
+                ->select('module_id', DB::raw('ROUND(AVG(note_finale), 2) as moyenne'))
+                ->groupBy('module_id')
+                ->pluck('moyenne', 'module_id')
+                ->all();
+
+            // Taux de présence: (attendu - absences) / attendu
+            $seancesParModule = Seance::where('professeur_id', $professeur->id)
+                ->whereIn('module_id', $moduleIds)
+                ->where('statut', 'effectuee')
+                ->select('module_id', DB::raw('COUNT(*) as total'))
+                ->groupBy('module_id')
+                ->pluck('total', 'module_id')
+                ->all();
+
+            $absencesParModule = DB::table('absences')
+                ->join('seances', 'absences.seance_id', '=', 'seances.id')
+                ->where('seances.professeur_id', $professeur->id)
+                ->whereIn('seances.module_id', $moduleIds)
+                ->select('seances.module_id', DB::raw('COUNT(absences.id) as total'))
+                ->groupBy('seances.module_id')
+                ->pluck('total', 'module_id')
+                ->all();
+
+            foreach ($modules as $module) {
+                $moyennesGraphData[] = [
+                    'nom'     => $module->nom,
+                    'moyenne' => (float) ($moyennesRaw[$module->id] ?? 0),
+                ];
+
+                $nbEtudiants       = (int) ($totalEtudiantsParModule[$module->id] ?? 0);
+                $nbSeances         = (int) ($seancesParModule[$module->id] ?? 0);
+                $nbAbsences        = (int) ($absencesParModule[$module->id] ?? 0);
+                $attendu           = $nbSeances * $nbEtudiants;
+                $tauxPresenceGraphData[] = [
+                    'nom'  => $module->nom,
+                    'taux' => $attendu > 0 ? round((($attendu - $nbAbsences) / $attendu) * 100) : 0,
+                ];
+            }
         }
 
         return view('professeur.dashboard', compact(
@@ -94,7 +136,9 @@ class DashboardController extends Controller
             'modulesActifs',
             'prochainesSeances',
             'modulesProgress',
-            'professeur'
+            'professeur',
+            'moyennesGraphData',
+            'tauxPresenceGraphData'
         ));
     }
 }

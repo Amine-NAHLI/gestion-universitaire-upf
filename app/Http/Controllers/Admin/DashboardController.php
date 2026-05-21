@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 use App\Models\Etudiant;
 use App\Models\Professeur;
@@ -31,6 +32,28 @@ class DashboardController extends Controller
             SUM(CASE WHEN note_finale < 10 THEN 1 ELSE 0 END) as echecs
         ')->first();
 
+        // Moyennes par filière pour graphique en ligne
+        $moyennesParFiliere = DB::table('notes')
+            ->join('etudiants', 'notes.etudiant_id', '=', 'etudiants.id')
+            ->join('groupes', 'etudiants.groupe_id', '=', 'groupes.id')
+            ->join('niveaux', 'groupes.niveau_id', '=', 'niveaux.id')
+            ->join('filieres', 'niveaux.filiere_id', '=', 'filieres.id')
+            ->whereNotNull('notes.note_finale')
+            ->select('filieres.nom', DB::raw('ROUND(AVG(notes.note_finale), 2) as moyenne'))
+            ->groupBy('filieres.id', 'filieres.nom')
+            ->orderBy('filieres.nom')
+            ->get();
+
+        // Top 5 modules avec le plus d'absences
+        $topAbsencesModules = DB::table('absences')
+            ->join('seances', 'absences.seance_id', '=', 'seances.id')
+            ->join('modules', 'seances.module_id', '=', 'modules.id')
+            ->select('modules.nom', DB::raw('COUNT(absences.id) as total'))
+            ->groupBy('modules.id', 'modules.nom')
+            ->orderByDesc('total')
+            ->limit(5)
+            ->get();
+
         $stats = [
             'etudiants_count'   => Etudiant::count(),
             'professeurs_count' => Professeur::count(),
@@ -50,6 +73,6 @@ class DashboardController extends Controller
             ],
         ];
 
-        return view('admin.dashboard', compact('stats'));
+        return view('admin.dashboard', compact('stats', 'moyennesParFiliere', 'topAbsencesModules'));
     }
 }

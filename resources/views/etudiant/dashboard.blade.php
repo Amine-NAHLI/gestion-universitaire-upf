@@ -1,35 +1,52 @@
 @extends('layouts.dashboard')
 
 @section('title', __('Dashboard Étudiant'))
-@section('header_title', __('Salut, ') . Auth::user()->prenom . ' ! 👋')
+@section('header_title', __('Salut, ') . Auth::user()->prenom . ' !')
 @section('header_subtitle', __('Voici ton résumé académique pour le semestre actuel.'))
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+@endpush
 
 @section('content')
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <x-dashboard.stat-card 
-            title="{{ __('Moyenne Générale') }}" 
-            value="{{ number_format($moyenneGenerale, 2) }}" 
-            icon="fa-graduation-cap" 
+        <x-dashboard.stat-card
+            title="{{ __('Moyenne Générale') }}"
+            value="{{ number_format($moyenneGenerale, 2) }}"
+            icon="fa-graduation-cap"
             color="primary" />
-            
-        <x-dashboard.stat-card 
-            title="{{ __('Absences') }}" 
-            value="{{ $absencesCount }}" 
-            icon="fa-user-clock" 
-            color="rose" 
+
+        <x-dashboard.stat-card
+            title="{{ __('Absences') }}"
+            value="{{ $absencesCount }}"
+            icon="fa-user-clock"
+            color="rose"
             trendUp="false" />
 
-        <x-dashboard.stat-card 
-            title="{{ __('Crédits validés') }}" 
-            value="{{ $creditsValides }}/{{ $totalModules }}" 
-            icon="fa-check-circle" 
+        <x-dashboard.stat-card
+            title="{{ __('Crédits validés') }}"
+            value="{{ $creditsValides }}/{{ $totalModules }}"
+            icon="fa-check-circle"
             color="emerald" />
 
-        <x-dashboard.stat-card 
-            title="{{ __('Supports de cours') }}" 
-            value="{{ $supportsCount }}" 
-            icon="fa-file-download" 
+        @if($rang)
+        <div class="bg-gradient-to-br from-indigo-500 to-purple-600 text-white p-6 rounded-3xl shadow-lg shadow-indigo-500/30 flex flex-col justify-between" data-aos="zoom-in">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-sm font-semibold opacity-80">{{ __('Rang dans le groupe') }}</span>
+                <i class="fas fa-trophy text-yellow-300 text-xl"></i>
+            </div>
+            <div class="flex items-end gap-1">
+                <span class="text-5xl font-black">{{ $rang }}</span>
+                <span class="text-lg font-semibold opacity-70 mb-1">/ {{ $totalGroupeEtudiants }}</span>
+            </div>
+        </div>
+        @else
+        <x-dashboard.stat-card
+            title="{{ __('Supports de cours') }}"
+            value="{{ $supportsCount }}"
+            icon="fa-file-download"
             color="indigo" />
+        @endif
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -88,9 +105,107 @@
                 </div>
                 @endforelse
             </div>
-            <button class="w-full mt-10 py-4 bg-white text-slate-900 font-black rounded-2xl hover:scale-105 transition-transform">
+            <a href="{{ route('etudiant.edt.index') }}" class="block w-full mt-10 py-4 bg-white text-slate-900 font-black rounded-2xl hover:scale-105 transition-transform text-center">
                 {{ __('Emploi du temps complet') }}
-            </button>
+            </a>
+        </div>
+    </div>
+
+    {{-- Charts row --}}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+        <!-- Radar Chart — Notes par module -->
+        <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm" data-aos="fade-up">
+            <div class="mb-6">
+                <h3 class="text-xl font-bold text-slate-800 dark:text-white">{{ __('Profil académique') }}</h3>
+                <p class="text-sm text-slate-500">{{ __('Notes finales par module') }}</p>
+            </div>
+            <div class="h-[300px] flex justify-center">
+                <canvas id="radarChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Bar Chart — Absences par module -->
+        <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm" data-aos="fade-up" data-aos-delay="150">
+            <div class="mb-6">
+                <h3 class="text-xl font-bold text-slate-800 dark:text-white">{{ __('Absences par module') }}</h3>
+                <p class="text-sm text-slate-500">{{ __('Nombre d\'absences enregistrées') }}</p>
+            </div>
+            <div class="h-[300px]">
+                <canvas id="absencesModuleChart"></canvas>
+            </div>
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Radar Chart — Notes par module
+    const radarLabels = @json($notesParModule->keys());
+    const radarData   = @json($notesParModule->values());
+
+    if (radarLabels.length > 0) {
+        const radarCtx = document.getElementById('radarChart').getContext('2d');
+        new Chart(radarCtx, {
+            type: 'radar',
+            data: {
+                labels: radarLabels,
+                datasets: [{
+                    label: '{{ __('Note /20') }}',
+                    data: radarData,
+                    backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                    borderColor: 'rgba(99, 102, 241, 0.8)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(99, 102, 241, 1)',
+                    pointRadius: 4,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 20,
+                        ticks: { color: '#94a3b8', stepSize: 4 },
+                        grid: { color: 'rgba(148, 163, 184, 0.15)' },
+                        pointLabels: { color: '#64748b', font: { size: 11 } }
+                    }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+    } else {
+        document.getElementById('radarChart').closest('.h-\\[300px\\]').innerHTML =
+            '<p class="text-center text-slate-400 pt-20">{{ __('Aucune note disponible.') }}</p>';
+    }
+
+    // Bar Chart — Absences par module
+    const absLabels = @json($absencesParModule->keys());
+    const absData   = @json($absencesParModule->values());
+
+    const absCtx = document.getElementById('absencesModuleChart').getContext('2d');
+    new Chart(absCtx, {
+        type: 'bar',
+        data: {
+            labels: absLabels.length ? absLabels : ['{{ __('Aucune absence') }}'],
+            datasets: [{
+                label: '{{ __('Absences') }}',
+                data: absData.length ? absData : [0],
+                backgroundColor: 'rgba(239, 68, 68, 0.7)',
+                borderRadius: 8,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, ticks: { stepSize: 1, color: '#94a3b8' }, grid: { color: 'rgba(148,163,184,0.1)' } },
+                x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+            }
+        }
+    });
+});
+</script>
+@endpush
