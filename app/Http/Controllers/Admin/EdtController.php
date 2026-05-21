@@ -82,12 +82,45 @@ class EdtController extends Controller
             'groupe_id' => 'required|exists:groupes,id',
             'salle_id' => 'nullable|exists:salles,id',
             'date' => 'required|date',
-            'heure_debut' => 'required',
-            'heure_fin' => 'required|after:heure_debut',
+            'heure_debut' => 'required|date_format:H:i',
+            'heure_fin' => 'required|date_format:H:i|after:heure_debut',
             'type' => 'required|in:cours,td,tp,examen',
         ]);
 
-        $seance = Seance::create($request->all() + ['statut' => 'planifiee']);
+        // Vérification des conflits salle (si une salle est spécifiée)
+        if ($request->salle_id) {
+            $conflitSalle = Seance::where('salle_id', $request->salle_id)
+                ->where('date', $request->date)
+                ->where('statut', '!=', 'annulee')
+                ->where(function ($q) use ($request) {
+                    $q->where(function ($q2) use ($request) {
+                        $q2->where('heure_debut', '<', $request->heure_fin)
+                           ->where('heure_fin', '>', $request->heure_debut);
+                    });
+                })->exists();
+
+            if ($conflitSalle) {
+                return response()->json(['success' => false, 'message' => 'Conflit : cette salle est déjà occupée sur ce créneau.'], 422);
+            }
+        }
+
+        // Vérification des conflits professeur
+        $conflitProf = Seance::where('professeur_id', $request->professeur_id)
+            ->where('date', $request->date)
+            ->where('statut', '!=', 'annulee')
+            ->where(function ($q) use ($request) {
+                $q->where('heure_debut', '<', $request->heure_fin)
+                  ->where('heure_fin', '>', $request->heure_debut);
+            })->exists();
+
+        if ($conflitProf) {
+            return response()->json(['success' => false, 'message' => 'Conflit : ce professeur a déjà une séance sur ce créneau.'], 422);
+        }
+
+        $seance = Seance::create(array_merge(
+            $request->only(['module_id', 'professeur_id', 'groupe_id', 'salle_id', 'date', 'heure_debut', 'heure_fin', 'type']),
+            ['statut' => 'planifiee']
+        ));
         
         // Notification batch data
         $notifications = [];
@@ -135,25 +168,37 @@ class EdtController extends Controller
     {
         $seance->update($request->only(['date', 'heure_debut', 'heure_fin', 'salle_id', 'statut']));
 
+        $notifications = [];
+
         // Notifier le professeur
-        NotificationApp::create([
+        $notifications[] = [
             'user_id' => $seance->professeur->user_id,
             'type' => 'EDT',
             'titre' => 'Séance modifiée',
             'message' => 'Votre séance de ' . $seance->module->nom . ' du ' . $seance->date->format('d/m/Y') . ' a été modifiée.',
             'lien' => route('professeur.dashboard'),
-        ]);
+            'lue' => false,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
 
-        // Notifier les étudiants
-        $etudiants = Etudiant::where('groupe_id', $seance->groupe_id)->get();
-        foreach ($etudiants as $etudiant) {
-            NotificationApp::create([
-                'user_id' => $etudiant->user_id,
+        // Notifier les étudiants (bulk insert)
+        $etudiantUserIds = Etudiant::where('groupe_id', $seance->groupe_id)->pluck('user_id');
+        foreach ($etudiantUserIds as $userId) {
+            $notifications[] = [
+                'user_id' => $userId,
                 'type' => 'EDT',
                 'titre' => 'Changement d\'emploi du temps',
                 'message' => 'La séance de ' . $seance->module->nom . ' du ' . $seance->date->format('d/m/Y') . ' a été modifiée.',
                 'lien' => route('etudiant.dashboard'),
-            ]);
+                'lue' => false,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        if (!empty($notifications)) {
+            NotificationApp::insert($notifications);
         }
         
         return response()->json(['success' => true]);
