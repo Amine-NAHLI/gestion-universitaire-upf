@@ -33,13 +33,20 @@ class ReleveNotesController extends Controller
         foreach ($etudiant->notes as $note) {
             $moduleName = $note->module->nom ?? 'Module inconnu';
             $coeff = $note->module->coefficient ?? 1;
+            $finale = (float) ($note->note_finale ?? 0);
             $notes[] = [
-                'module' => $moduleName,
-                'note' => number_format((float) ($note->note_finale ?? 0), 2),
+                'module'      => $moduleName,
+                'cc1'         => $note->cc1 !== null ? number_format((float) $note->cc1, 2) : '—',
+                'cc2'         => $note->cc2 !== null ? number_format((float) $note->cc2, 2) : '—',
+                'examen'      => $note->examen !== null ? number_format((float) $note->examen, 2) : '—',
+                'note'        => $note->note_finale !== null ? number_format($finale, 2) : '—',
                 'coefficient' => $coeff,
+                'statut'      => $note->note_finale === null ? 'En attente' : ($finale >= 10 ? 'Validé' : 'Ajourné'),
             ];
-            $totalWeighted += ((float) ($note->note_finale ?? 0)) * $coeff;
-            $totalCoeff += $coeff;
+            if ($note->note_finale !== null) {
+                $totalWeighted += $finale * $coeff;
+                $totalCoeff += $coeff;
+            }
         }
 
         $moyenne = $totalCoeff > 0 ? round($totalWeighted / $totalCoeff, 2) : 0;
