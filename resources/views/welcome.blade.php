@@ -33,8 +33,8 @@
                         U
                     </div>
                     <div class="flex flex-col">
-                        <span class="text-xl font-black text-slate-800 dark:text-white tracking-tight leading-none">UPF GESTION</span>
-                        <span class="text-[10px] font-bold text-indigo-500 uppercase tracking-widest mt-1">Université Privée de Fès</span>
+                        <span class="text-xl font-black text-slate-800 dark:text-white tracking-tight leading-none">{{ __('UPF Gestion') }}</span>
+                        <span class="text-[10px] font-bold text-indigo-500 uppercase tracking-widest mt-1">{{ __('Université Privée de Fès') }}</span>
                     </div>
                 </a>
                 <div class="flex items-center space-x-6">

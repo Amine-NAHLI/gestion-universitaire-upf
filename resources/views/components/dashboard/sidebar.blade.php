@@ -14,7 +14,7 @@
     <!-- SECTION A - Header -->
     <div class="flex items-center gap-3 p-4 border-b border-white/10 shrink-0 overflow-hidden">
         <div class="w-10 h-10 bg-gradient-to-br from-indigo-400 to-purple-400 rounded-xl flex items-center justify-center text-white font-bold text-lg shrink-0">U</div>
-        <span x-show="sidebarOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-4" x-transition:enter-end="opacity-100 translate-x-0" class="text-white font-bold text-lg whitespace-nowrap">UPF Gestion</span>
+        <span x-show="sidebarOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-4" x-transition:enter-end="opacity-100 translate-x-0" class="text-white font-bold text-lg whitespace-nowrap">{{ __('UPF Gestion') }}</span>
     </div>
 
     <!-- SECTION B - Profil utilisateur -->
@@ -189,25 +189,25 @@
             <a href="{{ route('parent.dashboard') }}" 
                class="flex items-center gap-3 px-4 py-3 mx-2 rounded-xl transition-all duration-300 group {{ request()->routeIs('parent.dashboard') ? 'bg-white/20 text-white shadow-lg' : 'text-indigo-100 hover:bg-white/10 hover:text-white' }}">
                 <i class="fa-solid fa-robot text-lg shrink-0 group-hover:scale-110 transition-transform w-5 text-center"></i>
-                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">Assistant E-UPF</span>
+                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">{{ __('Assistant E-UPF') }}</span>
             </a>
 
             <a href="{{ route('parent.notes') }}" 
                class="flex items-center gap-3 px-4 py-3 mx-2 rounded-xl transition-all duration-300 group {{ request()->routeIs('parent.notes') ? 'bg-white/20 text-white shadow-lg' : 'text-indigo-100 hover:bg-white/10 hover:text-white' }}">
                 <i class="fa-solid fa-graduation-cap text-lg shrink-0 group-hover:scale-110 transition-transform w-5 text-center"></i>
-                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">Notes & Bulletins</span>
+                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">{{ __('Notes & Bulletins') }}</span>
             </a>
 
             <a href="{{ route('parent.edt') }}" 
                class="flex items-center gap-3 px-4 py-3 mx-2 rounded-xl transition-all duration-300 group {{ request()->routeIs('parent.edt') ? 'bg-white/20 text-white shadow-lg' : 'text-indigo-100 hover:bg-white/10 hover:text-white' }}">
                 <i class="fa-solid fa-calendar-days text-lg shrink-0 group-hover:scale-110 transition-transform w-5 text-center"></i>
-                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">Emploi du Temps</span>
+                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">{{ __('Emploi du Temps') }}</span>
             </a>
 
             <a href="{{ route('parent.absences') }}" 
                class="flex items-center gap-3 px-4 py-3 mx-2 rounded-xl transition-all duration-300 group {{ request()->routeIs('parent.absences') ? 'bg-white/20 text-white shadow-lg' : 'text-indigo-100 hover:bg-white/10 hover:text-white' }}">
                 <i class="fa-solid fa-user-xmark text-lg shrink-0 group-hover:scale-110 transition-transform w-5 text-center"></i>
-                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">Absences & Suivi</span>
+                <span x-show="sidebarOpen" class="text-sm font-medium whitespace-nowrap">{{ __('Absences & Suivi') }}</span>
             </a>
         @else
             <!-- Student Links -->

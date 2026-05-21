@@ -24,13 +24,13 @@
 
             <div class="flex-1 min-w-0">
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/50 mb-1">
-                    Portail Famille · UPF
+                    {{ __('Portail Famille · UPF') }}
                 </span>
                 <h1 class="text-lg font-extrabold text-gray-900 dark:text-white tracking-tight">
-                    Bienvenue sur votre espace parent
+                    {{ __('Bienvenue sur votre espace parent') }}
                 </h1>
                 <p class="text-sm text-gray-500 dark:text-slate-400 mt-0.5">
-                    Suivez la scolarité de votre enfant grâce à l'Assistant E-UPF.
+                    {{ __('Suivez la scolarité de votre enfant') }}
                 </p>
             </div>
 
@@ -39,7 +39,7 @@
                     <p class="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-wider">Statut</p>
                     <span class="inline-flex items-center text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">
                         <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-1.5 animate-ping"></span>
-                        Actif & Lié
+                        {{ __('Actif & Lié') }}
                     </span>
                 </div>
                 <div class="px-4 py-2.5 bg-gray-50 dark:bg-slate-800/60 border border-gray-100 dark:border-slate-700 rounded-xl text-center">
@@ -89,6 +89,7 @@
             </div>
         </div>
 
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-slate-700/50 rounded-2xl shadow-sm overflow-hidden">
             {{-- Header --}}
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-6 py-4 border-b border-gray-100 dark:border-slate-700/60">
                 <div class="flex items-center gap-3">
@@ -197,9 +198,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                 </svg>
             </div>
-            <h3 class="text-base font-extrabold text-gray-800 dark:text-white mb-1">Aucun étudiant associé</h3>
+            <h3 class="text-base font-extrabold text-gray-800 dark:text-white mb-1">{{ __('Aucun étudiant associé') }}</h3>
             <p class="text-sm text-gray-500 dark:text-slate-400 max-w-sm mx-auto">
-                Votre compte parent n'est pas encore lié à un profil étudiant. Contactez l'administration de l'UPF.
+                {{ __('Votre compte parent n\'est pas encore lié') }}
             </p>
         </div>
     @endif

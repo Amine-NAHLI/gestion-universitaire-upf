@@ -21,10 +21,10 @@
         {{-- Données Alpine passées via script pour éviter les problèmes d'échappement HTML --}}
         <script>
             window._userCreateData = {
-                modulesParFiliere: {!! json_encode($modulesParFiliere) !!},
-                niveaux: {!! $niveaux->toJson() !!},
-                groupes: {!! $groupes->toJson() !!},
-                modulesSelectionnes: {!! json_encode($modulesSelectionnes) !!},
+                modulesParFiliere: @json($modulesParFiliere),
+                niveaux: @json($niveaux),
+                groupes: @json($groupes),
+                modulesSelectionnes: @json($modulesSelectionnes),
             };
         </script>
 
