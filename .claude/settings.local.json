@@ -17,7 +17,23 @@
       "Bash(Test-Path *)",
       "Bash(git add *)",
       "Bash(git commit *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(php -l app/Http/Controllers/Admin/DashboardController.php)",
+      "Bash(php -l app/Http/Controllers/Etudiant/DashboardController.php)",
+      "Bash(php -l app/Http/Controllers/Professeur/DashboardController.php)",
+      "Bash(php -l app/Http/Controllers/SearchController.php)",
+      "Bash(php -l app/Http/Controllers/Admin/UserController.php)",
+      "Bash(php -l app/Http/Controllers/Etudiant/EdtController.php)",
+      "Bash(php -l app/Http/Controllers/Professeur/EdtController.php)",
+      "Bash(php -l app/Exports/EtudiantsExport.php)",
+      "Bash(Get-ChildItem -Path \"D:\\\\3eme annee\\\\S6\\\\TW\\\\exam\\\\gestion-universitaire\" -Directory)",
+      "Bash(Select-Object Name)",
+      "Bash(sed \"s/__\\('//g\")",
+      "Bash(sed \"s/'\\)//g\")",
+      "Bash(php /tmp/hardcoded_analysis.php)",
+      "Bash(php -r ' *)",
+      "Bash(xargs grep -l \"onDelete\\\\|onUpdate\")",
+      "Bash(php -r 'foreach\\(['\\\\''lang/fr.json'\\\\'','\\\\''lang/en.json'\\\\'','\\\\''lang/ar.json'\\\\''] as $f\\){ $d=json_decode\\(file_get_contents\\($f\\),true\\); if\\(json_last_error\\(\\)!==JSON_ERROR_NONE\\){echo $f.'\\\\'' INVALIDE: '\\\\''.json_last_error_msg\\(\\).PHP_EOL;}else{echo $f.'\\\\'' — '\\\\''.count\\($d\\).'\\\\'' clés — OK'\\\\''.PHP_EOL;} }')"
     ]
   }
 }

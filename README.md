@@ -239,13 +239,25 @@ php artisan queue:listen --tries=1
 
 ## Comptes de démonstration
 
-Après `php artisan db:seed` :
+Après `php artisan migrate --seed` :
 
-| Rôle           | Email                    | Mot de passe |
-| -------------- | ------------------------ | ------------ |
-| Administrateur | `nahliamine95@gmail.com` | `password`   |
+| Rôle           | Email                                      | Mot de passe | Groupe   |
+| -------------- | ------------------------------------------ | ------------ | -------- |
+| Administrateur | `nahliamine95@gmail.com`                   | `password`   | —        |
+| Professeur     | `a.benali@upf.ma`                          | `password`   | —        |
+| Professeur     | `f.alaoui@upf.ma`                          | `password`   | —        |
+| Professeur     | `k.idrissi@upf.ma`                         | `password`   | —        |
+| Étudiant       | `y.tahiri@etudiant.upf.ma`                 | `password`   | GINFO3A  |
+| Étudiant       | `s.benchekroun@etudiant.upf.ma`            | `password`   | GINFO3A  |
+| Étudiant       | `h.zouari@etudiant.upf.ma`                 | `password`   | GINFO3A  |
+| Étudiant       | `n.belhaj@etudiant.upf.ma`                 | `password`   | GINFO3B  |
+| Étudiant       | `o.lahlou@etudiant.upf.ma`                 | `password`   | GINFO3B  |
+| Étudiant       | `i.radi@etudiant.upf.ma`                   | `password`   | GC3A     |
+| Étudiant       | `m.filali@etudiant.upf.ma`                 | `password`   | GC3A     |
+| Étudiant       | `l.mansouri@etudiant.upf.ma`               | `password`   | GIND3A   |
+| Parent         | `y.tahiri@etudiant.upf.ma` (sur `/login/parent`) | `password` | —      |
 
-> Les professeurs et étudiants sont créés manuellement par l'administrateur via le panneau admin, ou via la page d'inscription publique (`/register`).
+> Les parents se connectent sur `/login/parent` avec **l'email de l'étudiant** (sans `+parent`) et le même mot de passe.
 
 ### Flux de création d'un étudiant
 

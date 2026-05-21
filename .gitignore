@@ -18,6 +18,7 @@
 /public/storage
 /storage/*.key
 /storage/app/keys/
+/storage/logs/
 /storage/pail
 /vendor
 Homestead.json
