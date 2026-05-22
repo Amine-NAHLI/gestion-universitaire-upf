@@ -80,23 +80,23 @@ Le cœur technique d'E-UPF s'appuie sur le framework **Laravel 12.0** configuré
 
 ```mermaid
 graph TD
-    Client["🔑 Client (Navigateur / API Request)"] -->|1. Request| Route["📂 Laravel Routing (web.php / api.php)"]
-    Route -->|2. Filter| Middleware["🛡️ Middleware (RoleMiddleware / SetLocale)"]
-    
-    subgraph Noyau applicatif (Laravel 12)
-        Middleware -->|3. Autorisation| Controller["🎮 Http/Controllers (Admin, Prof, Student, Parent, Api)"]
-        Controller -->|4. Persistance| Eloquent["💾 Modèles Eloquent (App/Models/*)"]
-        Controller -->|5. Cryptographie| Crypto["🔑 Services/CryptoSignatureService.php"]
-        Controller -->|6. RAG Engine| AI["🤖 Services/AI/ChatbotService.php"]
+    Client["Client - Navigateur / API"] -->|1. Request| Route["Laravel Routing - web.php / api.php"]
+    Route -->|2. Filter| Middleware["Middleware - RoleMiddleware / SetLocale"]
+
+    subgraph core ["Noyau Applicatif - Laravel 12"]
+        Middleware -->|3. Autorisation| Controller["Http/Controllers"]
+        Controller -->|4. Persistance| Eloquent["Modeles Eloquent - 21 Models"]
+        Controller -->|5. Cryptographie| Crypto["CryptoSignatureService"]
+        Controller -->|6. RAG Engine| AI["ChatbotService / PromptBuilder"]
     end
-    
-    Eloquent <-->|SQL Queries| DB[("🗄️ Database MySQL (InnoDB)")]
-    Crypto -->|OpenSSL RSA 2048| Keys["🔑 Clés UPF (upf_private.pem / upf_public.pem)"]
-    AI -->|Bearer Session| Groq["☁️ API Groq Cloud (Llama-3.3-70b-versatile)"]
-    
-    Controller -->|7. View Render| View["🎨 Blade Engine (Alpine.js / Tailwind CSS)"]
-    Controller -->|8. Document Generation| PDF["📄 DomPDF / Maatwebsite Excel"]
-    
+
+    Eloquent <-->|SQL Queries| DB[("MySQL InnoDB")]
+    Crypto -->|OpenSSL RSA 2048| Keys["Cles RSA - upf_private.pem / upf_public.pem"]
+    AI -->|Bearer Token| Groq["API Groq Cloud - Llama 3.3 70B"]
+
+    Controller -->|7. View Render| View["Blade + Alpine.js + Tailwind CSS"]
+    Controller -->|8. Export| PDF["DomPDF / Maatwebsite Excel"]
+
     View -->|9. Response| Client
 ```
 
@@ -109,34 +109,34 @@ Ce schéma retrace le flux d'exécution complet et sécurisé lors de la soumiss
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Etudiant as 🎓 Étudiant
+    actor Etudiant as Etudiant
     participant Controller as JustificatifController
-    participant Storage as File Storage (Mime Validation)
-    participant DB as Database MySQL
-    participant Mail as Mail Service
-    actor Admin as 🧑‍💻 Administrateur
+    participant Storage as FileStorage
+    participant DB as MySQL
+    participant Mail as MailService
+    actor Admin as Administrateur
 
-    Etudiant->>Controller: Soumet justificatif (POST /etudiant/justificatifs)
+    Etudiant->>Controller: POST /etudiant/justificatifs
     activate Controller
-    note over Controller: Validation stricte de la taille (max 5Mo)<br/>et des types de fichiers autorisés
-    
-    Controller->>Controller: Protection IDOR (Vérifie la propriété de l'absence)
-    Controller->>Storage: Stockage sécurisé du fichier
-    Storage-->>Controller: Chemin d'accès relatif
-    
-    Controller->>DB: INSERT justificatif (statut='en_attente')
-    Controller->>DB: INSERT notification_app (pour l'administration)
-    Controller->>Mail: Notification par email aux administrateurs
-    Controller-->>Etudiant: Succès & affichage dynamique (Toast notification)
+    note over Controller: Validation MIME + taille max 5Mo
+
+    Controller->>Controller: Verification IDOR
+    Controller->>Storage: Sauvegarde du fichier
+    Storage-->>Controller: Chemin relatif
+
+    Controller->>DB: INSERT justificatif - en_attente
+    Controller->>DB: INSERT notification_app
+    Controller->>Mail: Email aux administrateurs
+    Controller-->>Etudiant: Redirection avec succes
     deactivate Controller
-    
-    Admin->>Controller: Valide le justificatif (PATCH /admin/justificatifs/{id}/valider)
+
+    Admin->>Controller: PATCH /admin/justificatifs/id/valider
     activate Controller
-    Controller->>DB: UPDATE justificatif (statut='accepte')
-    Controller->>DB: UPDATE absences (justifiee=true)
-    Controller->>DB: INSERT notification_app (pour l'étudiant)
-    Controller->>Mail: Envoi de l'email de confirmation à l'étudiant
-    Controller-->>Admin: Redirection avec Toast de confirmation (SweetAlert2)
+    Controller->>DB: UPDATE justificatif - accepte
+    Controller->>DB: UPDATE absences - justifiee=true
+    Controller->>DB: INSERT notification_app
+    Controller->>Mail: Email de confirmation etudiant
+    Controller-->>Admin: Redirection avec succes
     deactivate Controller
 ```
 
