@@ -1,494 +1,349 @@
-# UPF Gestion Universitaire
+<div align="center">
 
-php artisan optimize:clear
+# 🏛️ E-UPF : Système Intégré de Gestion Universitaire
+### *L'infrastructure d'exploitation académique et administrative de l'Université Privée de Fès*
 
-> Plateforme de gestion universitaire complète pour l'**Université Privée de Fès (UPF)**.
-> Développée avec Laravel 12, Alpine.js, Tailwind CSS et un chatbot IA propulsé par Groq/Llama.
+<br/>
 
-![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?logo=php&logoColor=white)
-![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?logo=laravel&logoColor=white)
-![Alpine.js](https://img.shields.io/badge/Alpine.js-3.x-8BC0D0?logo=alpinedotjs&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.x-38B2AC?logo=tailwindcss&logoColor=white)
-![License](https://img.shields.io/badge/Licence-MIT-green)
+[![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://www.php.net/)
+[![Laravel](https://img.shields.io/badge/Laravel-12.0-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Alpine.js](https://img.shields.io/badge/Alpine.js-3.15-8BC0D0?style=for-the-badge&logo=alpinedotjs&logoColor=white)](https://alpinejs.dev/)
+[![Groq Llama3](https://img.shields.io/badge/AI_Engine-Llama_3.3_70B-orange?style=for-the-badge&logo=openai&logoColor=white)](https://groq.com/)
+
+<p align="center" style="font-size: 1.15em; max-width: 720px; color: #4B5563; line-height: 1.6;">
+  Une plateforme ERP/SIS unifiée et hautement sécurisée, conçue pour dématérialiser et centraliser les flux pédagogiques, administratifs et logistiques. Elle propose une architecture multi-rôle, un moteur cryptographique PKI pour la certification des diplômes et relevés de notes, ainsi qu'un Assistant IA Parent contextuel (RAG).
+</p>
+
+---
+</div>
+
+## 📌 1. Problématique & Objectif
+
+Les universités font face au défi de la **dispersion des données**. Les plannings, les notes, le suivi d'absences, la logistique des salles et les requêtes administratives sont trop souvent cloisonnés dans des outils hétérogènes, induisant des inefficacités opérationnelles, un manque de suivi parental et des risques élevés d'altération de documents officiels.
+
+**E-UPF unifie l'écosystème universitaire sur une plateforme unique et infalsifiable :**
+*   **Centralisation Métier** : Pilotage global des filières, des emplois du temps (EDT) et des attributions d'enseignements.
+*   **Sécurisation par la Cryptographie** : Implémentation d'une infrastructure de clé publique (PKI) signant numériquement les relevés de notes et attestations officielles, vérifiables instantanément par un QR Code de confiance.
+*   **Responsabilisation & Collaboration** : Espaces autonomes pour enseignants (saisie matricielle de notes, appel en direct, réservation de salles) et étudiants (dépôt de justificatifs d'absence protégés contre les failles IDOR, Classroom collaborative).
+*   **Lien Parental Augmenté** : Portail parent doté d'un assistant IA contextuel sécurisé par rate limiter, capable de restituer en direct la situation de l'étudiant à partir de données réelles sans aucune hallucination.
 
 ---
 
-## Présentation
+## ⚡ 2. Key Features
 
-UPF Gestion Universitaire est une application web multi-rôles permettant la gestion complète d'un établissement d'enseignement supérieur :
+L'application découpe les privilèges en 4 portails étanches pilotés par un système d'autorisation granulaire :
 
-- **Administration** : gestion des utilisateurs, filières, modules, emploi du temps, statistiques
-- **Professeurs** : saisie des notes, appel, cahier de textes, classroom, réservations de salles
-- **Étudiants** : consultation des notes/absences, justificatifs, demandes administratives avec PDF signé
-- **Parents** : tableau de bord de suivi, chatbot IA contextuel, alertes nocturnes automatisées
+```
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                                    PORTAIL APPLICATIF                                   │
+├─────────────────────────┬─────────────────────────┬─────────────────────────┬───────────┤
+│ 🧑‍💻 Administrateur        │ 👨‍🏫 Enseignant           │ 🎓 Étudiant             │ 🧑‍👩‍👧‍👦 Parent  │
+├─────────────────────────┼─────────────────────────┼─────────────────────────┼───────────┤
+│ • Gestion BDD           │ • Appel numérique       │ • Coffre-fort PDF       │ • Suivi   │
+│   (Filières/Comptes)    │   (Absences directes)   │   (Attestations)        │   visuel  │
+│ • EDT interactif        │ • Notation matricielle  │ • Dépôt justificatifs   │ • Chatbot │
+│   (FullCalendar)        │   (CC1/CC2/Examen)      │   (Anti-IDOR, max 5Mo)  │   IA RAG  │
+│ • Validation PKI        │ • Réservation de salles │ • Espace Classroom      │ • Alertes │
+│   (Signatures / Sceaux) │   (Anti-collision)      │   (Supports de cours)   │   pushs   │
+└─────────────────────────┴─────────────────────────┴─────────────────────────┴───────────┘
+```
+
+### 🧑‍💻 Espace Administrateur (Gouvernance & Flux)
+*   **Gestion Référentielle** : CRUD complet des structures académiques (filières GC, GINFO, GIND, niveaux, groupes, modules, salles).
+*   **Planification Interactive** : Calendrier dynamique (FullCalendar) gérant le glisser-déposer des séances et prévenant les chevauchements.
+*   **Sceau Universitaire** : Approbation des demandes administratives et validation de pièces d'assiduité avec certification cryptographique.
+
+### 👨‍🏫 Espace Enseignant (Pédagogie & Évaluation)
+*   **Saisie Matricielle** : Saisie ergonomique des notes de contrôles continus et examens avec calcul automatique des moyennes pondérées.
+*   **Feuille d'Appel Virtuelle** : Appel d'assiduité en temps réel créant des fiches d'absences structurées en base de données.
+*   **Anti-Overlapping Logistique** : Réservation de salles de cours protégée par un algorithme d'exclusion temporelle mutuelle.
+*   **Espace Classroom** : Diffusion de messages urgents et de documents de cours volumineux (jusqu'à 20 Mo).
+
+### 🎓 Espace Étudiant (Services en ligne & Autonomie)
+*   **Services Administratifs** : Commande en ligne d'attestations et de relevés officiels en Français, Anglais ou Arabe.
+*   **Justification en Ligne** : Dépôt sécurisé de pièces justificatives (PDF/images de max 5 Mo) avec vérification d'autorisation (Anti-IDOR).
+*   **Consultation Globale** : Accès transparent à l'emploi du temps, carnet de notes et supports pédagogiques.
+
+### 🧑‍👩‍👧‍👦 Espace Parent (Supervision & Dialogue IA)
+*   **Miroir Scolaire** : Accès graphique aux résultats (Chart.js), aux fiches de présence et aux plannings de son enfant.
+*   **Assistant IA Contextuel** : Chatbot intelligent connecté à l'API Groq (Llama-3.3-70b-versatile) capable d'analyser le dossier de l'élève en direct (RAG) et de formuler des réponses multilingues claires et bienveillantes.
 
 ---
 
-## Fonctionnalités par rôle
+## 🏛️ 3. System Architecture
 
-### Administrateur
+Le portail repose sur une architecture **MVC (Model-View-Controller)** moderne, avec injection de dépendances applicatives et séparation stricte des responsabilités métier.
 
-- Gestion des utilisateurs (CRUD complet avec activation/désactivation)
-- Création automatique du compte parent lors de la création d'un étudiant
-- Approbation des inscriptions en attente par email
-- Gestion des filières, niveaux et groupes (3 filières : GINFO, GC, GIND)
-- Gestion des modules par filière/niveau
-- Gestion des salles de cours
-- Emploi du temps interactif (FullCalendar — cours/TD/TP/examen)
-- Validation/refus des demandes administratives avec génération PDF signé cryptographiquement
-- Validation/refus des justificatifs d'absence
-- Statistiques globales (distribution des notes, absences par mois, moyennes par module, répartition par filière)
-- Export Excel des absences par groupe
-- Tableau de bord avec indicateurs temps réel
-
-### Professeur
-
-- Tableau de bord personnalisé (séances du jour, statistiques)
-- Feuille de présence (appel par séance avec marquage présent/absent)
-- Saisie des notes (CC1, CC2, Examen) — calcul automatique note finale = (CC1+CC2)/2 × 0.4 + Examen × 0.6
-- Cahier de textes (objectif et contenu saisi par séance)
-- Emploi du temps (vue hebdomadaire)
-- Réservations de salles
-- Classroom : publication d'annonces épinglables et upload de supports de cours (20 MB max)
-- Demandes administratives (attestation de travail, ordre de mission)
-
-### Étudiant
-
-- Tableau de bord avec planning du jour
-- Consultation des notes avec moyenne générale et progression par module
-- Historique des absences avec statut de justification
-- Soumission de justificatifs (PDF, JPG, PNG — 5 MB max)
-- Demandes administratives (attestation de scolarité, relevé de notes, certificat d'inscription)
-- Téléchargement de PDF signés avec QR code de vérification
-- Relevé de notes officiel cryptographiquement signé (RSA 2048 bits)
-- Classroom : consultation des annonces, téléchargement des supports de cours, commentaires
-- Notifications en temps réel (notes mises à jour, emploi du temps modifié...)
-
-### Parent
-
-- Tableau de bord de suivi scolaire complet
-- Moyenne générale avec mention colorée (Très Bien vert, Bien vert, Assez Bien jaune, Passable jaune, Insuffisant rouge)
-- Statistiques des absences du mois (justifiées / non justifiées) avec alerte si >= 3 non justifiées
-- Prochaine séance de l'étudiant
-- Emploi du temps de la semaine courante (grille 5 jours)
-- Graphique des notes par module (Chart.js, horizontal bar)
-- Notifications et alertes IA (info, warning, urgent) avec marquage lu
-- **Chatbot IA contextuel** (Groq Llama 3.3-70b) — 20 questions/jour
-    - Message de bienvenue personnalisé généré par IA
-    - Historique persistant des conversations
-    - Suggestions contextuelles adaptées au profil de l'étudiant
-    - Feedback (pouces haut/bas) sur chaque réponse
-- **Alertes nocturnes automatisées** : analyse IA quotidienne et notification push si alerte détectée
-
----
-
-## Stack Technique
-
-### Backend (composer.json)
-
-| Technologie        | Version | Usage                         |
-| ------------------ | ------- | ----------------------------- |
-| PHP                | ^8.2    | Langage principal             |
-| Laravel            | ^12.0   | Framework MVC                 |
-| Laravel Sanctum    | ^4.0    | Authentification API tokens   |
-| Barryvdh DomPDF    | ^3.1    | Génération de PDFs            |
-| Intervention Image | ^3.11   | Traitement des images         |
-| Maatwebsite Excel  | ^3.1    | Export Excel (.xlsx)          |
-| Simple QR Code     | ^4.2    | Génération de QR codes SVG    |
-| Spatie Permissions | ^6.25   | Gestion des rôles/permissions |
-| Laravel Breeze     | ^2.4    | Scaffolding auth (dev)        |
-| DebugBar           | ^4.2    | Débogage (dev uniquement)     |
-
-### Frontend (package.json)
-
-| Technologie           | Version   | Usage                        |
-| --------------------- | --------- | ---------------------------- |
-| Tailwind CSS          | ^3.1.0    | Framework CSS utilitaire     |
-| Alpine.js             | ^3.15.12  | Réactivité JavaScript légère |
-| Chart.js              | ^4.5.1    | Graphiques et visualisations |
-| FullCalendar Core     | ^6.1.20   | Emploi du temps interactif   |
-| FullCalendar DayGrid  | ^6.1.20   | Vue mensuelle                |
-| FullCalendar TimeGrid | ^6.1.20   | Vue hebdomadaire             |
-| SweetAlert2           | ^11.26.24 | Modales de confirmation      |
-| Flatpickr             | ^4.6.13   | Sélecteurs de dates          |
-| Notyf                 | ^3.10.0   | Notifications toast          |
-| AOS                   | ^2.3.4    | Animations au défilement     |
-| GSAP                  | ^3.15.0   | Animations avancées          |
-| Axios                 | ^1.16.0   | Requêtes HTTP                |
-| Vite                  | ^7.0.7    | Bundler et hot reload        |
-| @tailwindcss/forms    | ^0.5.2    | Styles formulaires           |
-
-### IA et Services externes
-
-| Service                  | Usage                                 |
-| ------------------------ | ------------------------------------- |
-| Groq API (Llama 3.3-70b) | Chatbot parent + alertes nocturnes    |
-| OpenSSL (PHP natif)      | Signature RSA 2048 bits des documents |
-
----
-
-## Prérequis
-
-- PHP 8.2 ou supérieur
-- Composer 2.x
-- Node.js 18+ et npm
-- MySQL 8.0+ (ou SQLite pour le développement)
-- Extensions PHP : `openssl`, `gd` ou `imagick`, `pdo_mysql`, `zip`, `mbstring`
-
----
-
-## Installation
-
-### 1. Cloner et installer les dépendances
-
-```bash
-git clone <url-du-repo> gestion-universitaire
-cd gestion-universitaire
-composer install
-npm install
-```
-
-### 2. Configurer l'environnement
-
-```bash
-cp .env.example .env
-php artisan key:generate
-```
-
-Éditer `.env` avec les valeurs réelles :
-
-```dotenv
-APP_NAME="UPF Gestion Universitaire"
-APP_ENV=local
-APP_URL=http://localhost:8000
-
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=gestion_universitaire
-DB_USERNAME=root
-DB_PASSWORD=
-
-MAIL_MAILER=log
-# En production, utiliser smtp, mailtrap, mailgun...
-MAIL_FROM_ADDRESS=noreply@upf.ma
-MAIL_FROM_NAME="UPF Gestion"
-
-# Chatbot IA (obtenir sur console.groq.com)
-GROQ_API_KEY=gsk_xxxxxxxxxxxx
-GROQ_MODEL=llama-3.3-70b-versatile
-
-# URL du frontend React de vérification QR
-APP_VERIFICATION_FRONTEND_URL=http://localhost:5173
-```
-
-### 3. Migrer et seeder la base de données
-
-```bash
-php artisan migrate --seed
-```
-
-Cela crée :
-
-- Le compte admin : `nahliamine95@gmail.com` / `password`
-- Les 3 filières (GINFO, GC, GIND)
-- Les niveaux (1A, 2A, 3A par filière)
-- Les groupes (GINFO3A, GINFO3B, GC3A, GC3B, GIND3A, GIND3B)
-- Les modules (8 modules GINFO3, modules GC3 et GIND3)
-- Des salles de cours
-
-### 4. Générer les clés RSA pour la signature cryptographique
-
-```bash
-php artisan tinker
->>> app(App\Services\CryptoSignatureService::class)->generateKeyPair();
->>> exit
-```
-
-Les clés sont générées dans `storage/app/keys/` :
-
-- `upf_private.pem` (permissions 600)
-- `upf_public.pem`
-
-### 5. Lier le stockage public
-
-```bash
-php artisan storage:link
-```
-
-### 6. Compiler les assets frontend
-
-```bash
-npm run build
-# ou en développement avec hot reload :
-npm run dev
-```
-
-### 7. Lancer le serveur de développement
-
-```bash
-# Tout en un (serveur + queue + logs + vite) :
-composer dev
-
-# Ou séparément :
-php artisan serve
-php artisan queue:listen --tries=1
+```mermaid
+graph TD
+    Client["🔑 Client (Navigateur / API Request)"] -->|1. Requête| Route["📂 Laravel Routing (web.php / api.php)"]
+    Route -->|2. Filtrage| Middleware["🛡️ Middleware (RoleMiddleware / SetLocale)"]
+    
+    subgraph Noyau applicatif (Laravel 12)
+        Middleware -->|3. Autorisation| Controller["🎮 Http/Controllers (Espaces Métier)"]
+        Controller -->|4. Persistance| Eloquent["💾 Modèles Eloquent (App/Models)"]
+        Controller -->|5. Sceau PKI| Crypto["🔑 Services/CryptoSignatureService.php"]
+        Controller -->|6. Service RAG| AI["🤖 Services/AI/ChatbotService.php"]
+    end
+    
+    Eloquent <-->|SQL| DB[("🗄️ Database MySQL (InnoDB)")]
+    Crypto -->|RSA 2048-bit| RSA["🔑 OpenSSL (Private/Public Keys)"]
+    AI -->|Bearer Session| Groq["☁️ API Cloud Groq (Llama-3.3)"]
+    
+    Controller -->|7. Rendu| View["🎨 Templating Blade (Alpine.js / Tailwind CSS)"]
+    Controller -->|8. Téléchargement| PDF["📄 Moteur DomPDF / Maatwebsite Excel"]
+    
+    View -->|9. Affichage| Client
 ```
 
 ---
 
-## Comptes de démonstration
+## 🔄 4. User Flow / System Flow
 
-Après `php artisan migrate --seed` :
+Ce diagramme de séquence montre le flux d'exécution complet lors du dépôt et de la validation d'un justificatif d'absence d'étudiant, de la soumission à l'archivage en base de données et l'envoi d'emails.
 
-| Rôle           | Email                                      | Mot de passe | Groupe   |
-| -------------- | ------------------------------------------ | ------------ | -------- |
-| Administrateur | `nahliamine95@gmail.com`                   | `password`   | —        |
-| Professeur     | `a.benali@upf.ma`                          | `password`   | —        |
-| Professeur     | `f.alaoui@upf.ma`                          | `password`   | —        |
-| Professeur     | `k.idrissi@upf.ma`                         | `password`   | —        |
-| Étudiant       | `y.tahiri@etudiant.upf.ma`                 | `password`   | GINFO3A  |
-| Étudiant       | `s.benchekroun@etudiant.upf.ma`            | `password`   | GINFO3A  |
-| Étudiant       | `h.zouari@etudiant.upf.ma`                 | `password`   | GINFO3A  |
-| Étudiant       | `n.belhaj@etudiant.upf.ma`                 | `password`   | GINFO3B  |
-| Étudiant       | `o.lahlou@etudiant.upf.ma`                 | `password`   | GINFO3B  |
-| Étudiant       | `i.radi@etudiant.upf.ma`                   | `password`   | GC3A     |
-| Étudiant       | `m.filali@etudiant.upf.ma`                 | `password`   | GC3A     |
-| Étudiant       | `l.mansouri@etudiant.upf.ma`               | `password`   | GIND3A   |
-| Parent         | `y.tahiri@etudiant.upf.ma` (sur `/login/parent`) | `password` | —      |
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Etudiant as 🎓 Étudiant
+    participant Controller as JustificatifController
+    participant Disk as Storage Disk
+    participant BDD as Database MySQL
+    participant Mail as Mail Service
+    actor Admin as 🧑‍💻 Administrateur
 
-> Les parents se connectent sur `/login/parent` avec **l'email de l'étudiant** (sans `+parent`) et le même mot de passe.
-
-### Flux de création d'un étudiant
-
-1. L'admin crée un étudiant avec l'email `jean.dupont@etudiant.upf.ma`
-2. Un compte parent est automatiquement créé : email `jean.dupont@etudiant.upf.ma+parent`, même mot de passe
-3. Le parent se connecte sur `/login/parent`
-
-### Page d'inscription publique
-
-Les étudiants peuvent s'auto-inscrire via `/register`. Leur compte est **inactif** jusqu'à approbation par l'administrateur via le panneau "Utilisateurs en attente".
+    Etudiant->>Controller: Uploade justificatif (POST /etudiant/justificatifs)
+    activate Controller
+    note over Controller: Validation strict du type MIME (pdf,png,jpg)<br/>et de la taille (max 5Mo)
+    
+    Controller->>Controller: Vérifie IDOR (Absence appartient bien à l'étudiant)
+    Controller->>Disk: Sauvegarde le document physique
+    Disk-->>Controller: Retourne le chemin relatif sécurisé
+    
+    Controller->>BDD: INSERT justificatifs (statut='en_attente', fichier)
+    Controller->>BDD: INSERT notifications_app (pour les administrateurs)
+    Controller->>Mail: Envoie NouveauJustificatifAdmin (Mailable) aux administrateurs
+    Controller-->>Etudiant: Redirige avec succès (Toast notification)
+    deactivate Controller
+    
+    Admin->>Controller: Valide le document (PATCH /admin/justificatifs/12/valider)
+    activate Controller
+    Controller->>BDD: UPDATE justificatifs (statut='accepte')
+    Controller->>BDD: UPDATE absences (justifiee=true)
+    Controller->>BDD: INSERT notification_app (pour l'étudiant)
+    Controller->>Mail: Envoie JustificatifApprouve à l'étudiant
+    Controller-->>Admin: Redirige avec notification de succès (SweetAlert2)
+    deactivate Controller
+```
 
 ---
 
-## Structure du projet
+## 📂 5. Project Structure
+
+L'arborescence du projet est rationalisée pour cloisonner efficacement les différentes responsabilités :
 
 ```
 gestion-universitaire/
-├── app/
-│   ├── Http/
-│   │   ├── Controllers/
-│   │   │   ├── Admin/           # DashboardController, UserController, FiliereController,
-│   │   │   │                    # ModuleController, SalleController, AbsenceController,
-│   │   │   │                    # NoteController, EdtController, DemandeController,
-│   │   │   │                    # StatistiqueController
-│   │   │   ├── Professeur/      # DashboardController, ModuleController, NoteController,
-│   │   │   │                    # AbsenceController, CahierController, EdtController,
-│   │   │   │                    # ReservationController, ClassroomController, DemandeController
-│   │   │   ├── Etudiant/        # DashboardController, NoteController, AbsenceController,
-│   │   │   │                    # JustificatifController, DemandeController,
-│   │   │   │                    # ClassroomController, DocumentController,
-│   │   │   │                    # ReleveNotesController, EdtController
-│   │   │   ├── Parent/          # DashboardController, ChatbotController,
-│   │   │   │                    # NotificationController
-│   │   │   ├── Api/             # AuthController, NoteController, AbsenceController,
-│   │   │   │                    # ModuleController, EdtController,
-│   │   │   │                    # DocumentVerificationController
-│   │   │   └── Auth/            # AuthenticatedSessionController, RegisteredUserController,
-│   │   │                        # ParentAuthController, NewPasswordController, ...
-│   │   └── Middleware/
-│   │       ├── RoleMiddleware.php   # Vérification rôle + compte actif
-│   │       └── SetLocale.php        # Locale depuis la session
-│   ├── Models/                  # 21 modèles Eloquent
-│   ├── Services/
-│   │   ├── AI/
-│   │   │   ├── ChatbotService.php    # Client Groq API avec fallback
-│   │   │   └── PromptBuilder.php     # Prompt contextuel avec données étudiant
-│   │   └── CryptoSignatureService.php # RSA 2048 bits : sign + verify
-│   └── Jobs/
-│       └── SendNightlyAIAlerts.php   # Alertes IA nocturnes (queue)
-├── database/
-│   ├── migrations/            # 33 migrations
-│   └── seeders/               # 12 seeders
-├── lang/
-│   ├── fr.json                # 430+ clés
-│   ├── en.json
-│   └── ar.json                # RTL
-├── resources/views/
-│   ├── layouts/
-│   │   └── dashboard.blade.php  # Layout principal : sidebar, topbar, dark mode, flash
-│   ├── admin/                 # Vues administration (10 modules)
-│   ├── professeur/            # Vues professeur (7 modules)
-│   ├── etudiant/              # Vues étudiant (7 modules)
-│   ├── parent/                # Dashboard parent + chatbot intégré
-│   ├── pdf/                   # Templates PDF (relevé de notes, demandes)
-│   ├── emails/                # Templates emails (approbation, refus, justificatifs)
-│   └── errors/                # Pages 403, 404, 500 personnalisées
-└── routes/
-    ├── web.php                # Routes web (auth + 4 rôles)
-    ├── auth.php               # Routes auth avec throttle
-    └── api.php                # Routes API (Sanctum)
+ ├── app/
+ │    ├── Http/
+ │    │    ├── Controllers/         # Contrôleurs métier (Admin, Professeur, Etudiant, Parent, Api)
+ │    │    └── Middleware/          # Intercepteurs de requêtes (RoleMiddleware, SetLocale)
+ │    ├── Models/                   # 21 Modèles Eloquent matérialisant le schéma BDD
+ │    ├── Services/                 # Services applicatifs complexes (CryptoSignature, Chatbot AI)
+ │    ├── Mail/                     # Notifications transactionnelles par e-mail
+ │    └── Exports/                  # Exportations tabulaires Excel
+ ├── bootstrap/
+ │    └── app.php                   # Fichier d'initialisation, enregistrement des middlewares & alias
+ ├── config/                        # Fichiers de configuration (Database, Services, Mail, Sanctum)
+ ├── database/
+ │    ├── migrations/               # Fichiers DDL de création des 30 tables normalisées
+ │    └── seeders/                  # Données initiales et comptes démos
+ ├── docs/                          # Répertoire des diagrammes UML et schémas d'architecture
+ ├── resources/
+ │    ├── views/                    # Interfaces utilisateur rédigées en Blade & Alpine.js
+ │    └── css/app.css               # Point d'entrée des styles Tailwind CSS
+ └── routes/
+      ├── web.php                   # 120+ Routes d'interface Web sécurisées
+      └── api.php                   # 25+ Routes API REST sécurisées par Sanctum
 ```
 
 ---
 
-## Routes importantes
+## 🖼️ 6. Documentation Visuelle (docs/)
 
-### Authentification
+L'ensemble des diagrammes d'analyse et de conception officielle du projet sont archivés au sein du répertoire [docs/](file:///d:/3eme%20annee/S6/TW/exam/gestion-universitaire/docs) :
 
-| Méthode | URL              | Throttle |
-| ------- | ---------------- | -------- |
-| POST    | `/login`         | 5/min    |
-| POST    | `/login/parent`  | 5/min    |
-| POST    | `/register`      | 10/min   |
-| GET     | `/lang/{locale}` | —        |
-
-### Admin (`/admin/*`, middleware: `auth`, `role:admin`)
-
-| URL                              | Description                  |
-| -------------------------------- | ---------------------------- |
-| `/admin/dashboard`               | Tableau de bord              |
-| `/admin/users`                   | Gestion utilisateurs         |
-| `/admin/filieres/{id}/niveaux`   | AJAX niveaux par filière     |
-| `/admin/niveaux/{id}/groupes`    | AJAX groupes par niveau      |
-| `/admin/edt` + `/admin/edt/data` | Emploi du temps FullCalendar |
-| `/admin/statistiques`            | Statistiques globales        |
-| `/admin/demandes/{id}/pdf`       | PDF signé + QR code          |
-
-### Professeur (`/professeur/*`, middleware: `auth`, `role:professeur`)
-
-| URL                                       | Description             |
-| ----------------------------------------- | ----------------------- |
-| `/professeur/notes/{module}/{groupe}`     | Saisie des notes        |
-| `/professeur/absences/{seance}`           | Feuille de présence     |
-| `/professeur/classroom/{module}/supports` | Upload support de cours |
-
-### Étudiant (`/etudiant/*`, middleware: `auth`, `role:etudiant`)
-
-| URL                               | Description              |
-| --------------------------------- | ------------------------ |
-| `/etudiant/releve-notes/download` | Relevé PDF signé         |
-| `/etudiant/justificatifs`         | Soumettre justificatif   |
-| `/etudiant/demandes`              | Demandes administratives |
-
-### Parent (`/parent/*`, middleware: `auth`, `role:parent`)
-
-| URL                       | Throttle   | Description              |
-| ------------------------- | ---------- | ------------------------ |
-| `/parent/dashboard`       | —          | Tableau de bord          |
-| `/parent/chatbot`         | 20/1440min | Envoyer message IA       |
-| `/parent/chatbot/history` | —          | Historique conversations |
-| `/parent/notifications`   | —          | Alertes JSON             |
+*   📊 **Architecture Globale** : [Diagramme Conceptuel](docs/1. 📊 Diagramme Conceptuel & Architecture Applicative (Flowchart).png)
+*   🧑‍💻 **Cas d'Utilisation** : [Use Case Diagram](docs/usecase.png)
+*   🏛️ **Modèle de Classes** : [Class Diagram](docs/class.png)
+*   🔄 **Workflow Pédagogique** : [Sequence Diagram (Absence Approval)](docs/Diagramme de SéquenceApprobation de Justificatif d'Absence.png)
+*   🤖 **Intégration d'IA** : [Sequence Diagram (AI Parent Chatbot RAG)](docs/Diagramme de Séquence  Consultation RAG via l'Assistant IA Parent.png)
+*   🔑 **Scellement Cryptographique** : [Sequence Diagram (Signature Verification)](docs/seq.png)
+*   🗄️ **Base de Données** : [MCD Diagram](docs/mcd.png)
 
 ---
 
-## Chatbot IA
+## 🧠 7. Core Logic / Business Logic
 
-Le chatbot utilise l'API **Groq** (modèle `llama-3.3-70b-versatile`) pour fournir des réponses contextuelles aux parents.
+### 📊 Algorithme d'Évaluation Scolaire (Note.php)
+Le calcul de la moyenne de module est normé selon des pondérations fixes appliquées dans le modèle :
+$$Moyenne = (CC1 + CC2)/2 \times 0.4 + Examen \times 0.6$$
+*Règle d'ajournement* : Si $Moyenne < 10.00$, le statut du module bascule sur `'ajourné'`, ouvrant le droit d'accès aux sessions de rattrapage.
 
-### Fonctionnement
+### 🚫 Algorithme Anti-Collision (ReservationController.php)
+Le système protège les réservations de salles de cours contre tout chevauchement en effectuant une vérification d'exclusion temporelle mutuelle à l'insertion :
+```sql
+SELECT EXISTS (
+    SELECT * FROM reservations_salles 
+    WHERE salle_id = :salle_id 
+      AND date = :date 
+      AND statut = 'confirmee'
+      AND (
+          (heure_debut >= :debut AND heure_debut < :fin) OR -- Nouveau début dans un créneau existant
+          (heure_fin > :debut AND heure_fin <= :fin) OR     -- Nouvelle fin dans un créneau existant
+          (heure_debut <= :debut AND heure_fin >= :fin)     -- Nouveau créneau englobant un existant
+      )
+);
+```
 
-1. Le `PromptBuilder` construit un prompt système avec les données réelles de l'étudiant (notes, absences, groupe, filière, demandes).
-2. L'historique de conversation (max 10 messages) est envoyé pour maintenir le contexte.
-3. Les conversations sont persistées en base de données (`chatbot_conversations`).
-4. Timeout API : 30 secondes, fallback message générique en cas d'échec.
+### 🔒 Signature PKI RSA-2048 & QR Code
+Le service [CryptoSignatureService.php](file:///d:/3eme%20annee/S6/TW/exam/gestion-universitaire/app/Services/CryptoSignatureService.php) sécurise les relevés et attestations :
+1.  **Canonicité** : Le payload de données est encodé de manière déterministe (`json_encode` avec tris).
+2.  **Hachage** : Génération d'un hash SHA-256 du payload.
+3.  **Signature asymétrique** : Signature du hash avec la clé privée de l'université (RSA 2048-bit).
+4.  **QR Code de confiance** : Génération d'un QR code contenant le lien public de vérification `/verify/{documentId}`.
 
-### Limites de sécurité
+---
 
-- 20 questions/jour par parent (cache applicatif + throttle HTTP middleware)
-- Un parent ne peut accéder qu'aux données de son propre étudiant (vérification email `+parent`)
-- Fallback systématique si API timeout ou erreur
+## 🌐 8. API / Interaction Layer
 
-### Alertes nocturnes (`SendNightlyAIAlerts`)
+Le système expose des endpoints REST documentés pour d'éventuelles applications mobiles ou intégrations :
 
-Le job analyse chaque soir le dossier de chaque étudiant et crée une `NotificationApp` (info/warning/urgent) si l'IA détecte quelque chose de signalé. Chaque parent est traité dans un `try/catch` indépendant.
+### Endpoints Majeurs
 
-Pour activer la planification, ajouter dans `routes/console.php` :
+*   `POST /api/login` : Authentification, retourne le token Bearer Sanctum.
+*   `GET /api/me` (Auth requis) : Retourne le profil utilisateur connecté.
+*   `GET /api/notes` (Auth requis) : 
+    *   *Pour l'étudiant* : Ses notes détaillées par module et sa moyenne générale courante.
+    *   *Pour le professeur* : La liste des modules sous sa responsabilité et leurs moyennes globales de groupe.
+*   `GET /api/verify/{documentId}` (Public) : Endpoint de décodage cryptographique. Il récupère la signature associée, la décode à l'aide de la clé publique de l'université et confirme si le document a été falsifié ou non.
 
-```php
-Schedule::job(new \App\Jobs\SendNightlyAIAlerts())->dailyAt('22:00');
+#### Exemple de Réponse : Connexion Réussie (`POST /api/login`)
+```json
+{
+  "message": "Connexion réussie.",
+  "token": "3|a8F9...tY6z",
+  "token_type": "Bearer",
+  "user": {
+    "id": 14,
+    "nom": "NAHLI",
+    "prenom": "Amine",
+    "email": "student@upf.ma",
+    "role": "etudiant"
+  }
+}
 ```
 
 ---
 
-## Signature cryptographique des documents
+## 🔐 9. Security Thinking
 
-Les relevés de notes et documents administratifs sont signés numériquement (RSA 2048 bits + SHA-256).
-
-### Processus de signature
-
-1. Les données du document sont sérialisées en JSON canonique (`JSON_UNESCAPED_UNICODE`)
-2. Hash SHA-256 calculé sur le JSON
-3. La clé privée UPF signe le hash (`openssl_sign`)
-4. La signature base64, le hash et les données scellées sont stockés dans `document_signatures`
-5. Un QR code SVG est généré pointant vers l'URL de vérification
-
-### Vérification publique
-
-```
-GET /api/document-verification/{document_id}
-```
+*   **Authentification Robuste** : Sessions web étanches protégées par CSRF, doublées d'une API Stateless sécurisée par jetons d'accès Sanctum (`personal_access_tokens`).
+*   **Contrôle d'Accès par Rôles** : Middleware d'alias `'role'` (`RoleMiddleware.php`) interdisant tout contournement de route. Il gère également le verrouillage immédiat des comptes inactifs (`is_active = false`).
+*   **Protection Anti-IDOR** : Chaque action étudiant/professeur est validée au niveau de la base de données pour vérifier la propriété de la ressource demandée (ex: impossible d'altérer la note d'un groupe non affecté, ou de téléverser un justificatif sur l'absence d'un autre étudiant).
+*   **Défense du Stockage** : Téléversements de fichiers limités par type MIME et contraints en taille pour prévenir les attaques par déni de service logique (DoS).
 
 ---
 
-## Internationalisation (i18n)
+## 🛠️ 10. Installation & Run
 
-| Langue   | Fichier        | RTL               |
-| -------- | -------------- | ----------------- |
-| Français | `lang/fr.json` | Non               |
-| Anglais  | `lang/en.json` | Non               |
-| Arabe    | `lang/ar.json` | Oui (automatique) |
+### Prérequis
+*   PHP 8.2+ (avec extensions `openssl`, `pdo_mysql`, `gd`, `zip`, `mbstring`)
+*   Composer 2.x
+*   Node.js 18+ & npm
+*   Base de données MySQL 8.0+
 
-Changer de langue : cliquer sur le sélecteur dans la topbar, ou `GET /lang/{fr|en|ar}`.
-Le layout applique automatiquement `dir="rtl"` pour l'arabe.
+### Procédure de déploiement
+1.  **Cloner le dépôt :**
+    ```bash
+    git clone https://github.com/Amine-NAHLI/gestion-universitaire.git
+    cd gestion-universitaire
+    ```
+2.  **Installer les dépendances :**
+    ```bash
+    composer install
+    npm install
+    ```
+3.  **Configurer l'environnement :**
+    ```bash
+    cp .env.example .env
+    php artisan key:generate
+    ```
+    *Renseignez vos accès MySQL et votre clé d'API Groq (`GROQ_API_KEY`) dans le fichier `.env`.*
+
+4.  **Initialiser la base de données (Tables & Seeders) :**
+    ```bash
+    php artisan migrate --seed
+    ```
+5.  **Lancer l'application :**
+    ```bash
+    npm run dev
+    # Ouvrir un second terminal
+    php artisan serve
+    ```
 
 ---
 
-## Déploiement en production
+## 🧪 11. Testing Strategy
 
-### Variables d'environnement critiques
-
-```dotenv
-APP_ENV=production
-APP_DEBUG=false
-DB_CONNECTION=mysql
-QUEUE_CONNECTION=database
-GROQ_API_KEY=gsk_xxx
-```
-
-### Commandes de déploiement
+Le projet incorpore une suite complète de tests unitaires et fonctionnels (PHPUnit) garantissant la stabilité du système face aux régressions :
 
 ```bash
-composer install --no-dev --optimize-autoloader
-php artisan config:cache && php artisan route:cache && php artisan view:cache
-php artisan migrate --force
-php artisan storage:link
-npm run build
+# Lancement de l'intégralité des tests automatisés
+php artisan test
 ```
 
-### Queue et cron
-
-```bash
-# Supervisor pour la queue
-php artisan queue:work --sleep=3 --tries=3
-
-# Cron (cPanel ou crontab)
-* * * * * php /path/to/artisan schedule:run >> /dev/null 2>&1
-```
+### Stratégie de tests implémentée
+*   **Tests d'Authentification Avancés (`tests/Feature/Auth`)** : Couvrent l'inscription, la modification de mot de passe, l'authentification parentale et l'appairage automatique d'adresse email parent `student@upf.ma+parent`.
+*   **Tests d'Autorisation de Middleware (`RoleMiddlewareTest.php`)** : Valident que les utilisateurs inactifs sont immédiatement rejetés et déconnectés, et que l'accès aux espaces est strictement régi par le rôle.
+*   **Tests d'Intégrité Logistique (`RoomReservationConflictTest.php`)** : Simulent la soumission de deux réservations chevauchantes pour s'assurer que le système bloque mathématiquement le second conflit et conserve l'intégrité de la base de données.
 
 ---
 
-## Auteur
+## 🚀 12. Roadmap & Évolutions Futures
 
-**Amine NAHLI**
-Email : nahliamine95@gmail.com
-
----
-
-## Licence
-
-MIT — Voir `composer.json` pour les détails.
+*   **Optimisation Temporelle par IA** : Implémentation d'un algorithme génétique de planification pour générer les EDT de l'université sans conflits de professeurs ni de salles.
+*   **OCR Intelligent** : Analyse automatisée par vision des justificatifs d'absence soumis par les étudiants afin de pré-valider les motifs (maladie, convocation officielle) et alléger le travail de l'administration.
+*   **Analyses de Rétention Scolaire** : Tableau de bord de statistiques prédictives pour détecter les risques d'ajournement ou d'abandon selon l'assiduité et les notes de contrôle continu.
+*   **Passerelle SMS d'Alerte** : Notification push SMS instantanée aux parents lors d'une absence non justifiée ou d'une note de rattrapage.
 
 ---
 
-_Développé dans le cadre de l'examen TW S6 — Université Privée de Fès 2025-2026_
+## ❓ 13. FAQ (Foire Aux Questions)
+
+#### Comment fonctionne l'Assistant IA Parent ?
+Il s'appuie sur le modèle de langage **Llama 3.3** via l'API Groq. Le système injecte les notes réelles, les absences courantes et les demandes de l'élève dans le contexte d'appel (RAG). L'IA est bridée par des consignes strictes qui lui interdisent de spéculer ou d'aborder des sujets externes à la scolarité.
+
+#### Est-ce que le système de documents signés est vraiment sécurisé ?
+Oui. La signature est asymétrique. Elle est générée avec la clé privée de l'UPF (RSA 2048-bit) et ne peut être forgée. La clé publique (accessible en lecture seule) est uniquement utilisée pour valider que le hash SHA-256 du relevé de notes n'a pas été modifié. Toute altération manuelle du PDF (modification de note, changement de nom) invalide instantanément la signature.
+
+#### Comment est structuré le code des espaces utilisateurs ?
+Le code est cloisonné dans des sous-répertoires dédiés au sein de `app/Http/Controllers/` et `resources/views/`. Les contrôleurs héritent du noyau Laravel mais sont isolés dans des namespaces propres (`Admin\`, `Professeur\`, `Etudiant\`, `Parent\`), empêchant tout couplage fort et simplifiant les futurs refactorings.
+
+#### Comment ajouter un nouveau rôle d'utilisateur (ex: Scolarité) ?
+1.  Ajoutez le rôle dans l'enum SQL de la migration `users` (colonne `role`).
+2.  Créez un sous-dossier de contrôleurs et de vues dédiés.
+3.  Déclarez un groupe de routes dans `routes/web.php` protégé par le middleware `role:scolarite`.
+4.  Implémentez les redirections correspondantes dans la route racine `/dashboard`.
+
+---
+
+<div align="center">
+
+### 🏛️ E-UPF : Redéfinir l'Expérience Universitaire par l'Ingénierie Logicielle
+
+*Développé par **Amine NAHLI** sous la supervision du **Pr. Marwane KZADRI**.*  
+*Université Privée de Fès — Filière Génie Informatique / Technologies Web.*
+
+</div>

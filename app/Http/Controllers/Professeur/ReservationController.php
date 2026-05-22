@@ -34,7 +34,7 @@ class ReservationController extends Controller
 
         // Détection complète des conflits horaires (4 cas possibles)
         $conflit = ReservationSalle::where('salle_id', $request->salle_id)
-            ->where('date', $request->date)
+            ->whereDate('date', $request->date)
             ->where('statut', 'confirmee')
             ->where(function ($query) use ($request) {
                 // Cas 1 : début existant dans l'intervalle nouveau

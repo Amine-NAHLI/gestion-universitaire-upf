@@ -65,16 +65,19 @@ class DemandeController extends Controller
 
         // Generate the certified PDF with QR code
         $user = $demande->user;
+        $user->load('etudiant.notes.module', 'etudiant.groupe.niveau.filiere');
         $langue = $demande->langue_document ?? 'fr';
+
         $sealedData = [
-            'type'            => $demande->type,
-            'user_id'         => $user->id,
-            'nom'             => $user->name,
-            'prenom'          => $user->prenom,
-            'date_validation' => now()->toISOString(),
-            'validateur'      => auth()->user()->name,
-            'langue'          => $langue,
-            'donnees'         => $demande->donnees_supplementaires,
+            'student_name'     => trim(($user->prenom ?? '') . ' ' . $user->name),
+            'cne'              => $user->etudiant?->cne ?? 'N/A',
+            'filiere'          => $user->etudiant?->groupe?->niveau?->filiere?->nom ?? 'N/A',
+            'groupe'           => $user->etudiant?->groupe?->nom ?? 'N/A',
+            'document_type'    => $this->getTypeLabel($demande->type),
+            'issue_date'       => now()->format('Y-m-d'),
+            'moyenne'          => $this->getMoyenneGenerale($user),
+            'validateur'       => trim((auth()->user()->prenom ?? '') . ' ' . auth()->user()->name),
+            'langue'           => $langue,
         ];
 
         $cryptoService = app(\App\Services\CryptoSignatureService::class);
@@ -152,29 +155,21 @@ class DemandeController extends Controller
     {
         $demande->load('user');
         $user = $demande->user;
+        $user->load('etudiant.notes.module', 'etudiant.groupe.niveau.filiere');
         $langue = $demande->langue_document ?? 'fr';
-        
-        $typeLabels = [
-            'attestation_scolarite' => 'Attestation de Scolarité',
-            'releve_notes' => 'Relevé de Notes',
-            'certificat_inscription' => 'Certificat d\'Inscription',
-            'attestation_travail' => 'Attestation de Travail',
-            'ordre_mission' => 'Ordre de Mission',
-        ];
-        
-        $documentTypeStr = $typeLabels[$demande->type] ?? 'Document Administratif';
 
-        // Prepare sealed data based on the type of document
+        // Prepare sealed data — same keys as ReleveNotesController for PKI frontend compatibility
         $sealedData = [
-            'student_name' => trim(($user->prenom ?? '') . ' ' . $user->name),
-            'document_type' => $documentTypeStr,
-            'issue_date' => now()->format('Y-m-d'),
+            'student_name'     => trim(($user->prenom ?? '') . ' ' . $user->name),
+            'cne'              => $user->etudiant?->cne ?? 'N/A',
+            'filiere'          => $user->etudiant?->groupe?->niveau?->filiere?->nom ?? 'N/A',
+            'groupe'           => $user->etudiant?->groupe?->nom ?? 'N/A',
+            'document_type'    => $this->getTypeLabel($demande->type),
+            'issue_date'       => now()->format('Y-m-d'),
+            'moyenne'          => $this->getMoyenneGenerale($user),
+            'validateur'       => trim((auth()->user()->prenom ?? '') . ' ' . auth()->user()->name),
+            'langue'           => $langue,
         ];
-        
-        if ($user->isEtudiant() && $user->etudiant) {
-             $sealedData['cne'] = $user->etudiant->cne ?? 'N/A';
-             $sealedData['filiere'] = $user->etudiant->groupe->niveau->filiere->nom ?? 'N/A';
-        }
 
         // Generate Crypto Signature
         $cryptoService = app(\App\Services\CryptoSignatureService::class);
@@ -192,8 +187,39 @@ class DemandeController extends Controller
         // Load View with new data
         $pdf = Pdf::loadView('pdf.demande', compact('demande', 'langue', 'docSignature', 'qrCodeBase64', 'verificationUrl'));
         
-        $label = str_replace(' ', '_', $documentTypeStr);
+        $label = str_replace(' ', '_', $sealedData['document_type']);
         
         return $pdf->download($label . '_' . $user->name . '.pdf');
+    }
+
+    /**
+     * Get the human-readable label for a demande type.
+     */
+    private function getTypeLabel(string $type): string
+    {
+        return match($type) {
+            'attestation_scolarite'  => 'Attestation de Scolarité',
+            'releve_notes'           => 'Relevé de Notes Officiel',
+            'certificat_inscription' => "Certificat d'Inscription",
+            'attestation_travail'    => 'Attestation de Travail',
+            'ordre_mission'          => 'Ordre de Mission',
+            default                  => ucfirst(str_replace('_', ' ', $type)),
+        };
+    }
+
+    /**
+     * Calculate the student's general average from their notes.
+     */
+    private function getMoyenneGenerale($user): string
+    {
+        if (!$user->etudiant) return 'N/A';
+
+        $moyenne = $user->etudiant->notes()
+            ->whereNotNull('note_finale')
+            ->avg('note_finale');
+
+        return $moyenne
+            ? number_format((float) $moyenne, 2) . '/20'
+            : '0/20';
     }
 }
