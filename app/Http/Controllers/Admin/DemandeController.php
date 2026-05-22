@@ -65,20 +65,28 @@ class DemandeController extends Controller
 
         // Generate the certified PDF with QR code
         $user = $demande->user;
-        $user->load('etudiant.notes.module', 'etudiant.groupe.niveau.filiere');
         $langue = $demande->langue_document ?? 'fr';
 
         $sealedData = [
-            'student_name'     => trim(($user->prenom ?? '') . ' ' . $user->name),
-            'cne'              => $user->etudiant?->cne ?? 'N/A',
-            'filiere'          => $user->etudiant?->groupe?->niveau?->filiere?->nom ?? 'N/A',
-            'groupe'           => $user->etudiant?->groupe?->nom ?? 'N/A',
             'document_type'    => $this->getTypeLabel($demande->type),
             'issue_date'       => now()->format('Y-m-d'),
-            'moyenne'          => $this->getMoyenneGenerale($user),
             'validateur'       => trim((auth()->user()->prenom ?? '') . ' ' . auth()->user()->name),
             'langue'           => $langue,
         ];
+
+        if ($user->role === 'professeur') {
+            $user->load('professeur');
+            $sealedData['professor_name'] = trim(($user->prenom ?? '') . ' ' . $user->name);
+            $sealedData['specialite'] = $user->professeur?->specialite ?? 'N/A';
+            $sealedData['grade'] = $user->professeur?->grade ?? 'N/A';
+        } else {
+            $user->load('etudiant.notes.module', 'etudiant.groupe.niveau.filiere');
+            $sealedData['student_name'] = trim(($user->prenom ?? '') . ' ' . $user->name);
+            $sealedData['cne'] = $user->etudiant?->cne ?? 'N/A';
+            $sealedData['filiere'] = $user->etudiant?->groupe?->niveau?->filiere?->nom ?? 'N/A';
+            $sealedData['groupe'] = $user->etudiant?->groupe?->nom ?? 'N/A';
+            $sealedData['moyenne'] = $this->getMoyenneGenerale($user);
+        }
 
         $cryptoService = app(\App\Services\CryptoSignatureService::class);
         $docSignature = $cryptoService->signDocument($user, $demande->type, $sealedData);
@@ -155,21 +163,28 @@ class DemandeController extends Controller
     {
         $demande->load('user');
         $user = $demande->user;
-        $user->load('etudiant.notes.module', 'etudiant.groupe.niveau.filiere');
         $langue = $demande->langue_document ?? 'fr';
 
-        // Prepare sealed data — same keys as ReleveNotesController for PKI frontend compatibility
         $sealedData = [
-            'student_name'     => trim(($user->prenom ?? '') . ' ' . $user->name),
-            'cne'              => $user->etudiant?->cne ?? 'N/A',
-            'filiere'          => $user->etudiant?->groupe?->niveau?->filiere?->nom ?? 'N/A',
-            'groupe'           => $user->etudiant?->groupe?->nom ?? 'N/A',
             'document_type'    => $this->getTypeLabel($demande->type),
             'issue_date'       => now()->format('Y-m-d'),
-            'moyenne'          => $this->getMoyenneGenerale($user),
             'validateur'       => trim((auth()->user()->prenom ?? '') . ' ' . auth()->user()->name),
             'langue'           => $langue,
         ];
+
+        if ($user->role === 'professeur') {
+            $user->load('professeur');
+            $sealedData['professor_name'] = trim(($user->prenom ?? '') . ' ' . $user->name);
+            $sealedData['specialite'] = $user->professeur?->specialite ?? 'N/A';
+            $sealedData['grade'] = $user->professeur?->grade ?? 'N/A';
+        } else {
+            $user->load('etudiant.notes.module', 'etudiant.groupe.niveau.filiere');
+            $sealedData['student_name'] = trim(($user->prenom ?? '') . ' ' . $user->name);
+            $sealedData['cne'] = $user->etudiant?->cne ?? 'N/A';
+            $sealedData['filiere'] = $user->etudiant?->groupe?->niveau?->filiere?->nom ?? 'N/A';
+            $sealedData['groupe'] = $user->etudiant?->groupe?->nom ?? 'N/A';
+            $sealedData['moyenne'] = $this->getMoyenneGenerale($user);
+        }
 
         // Generate Crypto Signature
         $cryptoService = app(\App\Services\CryptoSignatureService::class);

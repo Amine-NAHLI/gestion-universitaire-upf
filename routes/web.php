@@ -102,6 +102,7 @@ Route::middleware(['auth', 'role:professeur'])->prefix('professeur')->name('prof
     
     Route::get('demandes', [\App\Http\Controllers\Professeur\DemandeController::class, 'index'])->name('demandes.index');
     Route::post('demandes', [\App\Http\Controllers\Professeur\DemandeController::class, 'store'])->name('demandes.store');
+    Route::get('demandes/{demande}/download', [\App\Http\Controllers\Professeur\DemandeController::class, 'download'])->name('demandes.download');
     
     Route::get('classroom', [\App\Http\Controllers\Professeur\ClassroomController::class, 'index'])->name('classroom.index');
     Route::get('classroom/{module}', [\App\Http\Controllers\Professeur\ClassroomController::class, 'show'])->name('classroom.show');

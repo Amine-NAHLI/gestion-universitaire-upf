@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Professeur;
 use App\Http\Controllers\Controller;
 use App\Models\DemandeAdministrative;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 use Illuminate\Support\Facades\Mail;
 use App\Models\User;
@@ -48,5 +49,21 @@ class DemandeController extends Controller
         }
 
         return back()->with('success', 'Demande soumise avec succès. Les administrateurs ont été notifiés.');
+    }
+
+    public function download(DemandeAdministrative $demande)
+    {
+        if ($demande->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        if (!$demande->fichier_pdf || !Storage::disk('public')->exists($demande->fichier_pdf)) {
+            abort(404, "Le fichier PDF est introuvable sur le serveur.");
+        }
+
+        return Storage::disk('public')->download(
+            $demande->fichier_pdf,
+            basename($demande->fichier_pdf)
+        );
     }
 }

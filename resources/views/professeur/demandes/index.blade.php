@@ -92,7 +92,7 @@
                         </td>
                         <td class="px-6 py-4 text-center">
                             @if($demande->statut === 'validee' && $demande->fichier_pdf)
-                                <a href="{{ route('etudiant.demandes.download', $demande) }}" class="text-indigo-600 hover:text-indigo-700 font-black text-[10px] uppercase tracking-widest">{{ __('Télécharger PDF') }}</a>
+                                <a href="{{ route('professeur.demandes.download', $demande) }}" class="text-indigo-600 hover:text-indigo-700 font-black text-[10px] uppercase tracking-widest">{{ __('Télécharger PDF') }}</a>
                             @else
                                 <span class="text-[10px] text-gray-400 font-bold uppercase">--</span>
                             @endif
