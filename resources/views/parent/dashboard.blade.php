@@ -84,6 +84,7 @@
             loading: false,
             limit: false,
             welcomeLoading: true,
+            suggestions: [],
 
             async init() {
                 // 1. Try history first
@@ -179,11 +180,14 @@
                     if (res.status === 429) {
                         this.limit = true;
                         this.messages.push({ id: null, role: 'assistant', content: data.reply, feedback: null, isWelcome: false });
+                        this.suggestions = [];
                     } else {
                         this.messages.push({ id: data.message_id ?? null, role: 'assistant', content: data.reply, feedback: null, isWelcome: false });
+                        this.suggestions = data.suggestions ?? [];
                     }
                 } catch (e) {
                     this.messages.push({ id: null, role: 'assistant', content: 'L\'assistant est indisponible. Réessayez plus tard.', feedback: null, isWelcome: false });
+                    this.suggestions = [];
                 } finally {
                     this.loading = false;
                     this.$nextTick(() => {
@@ -194,6 +198,7 @@
             },
 
             quickQuestion(text) {
+                this.suggestions = [];
                 this.input = text;
                 this.sendMessage();
             }
@@ -341,6 +346,30 @@
                                 <span class="w-1.5 h-1.5 bg-purple-500 rounded-full animate-bounce" style="animation-delay: 300ms"></span>
                             </div>
                             <span class="text-xs text-gray-400 dark:text-slate-500 font-medium italic">L'assistant analyse le dossier...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Suggestions dynamiques (après réponse hors sujet) --}}
+            <div x-show="suggestions.length > 0 && !loading" x-cloak class="flex justify-start">
+                <div class="flex items-start gap-2.5 max-w-[85%] sm:max-w-[72%]">
+                    <div class="w-7 h-7 flex-shrink-0"></div>
+                    <div class="space-y-2">
+                        <p class="text-[11px] text-gray-400 dark:text-slate-500 font-semibold uppercase tracking-wider ml-1">💡 Suggestions</p>
+                        <div class="flex flex-wrap gap-2">
+                            <template x-for="(s, si) in suggestions" :key="si">
+                                <button
+                                    x-on:click="quickQuestion(s)"
+                                    :disabled="loading || limit"
+                                    x-text="s"
+                                    class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold border transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed
+                                           border-indigo-200 dark:border-indigo-700/60 text-indigo-600 dark:text-indigo-300 bg-indigo-50/80 dark:bg-indigo-950/40
+                                           hover:bg-indigo-100 dark:hover:bg-indigo-900/50 hover:border-indigo-400 dark:hover:border-indigo-500
+                                           hover:shadow-md hover:shadow-indigo-500/10 hover:-translate-y-0.5
+                                           cursor-pointer"
+                                ></button>
+                            </template>
                         </div>
                     </div>
                 </div>

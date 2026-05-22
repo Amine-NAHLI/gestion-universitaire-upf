@@ -62,15 +62,29 @@ class ChatbotController extends Controller
 
         $reply = $this->chatbot->ask($etudiant, $request->string('message'), $history);
 
+        // Parse suggestions from AI reply
+        $suggestions = [];
+        $cleanReply = $reply;
+        if (preg_match('/\[SUGGESTIONS\]\s*(.+?)\s*\[\/SUGGESTIONS\]/s', $reply, $matches)) {
+            $cleanReply = trim(preg_replace('/\[SUGGESTIONS\].*?\[\/SUGGESTIONS\]/s', '', $reply));
+            $suggestions = array_map('trim', explode('|', $matches[1]));
+            $suggestions = array_filter($suggestions, fn($s) => strlen($s) > 0);
+            $suggestions = array_values($suggestions);
+        }
+
         $assistantMsg = ChatbotConversation::create([
             'parent_id'   => $parent->id,
             'etudiant_id' => $etudiant->id,
             'role'        => 'assistant',
-            'content'     => $reply,
+            'content'     => $cleanReply,
             'is_welcome'  => false,
         ]);
 
-        return response()->json(['reply' => $reply, 'message_id' => $assistantMsg->id]);
+        return response()->json([
+            'reply'       => $cleanReply,
+            'message_id'  => $assistantMsg->id,
+            'suggestions' => $suggestions,
+        ]);
     }
 
     public function welcome(): JsonResponse
