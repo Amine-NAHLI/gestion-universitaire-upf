@@ -11,6 +11,7 @@ use App\Models\Justificatif;
 use App\Models\DemandeAdministrative;
 use App\Models\CahierTexte;
 use App\Models\Module;
+use App\Models\User;
 use App\Policies\SeancePolicy;
 use App\Policies\NotePolicy;
 use App\Policies\ReservationSallePolicy;
@@ -18,6 +19,7 @@ use App\Policies\JustificatifPolicy;
 use App\Policies\DemandeAdministrativePolicy;
 use App\Policies\CahierTextePolicy;
 use App\Policies\ModulePolicy;
+use App\Observers\UserObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,6 +27,9 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Auto-create/sync parent accounts for students
+        User::observe(UserObserver::class);
+
         Gate::policy(Seance::class,              SeancePolicy::class);
         Gate::policy(Note::class,                NotePolicy::class);
         Gate::policy(ReservationSalle::class,    ReservationSallePolicy::class);
